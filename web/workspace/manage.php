@@ -31,12 +31,12 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 			<ul class="menugroup">
 				<li class="menulogo"><a href="/~sterlid2/bank/workspace/manage.php">TempBank</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/manage.php">Manage</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/search.php">Search</a></li>
+				<li class="menuitem"><a href="manage.php">Manage</a></li>
+				<li class="menuitem"><a href="search.php">Search</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/staff/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="staff/options.php">Options</a></li>
+				<li class="menuitem"><a href="../login.php">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
@@ -45,7 +45,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		    <div class="list main">
 		        <h2 id="title">Management</h2>
 		        <label class="info">Available Options</label>
-    		    <a href="/~sterlid2/bank/workspace/search.php" class="big-color-button transform-button split round shadow">
+    		    <a href="search.php" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Manage Users</p>
 		                <p>Mange User Accounts</p>
@@ -91,7 +91,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
         		        <hr>
         		        <p>Last Log: <? echo $lastLog ?></p>	
         		        <hr>
-        		        <a href="/~sterlid2/bank/workspace/staff/options.php" class="highlight-button transform-button split round">
+        		        <a href="staff/options.php" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p>Options</p>
                             </div>
@@ -102,7 +102,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
                             </div>
         		        </a>
                         <hr>
-        		        <a href="/~sterlid2/bank/login.php" class="highlight-button transform-button split round">
+        		        <a href="../login.php" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p>Sign Out</p>
                             </div>
@@ -117,6 +117,6 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		    </div>
 		</div>
 	</body>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/navigation.js">
+	<script type="text/javascript" src="../Scripts/navigation.js">
 	</script>
 </html>
