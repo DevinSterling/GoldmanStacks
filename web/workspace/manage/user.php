@@ -24,14 +24,14 @@ require_once('/home/sterlid2/Private/sysNotification.php');
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/workspace/manage.php">TempBank</a></li>
+				<li class="menulogo"><a href="../manage.php">TempBank</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/manage.php">Manage</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/search.php">Search</a></li>
+				<li class="menuitem"><a href="../manage.php">Manage</a></li>
+				<li class="menuitem"><a href="../search.php">Search</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/staff/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="../staff/options.php">Options</a></li>
+				<li class="menuitem"><a href="../../login.php">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
