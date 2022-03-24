@@ -10,12 +10,12 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-		<title>Management</title>
-		<!-- Stylesheet -->
-		<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
-		<!-- Favicon -->
-		<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
-		<!-- Google Font -->
+	<title>Management</title>
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="../CSS/stylesheet.css">
+	<!-- Favicon -->
+	<link rel="icon" href="../Images/logo.ico">
+	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +29,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/workspace/manage.php">TempBank</a></li>
+				<li class="menulogo"><a href="manage.php">TempBank</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="manage.php">Manage</a></li>
 				<li class="menuitem"><a href="search.php">Search</a></li>
