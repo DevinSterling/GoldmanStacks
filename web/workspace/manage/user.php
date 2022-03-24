@@ -25,7 +25,7 @@ require_once('/home/sterlid2/Private/sysNotification.php');
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="../manage.php">TempBank</a></li>
+				<li class="menulogo"><a href="../manage.php">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="../manage.php">Manage</a></li>
 				<li class="menuitem"><a href="../search.php">Search</a></li>
