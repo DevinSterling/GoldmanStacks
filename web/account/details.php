@@ -33,12 +33,12 @@ if (!in_array($currentAccountName, $accounts)) {
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-		<title><?echo strtoupper($currentAccountName)?> Account Details</title>
-		<!-- Stylesheet -->
-		<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
-		<!-- Favicon -->
-		<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
-		<!-- Google Font -->
+	<title><?echo strtoupper($currentAccountName)?> Account Details</title>
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
+	<!-- Favicon -->
+	<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
+	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,28 +50,28 @@ if (!in_array($currentAccountName, $accounts)) {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
-		<nav class="menubar">
-			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/home.php">TempBank</a></li>
-                <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/home.php">Home</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/transfer.php">Transfer</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/payments.php">Payments</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/open.php">Open New Account</a></li>
-				<li class="menuitem submenu">
-				    <a tabindex="0">Statements</a>
-				    <!--<ul class="submenugroup">
-				        <li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				        <li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-				    </ul>-->
-				</li>
-			</ul>
-			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/user/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
-			</ul>
-		</nav>
-		<? notification(); ?>
+	<nav class="menubar">
+		<ul class="menugroup">
+			<li class="menulogo"><a href="../home.php">TempBank</a></li>
+			<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
+			<li class="menuitem"><a href="../home.php">Home</a></li>
+			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
+			<li class="menuitem"><a href="payments.php">Payments</a></li>
+			<li class="menuitem"><a href="open.php">Open New Account</a></li>
+			<li class="menuitem submenu">
+			    <a tabindex="0">Statements</a>
+			    <!--<ul class="submenugroup">
+				<li class="subitem"><a href="#PrintAll">Print Statement</a></li>
+				<li class="subitem"><a href="#PrintOne">Print Specific</a></li>
+			    </ul>-->
+			</li>
+		</ul>
+		<ul class="menugroup">
+			<li class="menuitem"><a href="../user/options.php">Options</a></li>
+			<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+		</ul>
+	</nav>
+	<? notification(); ?>
     	<div class="container flex-center">
     	    <div class="list main">
     	        <div class="container">
@@ -185,7 +185,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	                <label class="banner-text">Account Actions</label>
     	            </div>
     	            <div class="item-content bottom-round">
-                        <a id="transfer" href="/~sterlid2/bank/account/transfer.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a id="transfer" href="transfer.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-exchange-alt icon"></i> Initiate Transfer</p>
                             </div>
@@ -196,7 +196,7 @@ if (!in_array($currentAccountName, $accounts)) {
                             </div>
                         </a>
                         <hr>
-                        <a href="/~sterlid2/bank/account/payments.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="payments.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
                             </div>
@@ -344,9 +344,9 @@ if (!in_array($currentAccountName, $accounts)) {
             </div>
         </div>
 	</body>
-    <script type="text/javascript"  src="/~sterlid2/bank/Scripts/jquery/jquery.js"></script>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/navigation.js"></script>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/post.js"></script>
+    	<script type="text/javascript" src="../Scripts/jquery/jquery.js"></script>
+	<script type="text/javascript" src="../Scripts/navigation.js"></script>
+	<script type="text/javascript" src="../Scripts/post.js"></script>
 	<script type="text/javascript">
         function showPopUp(ContentId, entity = null) {
             document.querySelectorAll(".pop-up-item").forEach((element) => {
