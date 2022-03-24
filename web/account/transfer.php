@@ -57,7 +57,7 @@ $amountOfAccounts = 5;
             echo "<div class=\"container flex-center marginless-bottom\">
                 <div class=\"list sub\">
                     <div class=\"split\">
-       	                <a id=\"return\" href=\"/~sterlid2/bank/account/details.php?acc=$referencedName\" class=\"expand-button transform-button extend-right round\">
+       	                <a id=\"return\" href=\"details.php?acc=$referencedName\" class=\"expand-button transform-button extend-right round\">
         	                <div class=\"split\">
         	                    <p class=\"condensed-info\"><i class=\"fas fa-arrow-left\"></i></p>
         	                    <div class=\"animate-right\">
