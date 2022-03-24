@@ -1,4 +1,5 @@
-# TemporaryBank
-Web Application
+# GoldmanStacks
+Web application **showcasing** an operational banking system.
+
 ```diff
-- All rights are reserved. You cannot modify or redistribute this code without explicit permission from the copyright holder.
+- 
