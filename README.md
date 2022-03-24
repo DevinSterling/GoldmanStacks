@@ -1,3 +1,3 @@
 # TempBank
-Project
-<span style="color:red">test</span>
+```diff
+- All rights are reserved. You cannot modify or redistribute this code without explicit permission from the copyright holder.
