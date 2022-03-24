@@ -20,30 +20,6 @@
     <body>
         <div class="flex-center-item">
             <div class="list container fixed-sub round">
-                <!--<div class="item-banner accent-border top-round">
-                    <br><br><br><br>
-                    <h1>TempBank</h1>
-                </div>
-                <form id="signin" class="item-content bottom-round">
-                    <label class="info" for="username">Username</label>
-    	            <div class="form-item">
-    		            <input id="username" class="input-field" type="text">
-    	            </div>
-    	            <label class="info" for="password">Password</label>
-    	            <div class="form-item">
-    		            <input id="password" class="input-field" type="password">
-    	            </div>
-    	            <div class="form-item">
-                        <button href= "#asd" class="standard-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Sign In<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-    	            </div>
-                </form>-->
                 <div class="accent-border top-round">
                     <h2 class="big"><b>TempBank</b><h2>
                 </div>
