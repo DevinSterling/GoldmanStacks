@@ -32,7 +32,7 @@ $amountOfAccounts = 5;
 	<body>
 	<nav class="menubar">
 		<ul class="menugroup">
-			<li class="menulogo"><a href="../home.php">TempBank</a></li>
+			<li class="menulogo"><a href="../home.php">Golden Stacks</a></li>
 			<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 			<li class="menuitem"><a href="../home.php">Home</a></li>
 			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
