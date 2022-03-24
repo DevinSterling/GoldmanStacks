@@ -21,7 +21,7 @@
         <div class="flex-center-item">
             <div class="list container fixed-sub round">
                 <div class="accent-border top-round">
-                    <h2 class="big"><b>TempBank</b><h2>
+                    <h2 class="big"><b>Goldman Stacks</b><h2>
                 </div>
                 <br>
                 <form id="edit">
