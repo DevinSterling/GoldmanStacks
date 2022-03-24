@@ -16,12 +16,12 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-		<title>Home</title>
-		<!-- Stylesheet -->
-		<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
-		<!-- Favicon -->
-		<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
-		<!-- Google Font -->
+	<title>Home</title>
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="CSS/stylesheet.css">
+	<!-- Favicon -->
+	<link rel="icon" href="Images/logo.ico">
+	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
