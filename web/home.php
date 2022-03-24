@@ -35,12 +35,12 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/home.php">TempBank</a></li>
+				<li class="menulogo"><a href="home.php">TempBank</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/home.php">Home</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/transfer.php">Transfer</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/payments.php">Payments</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/open.php">Open New Account</a></li>
+				<li class="menuitem"><a href="home.php">Home</a></li>
+				<li class="menuitem"><a href="account/transfer.php">Transfer</a></li>
+				<li class="menuitem"><a href="account/payments.php">Payments</a></li>
+				<li class="menuitem"><a href="account/open.php">Open New Account</a></li>
 				<li class="menuitem submenu">
 				    <a tabindex="0">Statements</a>
 				    <!--<ul class="submenugroup">
@@ -50,8 +50,8 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 				</li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/user/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="user/options.php">Options</a></li>
+				<li class="menuitem"><a href="login.php">Sign Out</a></li>
 			</ul>
 		</nav>
 		<? notification(); ?>
@@ -60,7 +60,7 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		        <h2 id="title">Welcome, <? echo $user ?></h2>
 		        <div class="split">
 		            <label class="info">Available Accounts</label>
-		            <a href="/~sterlid2/bank/account/open.php" class="expand-button transform-button extend-left round shadow">
+		            <a href="account/open.php" class="expand-button transform-button extend-left round shadow">
 		                <div class="split">
 		                    <div class="animate-left">
             		            <div class="toggle-button">
@@ -73,7 +73,7 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		        </div>
 		        <?
 	            for ($i = 0; $i < $amountOfAccounts; $i++) {
-		            echo "<a href=\"/~sterlid2/bank/account/details.php?acc=".$accounts[$i]."\" class=\"big-color-button transform-button split round shadow\">
+		            echo "<a href=\"account/details.php?acc=".$accounts[$i]."\" class=\"big-color-button transform-button split round shadow\">
                             <div class=\"list\">
             		            <p class=\"focused-info\">$accounts[$i]</p>
             		            <p>Savings Account (*".(1028+$i*402+$i*433).")</p>
@@ -107,11 +107,9 @@ $amountOfTransactions = 5; // Number of recent transactions to show
     		        </div>
     		        <div class="item-content bottom-round">
     		            <?
-    		            
     		            $recentAccount = "Checking"; // temp
-    		            
 		                for ($n = 1; $n <= $amountOfTransactions; $n++) {
-		                    echo "<a href=\"/~sterlid2/bank/account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
+		                    echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
 		                            <div class=\"list-padded\">
 		                                <h3 class=\"bold\">Transaction $n</h3>
 		                                <p>$lastVisit<p>
@@ -182,8 +180,8 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		    </div>
 		</div>
 	</body>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/navigation.js">
+	<script type="text/javascript" src="Scripts/navigation.js">
 	</script>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/post.js">
+	<script type="text/javascript" src="Scripts/post.js">
 	</script>
 </html>
