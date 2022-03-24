@@ -29,14 +29,14 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/workspace/manage.php">TempBank</a></li>
+				<li class="menulogo"><a href="../workspace/manage.php">TempBank</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/manage.php">Manage</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/search.php">Search</a></li>
+				<li class="menuitem"><a href="../workspace/manage.php">Manage</a></li>
+				<li class="menuitem"><a href="../workspace/search.php">Search</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/workspace/staff/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="../workspace/staff/options.php">Options</a></li>
+				<li class="menuitem"><a href="../../login.php">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
@@ -88,6 +88,6 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
             </div>
     	</div>
 	</body>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/navigation.js"></script>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/tabs.js"></script>
+	<script type="text/javascript" src="../../Scripts/navigation.js"></script>
+	<script type="text/javascript" src="../../bank/Scripts/tabs.js"></script>
 </html>
