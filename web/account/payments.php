@@ -12,12 +12,12 @@ $amountOfPayments = 5;
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-		<title>Payments</title>
-		<!-- Stylesheet -->
-		<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
-		<!-- Favicon -->
-		<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
-		<!-- Google Font -->
+	<title>Payments</title>
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="../CSS/stylesheet.css">
+	<!-- Favicon -->
+	<link rel="icon" href="../Images/logo.ico">
+	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,35 +29,35 @@ $amountOfPayments = 5;
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
-		<nav class="menubar">
-			<ul class="menugroup">
-				<li class="menulogo"><a href="/~sterlid2/bank/home.php">TempBank</a></li>
-                <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/home.php">Home</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/transfer.php">Transfer</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/payments.php">Payments</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/account/open.php">Open New Account</a></li>
-				<li class="menuitem submenu">
-				    <a tabindex="0">Statements</a>
-				    <!--<ul class="submenugroup">
-				        <li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				        <li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-				    </ul>-->
-				</li>
-			</ul>
-			<ul class="menugroup">
-				<li class="menuitem"><a href="/~sterlid2/bank/user/options.php">Options</a></li>
-				<li class="menuitem"><a href="/~sterlid2/bank/login.php">Sign Out</a></li>
-			</ul>
-		</nav>
-		<? 
-		notification();
+	<nav class="menubar">
+		<ul class="menugroup">
+			<li class="menulogo"><a href="../home.php">TempBank</a></li>
+			<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
+			<li class="menuitem"><a href="../home.php">Home</a></li>
+			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
+			<li class="menuitem"><a href="payments.php">Payments</a></li>
+			<li class="menuitem"><a href="open.php">Open New Account</a></li>
+			<li class="menuitem submenu">
+			    <a tabindex="0">Statements</a>
+			    <!--<ul class="submenugroup">
+				<li class="subitem"><a href="#PrintAll">Print Statement</a></li>
+				<li class="subitem"><a href="#PrintOne">Print Specific</a></li>
+			    </ul>-->
+			</li>
+		</ul>
+		<ul class="menugroup">
+			<li class="menuitem"><a href="../user/options.php">Options</a></li>
+			<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+		</ul>
+	</nav>
+	<? 
+	notification();
         
         if (!empty($referencedName)) {
             echo "<div class=\"container flex-center marginless-bottom\">
                 <div class=\"list sub\">
                     <div class=\"split\">
-       	                <a id=\"return\" href=\"/~sterlid2/bank/account/details.php?acc=$referencedName\" class=\"expand-button transform-button extend-right round\">
+       	                <a id=\"return\" href=\"details.php?acc=$referencedName\" class=\"expand-button transform-button extend-right round\">
         	                <div class=\"split\">
         	                    <p class=\"condensed-info\"><i class=\"fas fa-arrow-left\"></i></p>
         	                    <div class=\"animate-right\">
@@ -239,9 +239,9 @@ $amountOfPayments = 5;
             </div>
         </div>
 	</body>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/navigation.js">
+	<script type="text/javascript" src="../Scripts/navigation.js">
 	</script>
-	<script type="text/javascript" src="/~sterlid2/bank/Scripts/tabs.js"></script>
+	<script type="text/javascript" src="../Scripts/tabs.js"></script>
 	<script type="text/javascript">
         function showPopUp(ContentId) {
             document.querySelectorAll(".pop-up-item").forEach((element) => {
