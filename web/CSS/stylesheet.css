@@ -155,7 +155,7 @@ p, h5, h4, h3, h2, h1 {
     position: fixed;
     top: 50vh;
     left: 50vw;
-    transform: translate(-50%, -25%);
+    transform: translate(-50%, -70%);
     
     animation: showPopUpAnimation;
     animation-duration: 0.4s;
@@ -660,13 +660,13 @@ p, h5, h4, h3, h2, h1 {
 @keyframes showPopUpAnimation {
     0% {
         opacity: 0;
-        transform: translate(-50%, -45%);
+        transform: translate(-50%, -65%);
     }
     20% {
         opacity: 1;
     }
     99% {
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -70%);
     }
 }
 
