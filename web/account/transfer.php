@@ -1,6 +1,16 @@
 <?
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/userbase.php');
+
+/* Force https connection */
+forceHTTPS();
+
+session_start();
+if(!checkIfLoggedIn() || !isClient()) {
+    header("Location: ../signin.php");
+    die();
+}
 
 /* Passed Variables */
 $referencedName = $_GET['acc'];
@@ -38,17 +48,11 @@ $amountOfAccounts = 5;
 			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
 			<li class="menuitem"><a href="payments.php">Payments</a></li>
 			<li class="menuitem"><a href="open.php">Open New Account</a></li>
-			<li class="menuitem submenu">
-			    <a tabindex="0">Statements</a>
-			    <!--<ul class="submenugroup">
-				<li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				<li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-			    </ul>-->
-			</li>
+			<li class="menuitem"><a href="statement.php">Statement</a></li>
 		</ul>
 		<ul class="menugroup">
 			<li class="menuitem"><a href="../user/options.php">Options</a></li>
-			<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+			<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
 	<? 
@@ -152,13 +156,13 @@ $amountOfAccounts = 5;
     		            <select id="external-sender" class="input-field">
                             <?
                             for ($n = 0; $n < $amountOfAccounts; $n++) {
-                               echo "<option";
+                                echo "<option";
                                
-                               if ($referencedName === $accounts[$n]) {
+                                if ($referencedName === $accounts[$n]) {
                                     echo " selected";
-                               }
+                                }
                                
-                               echo ">$accounts[$n]</option>";
+                                echo ">$accounts[$n]</option>";
                             }
                             ?>
     		            </select>
