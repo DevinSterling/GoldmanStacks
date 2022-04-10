@@ -64,7 +64,7 @@ if (hash_equals($calc, $token)
                     $dbMessage = $dbFailMessage;
                 } else {
                     $dbSuccess = true;
-                    $dbMessage = "Password Has Been Updated";
+                    $dbMessage = "Password has been updated";
                 }
                 
                 /* Close Statement */
