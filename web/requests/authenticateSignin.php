@@ -41,8 +41,6 @@ if (hash_equals($calc, $token)
             
             /* Compare passwords */
             if ($password === $user['password']) {
-                /* Start Session */
-                session_start();
                 session_regenerate_id(true);
                 
                 $_SESSION['uid'] = $user['userID']; // Set User Id for Session
