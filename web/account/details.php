@@ -411,7 +411,9 @@ if (!in_array($currentAccountName, $accounts)) {
 	let transactionsTable = document.getElementById("transactions-body");
 		
 	transactionsTable.addEventListener('focus', (event) => {
-  	    console.log("Test!");
+  	    document.addEventListener('keydown', (event) => {
+	    	console.log("Test!");
+	    });
 	});
 	</script>
 	<script type="text/javascript">
