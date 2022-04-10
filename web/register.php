@@ -13,6 +13,12 @@ if(checkIfLoggedIn()) {
     }
 }
 
+/* Check if there is a key */
+if (!isset($_SESSION['key'])) {
+    $_SESSION['key'] = bin2hex(random_bytes(32));
+}
+
+$registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
 ?>
 
 <!DOCTYPE html>
@@ -96,6 +102,7 @@ if(checkIfLoggedIn()) {
         		            <input id="password" class="input-field" type="txet">
         	            </div>
         	            <hr>
+			    <input type="hidden" name="token" value="<? echo $registrationToken ?>">
                         <div class="form-item">
                             <button form="edit" class="standard-button transform-button flex-center round">
                                 <div class="split">
