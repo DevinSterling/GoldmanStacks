@@ -42,7 +42,7 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
         <div class="flex-center-item">
             <div class="list fixed-sub round">
                 <button id="notification" onClick="hide(this)" class="notification max failure transform-button round collapse">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text">Invalid Sign In Information</span></p>
+                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
@@ -88,7 +88,7 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
             </div>
         </div>
     </body>
-	<script type="text/javascript" src="Scripts/hide.js"></script>
+	<script type="text/javascript" src="Scripts/notification.js"></script>
 	<script type="text/javascript">
 	    let notification = document.getElementById('notification');
 	    let notificationText = document.getElementById('notification-text');
@@ -113,17 +113,15 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
 	        fetch(request)
 	            .then((response) => response.json())
 	            .then((data) => {
-	                console.log("Data From Server: " + data.response);
-	                console.log(data);
-	                
+			showNotification();
+
 	                if (data.response) {
-                        window.location.href = "home.php";
+	                    setSuccessNotification(data.message);
+	                    window.location.href = "home.php";
 	                } else {
-	                    if (notification.classList.contains('collapse')) notification.classList.remove('collapse');
-	                    
-	                    notificationText.textContent = data.message;
+	                    setFailNotification(data.message);
 	                }
-	            })
+	             })
 	            .catch(console.warn);
 	    }
     </script>
