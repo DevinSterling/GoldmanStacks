@@ -50,13 +50,13 @@ if (hash_equals($calc, $token)
         
         if ($result->num_rows > 0) {
             $password = $result->fetch_assoc();
-            if ($oldPassword === $password['password']) {
+            if (password_verify($oldPassword, $password['password'])) {
                 /* Encrypt Password */
-                $password = password_hash($password, PASSWORD_DEFAULT);
+                $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 
                 /* Prepared Statement */
                 $stmt = $db->prepare("UPDATE users SET password=? WHERE userID=?");
-                $stmt->bind_param("si", $password, $userID);
+                $stmt->bind_param("si", $newPassword, $userID);
                 $stmt->execute();
                 
                 /* Check Execution */
