@@ -41,7 +41,7 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hide(this)" class="notification max failure transform-button round collapse">
+                <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round collapse">
                     <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
                     <div class="split">
                            <div class="toggle-button">
