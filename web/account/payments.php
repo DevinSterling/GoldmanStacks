@@ -12,6 +12,12 @@ if(!checkIfLoggedIn() || !isClient()) {
     die();
 }
 
+/* Check if the user has been inactive */
+if (checkInactive()) {
+    header("Location: requests/signout.php");
+    die();
+}
+
 $referencedName = $_GET['acc'];
 
 /* Temp Variables*/
