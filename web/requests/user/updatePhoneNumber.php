@@ -55,7 +55,7 @@ if (hash_equals($calc, $token)
             }
             else {
                 $dbSuccess = true;
-                $dbMessage = "Phone Number Has Been Updated";
+                $dbMessage = "Phone number has been updated";
             }
 
             /* Close Streams */
