@@ -10,6 +10,13 @@ if(checkIfLoggedIn()) {
     header("Location: home.php");
     die();
 }
+
+/* Check if there is a key */
+if (!isset($_SESSION['key'])) {
+    $_SESSION['key'] = bin2hex(random_bytes(32));
+}
+
+$signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +63,7 @@ if(checkIfLoggedIn()) {
     	            <div class="form-item">
     		            <input id="password" class="input-field" name="password" type="password" required>
     	            </div>
+    	            <input type="hidden" name="token" value="<? echo $signinToken ?>">
                     <a href="register.php" class="highlight-button transform-button split round">
                         <div class="list">
                             <p><i class="fas fa-info icon"></i> Don't have an account? Register here</p>
@@ -96,7 +104,7 @@ if(checkIfLoggedIn()) {
 	        let form = event.target;
 	        let formData = new FormData(form);
 	        
-	        let url = "requests/authenticateLogin.php";
+	        let url = "requests/authenticateSignin.php";
 	        let request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
