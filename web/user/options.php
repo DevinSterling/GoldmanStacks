@@ -13,6 +13,12 @@ if(!checkIfLoggedIn() || !isClient()) {
     die();
 }
 
+/* Check if the user has been inactive */
+if (checkInactive()) {
+    header("Location: requests/signout.php");
+    die();
+}
+
 $userID = $_SESSION['uid'];
 
 /* Create CSRF tokens */
