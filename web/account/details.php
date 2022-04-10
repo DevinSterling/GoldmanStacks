@@ -411,19 +411,31 @@ if (!in_array($currentAccountName, $accounts)) {
 	let transactionsTable = document.getElementById('transactions-body');
 	
 	document.addEventListener('keydown', (event) => {
-	    if (transactionsTable === document.activeElement) {
-	        $('.transaction-element:first').focus();
-	    } else if (document.activeElement.classList.contains('transaction-element')) {		
-	    	let currentElement = document.activeElement;
-		
-		$(currentElement).next('.transaction-element').focus();
-	    }
-	});
-	document.addEventListener('keydown', (event) => {
-	    if (document.activeElement.classList.contains('transaction-element')) {
-	    	let currentElement = document.activeElement;
-		
-		$(currentElement).prev('.transaction-element').focus();
+	    switch (event.key) {
+	        case 'ArrowUp':
+        	    if (document.activeElement.classList.contains('transaction-element')) {
+        	    	let currentElement = document.activeElement;
+        		
+        		    $(currentElement).prevAll('.transaction-element:first').focus();
+        	    }
+        	    
+         	    break;
+	        case 'ArrowDown':
+        	    if (transactionsTable === document.activeElement) {
+        	        $('.transaction-element:first').focus();
+        	    } else if (document.activeElement.classList.contains('transaction-element')) {
+        	    	let currentElement = document.activeElement;
+        	    	
+        		    $(currentElement).nextAll('.transaction-element:first').focus();
+        	    }
+        	    
+        	    break;
+        	case 'Enter':
+        	    if (document.activeElement.classList.contains('transaction-element')) {
+        	    	let currentElement = document.activeElement;
+        	    	
+        		    showPopUp('transaction-popup-content', currentElement);
+        	    }
 	    }
 	});
 	</script>
