@@ -15,7 +15,7 @@ if(!checkIfLoggedIn() || !isClient()) {
 
 /* Check if the user has been inactive */
 if (checkInactive()) {
-    header("Location: requests/signout.php");
+    header("Location: ../requests/signout.php");
     die();
 }
 
