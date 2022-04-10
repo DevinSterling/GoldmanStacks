@@ -110,10 +110,10 @@ if (!in_array($currentAccountName, $accounts)) {
 	                        <th class="hidden">Type</th>
 	                    </tr>
                     </thead>
-                    <tbody>
+                    <tbody tabindex="0">
 		            <?
 	                for ($n = 1; $n <= $amountOfTransactions; $n++) {
-	                    echo "<tr onClick=\"showPopUp('transaction-popup-content', this)\">
+	                    echo "<tr tabindex="-1" onClick=\"showPopUp('transaction-popup-content', this)\">
 	                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
 	                            <td data-label=\"Type\" class=\"hidden\">Withdrawal</td>
 	                            <td data-label=\"Date\" class=\"date\">$lastVisit</td>
