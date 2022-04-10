@@ -91,7 +91,7 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </a>
-                <button class="tab-button transform-button round" data-id="change-username" data-title="Change Username">
+                <!--<button class="tab-button transform-button round" data-id="change-username" data-title="Change Username">
                     <div class="split">
                         <div class="text-right">
                             <p>Username</p>
@@ -100,7 +100,7 @@ if ($db === null) {
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
-		        </button>
+		        </button>-->
                 <button class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
                     <div class="split">
                         <div class="text-right">
