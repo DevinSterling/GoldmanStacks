@@ -49,7 +49,7 @@ if (isset($_GET['timeout'])) {
         <div class="flex-center-item">
             <div class="list fixed-sub round">
                 <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round <? if (!$timeout) echo "collapse" ?>">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Inactivity Detected" ?></span></p>
+                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Signed Out Due to Inactivity" ?></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
