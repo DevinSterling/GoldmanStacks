@@ -110,7 +110,7 @@ if (!in_array($currentAccountName, $accounts)) {
 	                        <th class="hidden">Type</th>
 	                    </tr>
                     </thead>
-                    <tbody tabindex="0">
+                    <tbody tabindex="0" id="transactions-body">
 		            <?
 	                for ($n = 1; $n <= $amountOfTransactions; $n++) {
 	                    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\">
@@ -384,7 +384,7 @@ if (!in_array($currentAccountName, $accounts)) {
             document.querySelectorAll(".pop-up-item").forEach((element) => {
                 if (element.id === ContentId) {
                     if (entity !== null && ContentId === 'transaction-popup-content') {
-            	        var item = entity.children;
+            	        let item = entity.children;
             	        
                         $("#transaction-date").text(item[2].textContent);
                         $("#transaction-description").text(item[3].textContent);
@@ -407,12 +407,19 @@ if (!in_array($currentAccountName, $accounts)) {
             document.getElementById("pup-up-element").classList.add("hidden");
         }
 	</script>
+	<script>
+	let transactionsTable = document.getElementById("transactions-body");
+		
+	transactionsTable.addEventListener('focus', (event) => {
+  	    console.log("Test!");
+	});
+	</script>
 	<script type="text/javascript">
-	    var currentAccount = "<? echo $currentAccountName ?>";
+	    let currentAccount = "<? echo $currentAccountName ?>";
 	
 	    /* Retrieve New DB Details */
         $("#choose-account").on("change", function (e) {
-            var optionSelected = $("option:selected", this);
+            let optionSelected = $("option:selected", this);
             currentAccount = this.value;
             
             document.getElementById("title").textContent = currentAccount+" History";
