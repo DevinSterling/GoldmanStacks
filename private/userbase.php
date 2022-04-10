@@ -15,7 +15,7 @@ function checkIfLoggedIn() {
 
 // Inactivity Detection
 function checkInactive() {
-    if ($_SESSION['last_activity'] < time() - $_SESSION['expire_time'] ) { // Inactive User Condition
+    if ($_SESSION['last_activity'] < time() - $_SESSION['expiry_time'] ) { // Inactive User Condition
         return true;
     } else {
         $_SESSION['last_activity'] = time();
