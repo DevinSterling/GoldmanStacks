@@ -18,7 +18,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbFailMessage = "Invalid Credentials Provided";
+$dbFailMessage = "Invalid Username or Password";
 $dbMessage = "";
 
 /* Confirm token and parameters */
