@@ -80,6 +80,8 @@ if (hash_equals($calc, $token)
     } else {
         $dbMessage = $dbFailMessage;
     }
+} else {
+    die();
 }
 
 /* Return Outcome */
