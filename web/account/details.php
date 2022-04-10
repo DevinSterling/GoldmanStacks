@@ -11,6 +11,16 @@ function generateRandomString($length = 10) {
 
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/userbase.php');
+
+/* Force https connection */
+forceHTTPS();
+
+session_start();
+if(!checkIfLoggedIn() || !isClient()) {
+    header("Location: ../signin.php");
+    die();
+}
 
 /* Passed Variables */
 $currentAccountName = $_GET['acc'];
@@ -35,7 +45,7 @@ if (!in_array($currentAccountName, $accounts)) {
 	<head>
 	<title><?echo strtoupper($currentAccountName)?> Account Details</title>
 	<!-- Stylesheet -->
-	<link rel="stylesheet" href="/~sterlid2/bank/CSS/stylesheet.css">
+	<link rel="stylesheet" href="../CSS/stylesheet.css">
 	<!-- Favicon -->
 	<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
 	<!-- Google Font -->
@@ -58,17 +68,11 @@ if (!in_array($currentAccountName, $accounts)) {
 			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
 			<li class="menuitem"><a href="payments.php">Payments</a></li>
 			<li class="menuitem"><a href="open.php">Open New Account</a></li>
-			<li class="menuitem submenu">
-			    <a tabindex="0">Statements</a>
-			    <!--<ul class="submenugroup">
-				<li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				<li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-			    </ul>-->
-			</li>
+			<li class="menuitem"><a href="statement.php">Statement</a></li>
 		</ul>
 		<ul class="menugroup">
 			<li class="menuitem"><a href="../user/options.php">Options</a></li>
-			<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+			<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
 	<? notification(); ?>
@@ -142,7 +146,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	                <hr>
                         <button onClick="showPopUp('account-popup-content')" class="highlight-button transform-button split round">
                             <div class="list">
-                                <p><i class="fas fa-times icon"></i> View Account Details</p>
+                                <p><i class="fas fa-info-circle icon"></i> View Account Details</p>
                             </div>
                             <div class="animate-left">
                 	            <div class="toggle-button">
@@ -150,6 +154,56 @@ if (!in_array($currentAccountName, $accounts)) {
                 	            </div>
                             </div>
                         </button>
+    	            </div>
+    	        </div>
+                <div class="container round shadow">
+    	            <div class="item-banner top-round">
+    	                <label class="banner-text">Account Actions</label>
+    	            </div>
+    	            <div class="item-content bottom-round">
+                        <a href="funds.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-plus icon"></i> Deposit Funds</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
+                        <hr>
+                        <a href="funds.php?v=withdraw&acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-minus icon"></i> Withdraw Funds</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
+                        <hr>
+                        <a id="transfer" href="transfer.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-exchange-alt icon"></i> Transfer Funds</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
+                        <hr>
+                        <a href="payments.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
     	            </div>
     	        </div>
     	        <div class="container round shadow">
@@ -171,34 +225,6 @@ if (!in_array($currentAccountName, $accounts)) {
                         <a href="#Remove" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-times icon"></i> Close Account</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-                        </a>
-    	            </div>
-    	        </div>
-    	        <div class="container round shadow">
-    	            <div class="item-banner top-round">
-    	                <label class="banner-text">Account Actions</label>
-    	            </div>
-    	            <div class="item-content bottom-round">
-                        <a id="transfer" href="transfer.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p><i class="fas fa-exchange-alt icon"></i> Initiate Transfer</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-                        </a>
-                        <hr>
-                        <a href="payments.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
                             </div>
                             <div class="animate-left">
                 	            <div class="toggle-button">
