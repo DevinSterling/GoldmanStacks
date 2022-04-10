@@ -308,12 +308,8 @@ if ($db === null) {
 	<script type="text/javascript" src="../Scripts/navigation.js"></script>
 	<script type="text/javascript" src="../Scripts/tabs.js"></script>
 	<script type="text/javascript" src="../Scripts/post.js"></script>
-	<script type="text/javascript" src="../Scripts/hide.js"></script>
+	<script type="text/javascript" src="../Scripts/notification.js"></script>
 	<script type="text/javascript">
-	    let notification = document.getElementById('notification');
-	    let notificationText = document.getElementById('notification-text');
-	    let notificationIcon = document.getElementById('notification-icon');
-	
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('change-password').addEventListener('submit', handlePasswordForm);
             document.getElementById('change-address').addEventListener('submit', handleForm);
@@ -349,49 +345,24 @@ if ($db === null) {
 	        });
 	        
 	        if (formData.get('new') === formData.get('confirm')) {
-	            console.log(submitForm(request));
+	            submitForm(request);
 	            form.reset();
 	        } else {
 	            document.getElementById("new-password").focus();
 	            
-	            if (notification.classList.contains('collapse')) notification.classList.remove('collapse');
-	            
-                notificationText.textContent = "Passwords Do Not Match";
-                if (!notification.classList.contains('failure')) {
-                    notification.classList.add('failure');
-                    notification.classList.remove('success');
-                    notificationIcon.classList.add('fa-times');
-                    notificationIcon.classList.remove('fa-check');
-                }
+	            setFailNotification("Passwords Do Not Match");
+	            showNotification();
 	        }
 	    }
 	    
 	    function submitForm(request) {
 	        fetch(request)
 	            .then((response) => response.json())
-	            .then((data) => {
-	                console.log("Data From Server: " + data.response);
-	                console.log(data);
-	                
-	                if (notification.classList.contains('collapse')) notification.classList.remove('collapse');
-	                
-	                if (data.response) {
-	                    notificationText.textContent = data.message;
-	                    if (!notification.classList.contains('success')) {
-                            notification.classList.add('success');
-	                        notification.classList.remove('failure');
-	                        notificationIcon.classList.add('fa-check');
-	                        notificationIcon.classList.remove('fa-times');
-	                    }
-	                } else {
-	                    notificationText.textContent = data.message;
-	                    if (!notification.classList.contains('failure')) {
-                            notification.classList.add('failure');
-	                        notification.classList.remove('success');
-	                        notificationIcon.classList.add('fa-times');
-	                        notificationIcon.classList.remove('fa-check');
-	                    }
-	                }
+	            .then((data) => {          
+	                if (data.response) setSuccessNotification(data.message);
+	                else setFailNotification(data.message);
+			
+	                showNotification();
 	            })
 	            .catch(console.warn);
 	    }
