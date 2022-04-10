@@ -1,6 +1,17 @@
 <?
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/userbase.php');
+
+/* Force https connection */
+forceHTTPS();
+
+/* Check if the user is logged in already */
+session_start();
+if(!checkIfLoggedIn()) {
+    header("Location: signin.php");
+    die();
+}
 
 /* Temp Variables */
 $user = "User"; // Taken from DB, user account name
@@ -36,22 +47,16 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		<nav class="menubar">
 			<ul class="menugroup">
 				<li class="menulogo"><a href="home.php">Goldman Stacks</a></li>
-                		<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="home.php">Home</a></li>
 				<li class="menuitem"><a href="account/transfer.php">Transfer</a></li>
 				<li class="menuitem"><a href="account/payments.php">Payments</a></li>
 				<li class="menuitem"><a href="account/open.php">Open New Account</a></li>
-				<li class="menuitem submenu">
-				    <a tabindex="0">Statements</a>
-				    <!--<ul class="submenugroup">
-				        <li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				        <li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-				    </ul>-->
-				</li>
+				<li class="menuitem"><a href="account/statement.php">Statement</a></li>
 			</ul>
 			<ul class="menugroup">
 				<li class="menuitem"><a href="user/options.php">Options</a></li>
-				<li class="menuitem"><a href="login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="requests/signout.php">Sign Out</a></li>
 			</ul>
 		</nav>
 		<? notification(); ?>
@@ -99,6 +104,28 @@ $amountOfTransactions = 5; // Number of recent transactions to show
     		        </div>
     		        <div class="item-content bottom-round">
     		            <p class="info text-center">Last Sign In: <? echo $lastVisit ?></p>
+    		            <hr>
+                        <a href="account/funds.php" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-plus icon"></i> Deposit Funds</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
+                        <hr>
+                        <a href="account/funds.php?v=withdraw" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-minus icon"></i> Withdraw Funds</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </a>
     		        </div>
     		    </div>
 		        <div class="container round shadow">
