@@ -183,7 +183,9 @@ if ($db === null) {
                     ?>
                     <h5 class="big-info">Address Information</h5>
                     <p class="info"><b>Line 1</b>: <? echo $address['line1'] ?></p>
-                    <p class="info"><b>Line 2</b>: <? echo $address['line2'] ?></p>
+                    <?
+			if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>: $address['line2']</p>";
+                    ?>
                     <p class="info"><b>City</b>: <? echo $address['city'] ?></p>
                     <p class="info"><b>State</b>: <? echo $address['state'] ?></p>
                     <p class="info"><b>Postal Code</b>: <? echo $address['postalCode'] ?></p>
