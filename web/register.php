@@ -59,47 +59,47 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
                     </div>
                     <br>
                     <form id="edit">
-                        <label for="username" class="info">Email</label>
+                        <label for="email" class="info">Email</label>
         	            <div class="form-item">
-        		            <input id="username" class="input-field" type="text">
+        		            <input id="email" name="email" type="email" class="input-field" required>
         	            </div>
         	            <label for="password" class="info">Password</label>
         	            <div class="form-item">
-        		            <input id="password" class="input-field" type="password">
+        		            <input id="password" name="password" type="password" class="input-field"required>
         	            </div>
-        	            <label for="password" class="info">Confirm Password</label>
+        	            <label for="confirm-password" class="info">Confirm Password</label>
         	            <div class="form-item">
-        		            <input id="password" class="input-field" type="password">
-        	            </div>
-        	            <hr>
-                        <label for="username" class="info">Phone Number</label>
-        	            <div class="form-item">
-        		            <input id="username" class="input-field" type="text">
-        	            </div>
-        	            <label for="password" class="info">SSN</label>
-        	            <div class="form-item">
-        		            <input id="password" class="input-field" type="txet">
+        		            <input id="confirm-password" name="confirm-password" type="password" class="input-field" required>
         	            </div>
         	            <hr>
-                        <label for="username" class="info">Address Line 1</label>
+                        <label for="phone-number" class="info">Phone Number</label>
         	            <div class="form-item">
-        		            <input id="username" class="input-field" type="text">
+        		            <input id="phone-number" name="phone-number" type="text" pattern="1?\d{3}-?\d{3}-?{4}" class="input-field" required>
         	            </div>
-        	            <label for="password" class="info">Address Line 2</label>
+        	            <label for="ssn" class="info">SSN</label>
         	            <div class="form-item">
-        		            <input id="password" class="input-field" type="txet">
+        		            <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" class="input-field" required>
         	            </div>
-        	            <label for="username" class="info">City</label>
+        	            <hr>
+                        <label for="address-line1" class="info">Address Line 1</label>
         	            <div class="form-item">
-        		            <input id="username" class="input-field" type="text">
+        		            <input id="address-line1" name="address-line1" type="text" pattern="^\d+ [A-z ]+.?$" class="input-field" required>
         	            </div>
-        	            <label for="password" class="info">State</label>
+        	            <label for="address-line2" class="info">Address Line 2</label>
         	            <div class="form-item">
-        		            <input id="password" class="input-field" type="txet">
+        		            <input id="address-line2" name="address-line2" type="text" pattern="^[A-z0-9#, ]+$" class="input-field">
         	            </div>
-        	            <label for="password" class="info">Postal Code</label>
+        	            <label for="address-city" class="info">City</label>
         	            <div class="form-item">
-        		            <input id="password" class="input-field" type="txet">
+        		            <input id="address-city" name="address-city" type="text" pattern="^[A-z. ]+$" class="input-field" required>
+        	            </div>
+        	            <label for="address-state" class="info">State</label>
+        	            <div class="form-item">
+        		            <input id="address-state" name="address-state" type="text" pattern="^[A-z ]+$" class="input-field" required>
+        	            </div>
+        	            <label for="address-postal-code" class="info">Postal Code</label>
+        	            <div class="form-item">
+        		            <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" class="input-field" required>
         	            </div>
         	            <hr>
 			    <input type="hidden" name="token" value="<? echo $registrationToken ?>">
