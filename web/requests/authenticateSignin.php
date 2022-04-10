@@ -40,7 +40,7 @@ if (hash_equals($calc, $token)
             $user = $result->fetch_assoc();
             
             /* Compare passwords */
-            if ($password === $user['password']) {
+            if (password_verify($password, $user['password'])) {
                 session_regenerate_id(true);
                 
                 $_SESSION['uid'] = $user['userID']; // Set User Id for Session
