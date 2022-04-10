@@ -90,10 +90,6 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
     </body>
 	<script type="text/javascript" src="Scripts/notification.js"></script>
 	<script type="text/javascript">
-	    let notification = document.getElementById('notification');
-	    let notificationText = document.getElementById('notification-text');
-	    let notificationIcon = document.getElementById('notification-icon');
-	
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login').addEventListener('submit', handleForm);
         });
@@ -121,7 +117,7 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
 	                } else {
 	                    setFailNotification(data.message);
 	                }
-	             })
+	            })
 	            .catch(console.warn);
 	    }
     </script>
