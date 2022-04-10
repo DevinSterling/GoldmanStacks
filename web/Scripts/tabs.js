@@ -1,5 +1,5 @@
-var buttons = document.querySelectorAll('.tab-button');
-var title = document.getElementById("title");
+let buttons = document.querySelectorAll('.tab-button');
+let title = document.getElementById("title");
 
 buttons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -15,7 +15,7 @@ function changeSelected(selected) {
     }
     
     buttons.forEach((button) => {
-        var field = document.getElementById(button.dataset.id);
+        let field = document.getElementById(button.dataset.id);
         
         if (button == selected) { 
             button.classList.add("selected"); 
