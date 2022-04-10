@@ -25,33 +25,43 @@ $token = $_POST['token'];
 $dbSuccess = false;
 $dbMessage = "";
 
+$dbFailMessage = "Failed to update email address";
+
 /* Confirm token and parameters */
 $calc = hash_hmac('sha256', '/updateEmail.php', $_SESSION['key']);
 if (hash_equals($calc, $token)
     && !empty($email)) {
-    /* DB Connection */
-    $db = getUpdateConnection();
     
-    if ($db !== null) {
-        /* Prepared Statement */
-        $stmt = $db->prepare("UPDATE users SET email=? WHERE userID=?");
-        $stmt->bind_param("si", $email, $userID);
-        $stmt->execute();
-        
-        /* Check Execution */
-        if ($db->affected_rows === 0) { // If 0, update failed to execute
-            $dbMessage = "Failed To Update Email Address";
+    /* Input Validation */
+    $isMatch = filter_var($email, FILTER_VALIDATE_EMAIL);
+    
+    if ($isMatch) {
+        /* DB Connection */
+        $db = getUpdateConnection();
+
+        if ($db !== null) {
+            /* Prepared Statement */
+            $stmt = $db->prepare("UPDATE users SET email=? WHERE userID=?");
+            $stmt->bind_param("si", $email, $userID);
+            $stmt->execute();
+
+            /* Check Execution */
+            if ($db->affected_rows === 0) { // If 0, update failed to execute
+                $dbMessage = $dbFailMessage;
+            }
+            else {
+                $dbSuccess = true;
+                $dbMessage = "Email address has been updated";
+            }
+
+            /* Close Streams */
+            $stmt->close();
+            $db->close();
+        } else {
+            $dbMessage = $dbFailMessage;
         }
-        else {
-            $dbSuccess = true;
-            $dbMessage = "Email Address Has Been Updated";
-        }
-        
-        /* Close Streams */
-        $stmt->close();
-        $db->close();
     } else {
-        $dbMessage = "Cannot Connect To Database";
+        $dbMessage = $dbFailMessage;
     }
 }
 
