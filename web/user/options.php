@@ -160,12 +160,12 @@ if ($db === null) {
                         $queryUser->close();
                     ?>
                     <h5 class="big-info">User Information</h5>
-                    <p class="info"><b>First Name</b>: <? echo $user['firstName'] ?></p>
-                    <p class="info"><b>Last Name</b>: <? echo $user['lastName'] ?></p>
+                    <p class="info"><b>First Name</b>: <? echo htmlspecialchars($user['firstName']) ?></p>
+                    <p class="info"><b>Last Name</b>: <? echo htmlspecialchars($user['lastName']) ?></p>
                     <hr>
                     <h5 class="big-info">Contact Information</h5>
-                    <p class="info"><b>Email Address</b>: <? echo $user['email'] ?></p>
-                    <p class="info"><b>Phone Number</b>: <? echo $user['phoneNumber'] ?></p>
+                    <p class="info"><b>Email Address</b>: <? echo htmlspecialchars($user['email']) ?></p>
+                    <p class="info"><b>Phone Number</b>: <? echo htmlspecialchars($user['phoneNumber']) ?></p>
                     <hr>
                     <?
                         /* Query */
@@ -182,13 +182,13 @@ if ($db === null) {
                         $queryAddress->close();
                     ?>
                     <h5 class="big-info">Address Information</h5>
-                    <p class="info"><b>Line 1</b>: <? echo $address['line1'] ?></p>
+                    <p class="info"><b>Line 1</b>: <? echo htmlspecialchars($address['line1']) ?></p>
                     <?
-			if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".$address['line2']."</p>";
+			if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($address['line2'])."</p>";
                     ?>
-                    <p class="info"><b>City</b>: <? echo $address['city'] ?></p>
-                    <p class="info"><b>State</b>: <? echo $address['state'] ?></p>
-                    <p class="info"><b>Postal Code</b>: <? echo $address['postalCode'] ?></p>
+                    <p class="info"><b>City</b>: <? echo htmlspecialchars($address['city']) ?></p>
+                    <p class="info"><b>State</b>: <? echo htmlspecialchars($address['state']) ?></p>
+                    <p class="info"><b>Postal Code</b>: <? echo htmlspecialchars($address['postalCode']) ?></p>
                     <?
                         $db->close(); 
                     ?>
