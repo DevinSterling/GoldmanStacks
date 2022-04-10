@@ -29,6 +29,8 @@ $token = $_POST['token'];
 $dbSuccess = false;
 $dbMessage = "";
 
+$dbFailMessage = "Failed to update address";
+
 /* Confirm token and parameters */
 $calc = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
 if (hash_equals($calc, $token)
@@ -36,29 +38,47 @@ if (hash_equals($calc, $token)
     || empty($addressCity)
     || empty($addressState)
     || empty($addressPostalCode))) { // if true, non-empty parameters given
-    /* DB Connection */
-    $db = getUpdateConnection();
     
-    if ($db !== null) {
-        /* Prepared Statement */
-        $stmt = $db->prepare("UPDATE address SET line1=?, line2=?, city=?, state=?, postalCode=? WHERE userID=?");
-        $stmt->bind_param("sssssi", $addressLine1, $addressLine2, $addressCity, $addressState, $addressPostalCode, $userID);
-        $stmt->execute();
-        
-        /* Check Execution */
-        if ($db->affected_rows === 0) { // If 0, update failed to execute
-            $dbMessage = "Failed To Update Address";
+    /* Input Validation */
+    $isMatchLine1 = preg_match('/^\d+ [A-z ]+.?$/', $addressLine1);
+    $isMatchLine2 = preg_match('/^[A-z0-9#, ]+$/');
+    $isMatchCity = preg_match('/^[A-z. ]+$/', $addressCity);
+    $isMatchState = preg_match('/^[A-z ]+$/', $addressState);
+    $isMatchPostalCode = preg_match('/^[0-9]{5}$/');
+    
+    $isMatch = $isMatchLine1 && $isMatchCity && $isMatchState && $isMatchPostalCode;
+    
+    if (!empty($addressLine2)) {
+        $isMatch &= $isMatchLine2;
+    }
+    
+    if ($isMatch) {
+        /* DB Connection */
+        $db = getUpdateConnection();
+
+        if ($db !== null) {
+            /* Prepared Statement */
+            $stmt = $db->prepare("UPDATE address SET line1=?, line2=?, city=?, state=?, postalCode=? WHERE userID=?");
+            $stmt->bind_param("sssssi", $addressLine1, $addressLine2, $addressCity, $addressState, $addressPostalCode, $userID);
+            $stmt->execute();
+
+            /* Check Execution */
+            if ($db->affected_rows === 0) { // If 0, update failed to execute
+                $dbMessage = $dbFailMessage;
+            }
+            else {
+                $dbSuccess = true;
+                $dbMessage = "Address Has Been Updated";
+            }
+
+            /* Close Streams */
+            $stmt->close();
+            $db->close();
+        } else {
+            $dbMessage = $dbFailMessage;
         }
-        else {
-            $dbSuccess = true;
-            $dbMessage = "Address Has Been Updated";
-        }
-        
-        /* Close Streams */
-        $stmt->close();
-        $db->close();
     } else {
-        $dbMessage = "Cannot Connect To Database";
+        $dbMessage = $dbFailMessage;
     }
 }
 
