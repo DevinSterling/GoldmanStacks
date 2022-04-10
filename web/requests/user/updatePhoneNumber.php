@@ -37,7 +37,7 @@ if (hash_equals($calc, $token)
     
     /* Vlidate Input */
     $phoneNumber = str_replace('-', '', $phoneNumber); // Remove hyphens if provided by user
-    $isMatch = preg_match('^\d{10}$', $phoneNumber); // Check if phone number matches requirement
+    $isMatch = preg_match('/^\d{10}$/', $phoneNumber); // Check if phone number matches requirement
     
     if ($isMatch) { 
         /* DB Connection */
