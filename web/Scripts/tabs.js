@@ -8,6 +8,12 @@ buttons.forEach((button) => {
 });
 
 function changeSelected(selected) {
+    if (document.body.contains(document.getElementById('notification'))) {
+        let notification = document.getElementById('notification');
+        
+        if (!notification.classList.contains('collapse')) notification.classList.add('collapse');
+    }
+    
     buttons.forEach((button) => {
         var field = document.getElementById(button.dataset.id);
         
