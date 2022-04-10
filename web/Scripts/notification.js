@@ -23,6 +23,10 @@ function setFailNotification(message) {
     }
 }
 
+function showNotification() {
+    if (notification.classList.contains('collapse')) notification.classList.remove('collapse');
+}
+
 function hideNotification() {
     notification.classList.add('collapse');
 }
