@@ -413,17 +413,17 @@ if (!in_array($currentAccountName, $accounts)) {
 	document.addEventListener('keydown', (event) => {
 	    if (transactionsTable === document.activeElement) {
 	        $('.transaction-element:first').focus();
-	    } else if (document.activeElement.classList.contains('transaction-element')) {
+	    } else if (document.activeElement.classList.contains('transaction-element')) {		
 	    	let currentElement = document.activeElement;
 		
-		$(currentElement).next('transaction-element').focus();
+		$(currentElement).next('.transaction-element').focus();
 	    }
 	});
 	document.addEventListener('keydown', (event) => {
 	    if (document.activeElement.classList.contains('transaction-element')) {
 	    	let currentElement = document.activeElement;
 		
-		$(currentElement).prev('transaction-element').focus();
+		$(currentElement).prev('.transaction-element').focus();
 	    }
 	});
 	</script>
