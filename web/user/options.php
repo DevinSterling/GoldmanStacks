@@ -65,7 +65,7 @@ if ($db === null) {
         	</ul>
         </nav>
         <? notification(); ?>
-        <button id="notification" onClick="hide(this)" class="notification sub success transform-button round collapse">
+        <button id="notification" onClick="hideNotification()" class="notification sub success transform-button round collapse">
             <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
             <div class="split">
    	            <div class="toggle-button">
