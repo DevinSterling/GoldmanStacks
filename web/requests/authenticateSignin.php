@@ -50,7 +50,7 @@ if (hash_equals($calc, $token)
                 $_SESSION['key'] = bin2hex(random_bytes(32)); // Create Session Key for CSRF tokens
                 
                 $_SESSION['last_activity'] = time(); // Set active time (used for inactivity detection)
-                $_SESSION['expiry_time'] = /*10 * */60; // Time till timeout (10 minutes)
+                $_SESSION['expiry_time'] = 10 * 60; // Time till timeout (10 minutes)
                 
                 $dbSuccess = true;
                 $dbMessage = "Sign In Verified";
