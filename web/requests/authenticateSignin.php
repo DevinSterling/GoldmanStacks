@@ -50,6 +50,7 @@ if (hash_equals($calc, $token)
                 $_SESSION['key'] = bin2hex(random_bytes(32)); // Create Session Key for CSRF tokens
                 
                 $dbSuccess = true;
+                $dbMessage = "Sign In Verified";
             } else {
                 $dbMessage = $dbFailMessage;
             }
