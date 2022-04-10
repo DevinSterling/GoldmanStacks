@@ -61,7 +61,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
                     <form id="register">
 			    <label for="first-name" class="info">First Name</label>
 			    <div class="form-item">
-				    <input id="first-name" name="first-name" type="text" pattern="^[A-z]+$" class="input-field" required>
+				    <input id="first-name" name="first-name" type="text" pattern="^[A-z]+$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="middle-name" class="info">Middle Name</label>
 			    <div class="form-item">
@@ -69,34 +69,34 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 			    </div>
 			    <label for="last-name" class="info">Last Name</label>
 			    <div class="form-item">
-				    <input id="last-name" name="last-name" type="text" pattern="^[A-z]+$" class="input-field" required>
+				    <input id="last-name" name="last-name" type="text" pattern="^[A-z]+$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <hr>
 			    <label for="email" class="info">Email</label>
 			    <div class="form-item">
-				    <input id="email" name="email" type="email" class="input-field" required>
+				    <input id="email" name="email" type="email" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="password" class="info">Password</label>
 			    <div class="form-item">
-				    <input id="password" name="password" type="password" class="input-field"required>
+				    <input id="password" name="password" type="password" placeholder="Required" class="input-field"required>
 			    </div>
 			    <label for="confirm-password" class="info">Confirm Password</label>
 			    <div class="form-item">
-				    <input id="confirm-password" name="confirm-password" type="password" class="input-field" required>
+				    <input id="confirm-password" name="confirm-password" type="password" placeholder="Required" class="input-field" required>
 			    </div>
 			    <hr>
 			    <label for="phone-number" class="info">Phone Number</label>
 			    <div class="form-item">
-				    <input id="phone-number" name="phone-number" type="text" pattern="1?\d{3}-?\d{3}-?{4}" class="input-field" required>
+				    <input id="phone-number" name="phone-number" type="text" pattern="1?\d{3}-?\d{3}-?{4}" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="ssn" class="info">SSN</label>
 			    <div class="form-item">
-				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" class="input-field" required>
+				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <hr>
 			    <label for="address-line1" class="info">Address Line 1</label>
 			    <div class="form-item">
-				    <input id="address-line1" name="address-line1" type="text" pattern="^\d+ [A-z ]+.?$" class="input-field" required>
+				    <input id="address-line1" name="address-line1" type="text" pattern="^\d+ [A-z ]+.?$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="address-line2" class="info">Address Line 2</label>
 			    <div class="form-item">
@@ -104,15 +104,15 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 			    </div>
 			    <label for="address-city" class="info">City</label>
 			    <div class="form-item">
-				    <input id="address-city" name="address-city" type="text" pattern="^[A-z. ]+$" class="input-field" required>
+				    <input id="address-city" name="address-city" type="text" pattern="^[A-z. ]+$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="address-state" class="info">State</label>
 			    <div class="form-item">
-				    <input id="address-state" name="address-state" type="text" pattern="^[A-z ]+$" class="input-field" required>
+				    <input id="address-state" name="address-state" type="text" pattern="^[A-z ]+$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="address-postal-code" class="info">Postal Code</label>
 			    <div class="form-item">
-				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" class="input-field" required>
+				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <hr>
 			    <input type="hidden" name="token" value="<? echo $registrationToken ?>">
