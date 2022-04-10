@@ -16,7 +16,14 @@ if (!isset($_SESSION['key'])) {
     $_SESSION['key'] = bin2hex(random_bytes(32));
 }
 
-$signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
+/* Signin form csrf token */
+$signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']); 
+
+/* Check if the user can been timed out (and redirected here [signin.php]) */
+$timeout = false;
+if (isset($_GET['timeout'])) {
+    $timeout = (bool)$_GET['timeout']; // Get timeout value
+};
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +48,8 @@ $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round collapse">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
+                <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round <? if (!$timeout) echo "collapse" ?>">
+                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Inactivity Detected" ?></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
