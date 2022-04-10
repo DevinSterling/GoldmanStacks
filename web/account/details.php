@@ -53,7 +53,7 @@ if (!in_array($currentAccountName, $accounts)) {
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../CSS/stylesheet.css">
 	<!-- Favicon -->
-	<link rel="icon" href="/~sterlid2/bank/Images/logo.ico">
+	<link rel="icon" href="../Images/logo.ico">
 	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -113,7 +113,7 @@ if (!in_array($currentAccountName, $accounts)) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?
 	                for ($n = 1; $n <= $amountOfTransactions; $n++) {
-	                    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\">
+	                    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
 	                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
 	                            <td data-label=\"Type\" class=\"hidden\">Withdrawal</td>
 	                            <td data-label=\"Date\" class=\"date\">$lastVisit</td>
@@ -381,56 +381,59 @@ if (!in_array($currentAccountName, $accounts)) {
 	<script type="text/javascript" src="../Scripts/post.js"></script>
 	<script type="text/javascript">
         function showPopUp(ContentId, entity = null) {
-            document.querySelectorAll(".pop-up-item").forEach((element) => {
+            document.querySelectorAll('.pop-up-item').forEach((element) => {
                 if (element.id === ContentId) {
                     if (entity !== null && ContentId === 'transaction-popup-content') {
             	        let item = entity.children;
             	        
-                        $("#transaction-date").text(item[2].textContent);
-                        $("#transaction-description").text(item[3].textContent);
-                        $("#transaction-type").text(item[1].textContent);
-                        $("#transaction-amount").text(item[4].textContent);
-                        $("#transaction-balance").text(item[0].textContent);
+                        $('#transaction-date').text(item[2].textContent);
+                        $('#transaction-description').text(item[3].textContent);
+                        $('#transaction-type').text(item[1].textContent);
+                        $('#transaction-amount').text(item[4].textContent);
+                        $('#transaction-balance').text(item[0].textContent);
                     }
-                    element.classList.remove("hidden");
+                    element.classList.remove('hidden');
                 }
                 else {
-                    element.classList.add("hidden");
+                    element.classList.add('hidden');
                 }
             });
-            document.getElementById("pop-up").classList.add("show-popup-content");
-            document.getElementById("pup-up-element").classList.remove("hidden");
+            document.getElementById('pop-up').classList.add('show-popup-content');
+            document.getElementById('pup-up-element').classList.remove('hidden');
         }
         
         function hidePopUp() {
-            document.getElementById("pop-up").classList.remove("show-popup-content");
-            document.getElementById("pup-up-element").classList.add("hidden");
+            document.getElementById('pop-up').classList.remove('show-popup-content');
+            document.getElementById('pup-up-element').classList.add('hidden');
         }
 	</script>
 	<script>
-	let transactionsTable = document.getElementById("transactions-body");
-		
-	transactionsTable.addEventListener('focus', (event) => {
-  	    document.addEventListener('keydown', (event) => {
-	    	console.log("Test!");
-	    });
+	let transactionsTable = document.getElementById('transactions-body');
+	
+	document.addEventListener('keydown', (event) => {
+	    if (transactionsTable === document.activeElement) {
+	        $('.transaction-element:first').focus();
+	    }
+	});
+	document.addEventListener('keydown', (event) => {
+	    console.log("Test!");
 	});
 	</script>
 	<script type="text/javascript">
 	    let currentAccount = "<? echo $currentAccountName ?>";
 	
 	    /* Retrieve New DB Details */
-        $("#choose-account").on("change", function (e) {
-            let optionSelected = $("option:selected", this);
+        $('#choose-account').on('change', function (e) {
+            let optionSelected = $('option:selected', this);
             currentAccount = this.value;
             
-            document.getElementById("title").textContent = currentAccount+" History";
-            document.getElementById("transfer").href = "/~sterlid2/bank/account/transfer.php?acc="+currentAccount;
-            document.title = currentAccount.toUpperCase()+" Account Details";
+            document.getElementById('title').textContent = currentAccount+' History';
+            document.getElementById('transfer').href = '/~sterlid2/bank/account/transfer.php?acc='+currentAccount;
+            document.title = currentAccount.toUpperCase()+' Account Details';
             
-            document.getElementById("account-name").textContent = currentAccount;
-            document.getElementById("account-balance").textContent = "$0.00";
-            document.getElementById("account-routing-number").textContent = "123456789";
+            document.getElementById('account-name').textContent = currentAccount;
+            document.getElementById('account-balance').textContent = '$0.00';
+            document.getElementById('account-routing-number').textContent = '123456789';
         });
     </script>
 </html>
