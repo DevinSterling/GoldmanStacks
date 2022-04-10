@@ -59,6 +59,19 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
                     </div>
                     <br>
                     <form id="register">
+			    <label for="first-name" class="info">First Name</label>
+			    <div class="form-item">
+				    <input id="first-name" name="first-name" type="text" pattern="^[A-z]+$" class="input-field" required>
+			    </div>
+			    <label for="middle-name" class="info">Middle Name</label>
+			    <div class="form-item">
+				    <input id="middle-name" name="middle-name" type="text" pattern="^[A-z]+$" class="input-field">
+			    </div>
+			    <label for="last-name" class="info">Last Name</label>
+			    <div class="form-item">
+				    <input id="last-name" name="last-name" type="text" pattern="^[A-z]+$" class="input-field" required>
+			    </div>
+			    <hr>
 			    <label for="email" class="info">Email</label>
 			    <div class="form-item">
 				    <input id="email" name="email" type="email" class="input-field" required>
