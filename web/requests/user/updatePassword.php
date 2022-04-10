@@ -28,8 +28,9 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbFailMessage = "Failed To Update Password";
 $dbMessage = "";
+
+$dbFailMessage = "Failed to update password";
 
 /* Confirm token and parameters */
 $calc = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
@@ -71,7 +72,7 @@ if (hash_equals($calc, $token)
             } else {
                 $dbMessage = $dbFailMessage;
             }
-        } else { // Concerning Warning (Possibly Invasive)
+        } else {
             $dbMessage = $dbFailMessage;
         }
         
@@ -80,10 +81,9 @@ if (hash_equals($calc, $token)
         $query->close();
         $db->close();
     } else {
-        $dbMessage = "Cannot Connect To Database";
+        $dbMessage = $dbFailMessage;
     }
 }
-else $dbMessage="Test";
 
 /* Return Outcome */
 $myObj = (object)array();
