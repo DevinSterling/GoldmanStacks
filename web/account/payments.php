@@ -1,6 +1,16 @@
 <?
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/userbase.php');
+
+/* Force https connection */
+forceHTTPS();
+
+session_start();
+if(!checkIfLoggedIn() || !isClient()) {
+    header("Location: ../signin.php");
+    die();
+}
 
 $referencedName = $_GET['acc'];
 
@@ -8,6 +18,7 @@ $referencedName = $_GET['acc'];
 $accounts = ["Checking", "Savings", "Account 3", "Account 4", "Account 5"]; // User Account names taken from DB
 
 $amountOfPayments = 5;
+$amountOfAccounts = 5;
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -37,17 +48,11 @@ $amountOfPayments = 5;
 			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
 			<li class="menuitem"><a href="payments.php">Payments</a></li>
 			<li class="menuitem"><a href="open.php">Open New Account</a></li>
-			<li class="menuitem submenu">
-			    <a tabindex="0">Statements</a>
-			    <!--<ul class="submenugroup">
-				<li class="subitem"><a href="#PrintAll">Print Statement</a></li>
-				<li class="subitem"><a href="#PrintOne">Print Specific</a></li>
-			    </ul>-->
-			</li>
+			<li class="menuitem"><a href="statement.php">Statement</a></li>
 		</ul>
 		<ul class="menugroup">
 			<li class="menuitem"><a href="../user/options.php">Options</a></li>
-			<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+			<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
 	<? 
@@ -94,7 +99,7 @@ $amountOfPayments = 5;
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
-		        </button>            
+		        </button>   
 		    </div>
             <div class="list sub">
                 <div class="">
@@ -135,25 +140,41 @@ $amountOfPayments = 5;
                     <form id="filterDate">
                         <label for="input-sender" class="info">From</label>
         	            <div class="form-item">
-                            <select id="input-sender" class="input-field">
-                                
-                            </select>
+        		            <select id="input-sender" class="input-field">
+                                <?
+                                for ($n = 0; $n < $amountOfAccounts; $n++) {
+                                    echo "<option";
+                                   
+                                    if ($referencedName === $accounts[$n]) {
+                                        echo " selected";
+                                    }
+                                   
+                                    echo ">$accounts[$n]</option>";
+                                }
+                                ?>
+        		            </select>
         	            </div>
-                        <label for="input-reciever" class="info">To</label>
+        	            <label for="input-receiver" class="info">Receiver Address</label>
         	            <div class="form-item">
-                            <select id="input-reciever" class="input-field">
-                            </select>
-        	            </div>
+                            <input id="input-receiver" class="input-field" type="text">
+        		        </div>
         	            <hr>
                         <label for="input-date" class="info">Date</label>
         	            <div class="form-item">
                             <input id="input-date" type="date" class="input-field">
         	            </div>
-        	            <hr>
                         <label for="input-amount" class="info">Amount</label>
         	            <div class="form-item">
-                            <input id="input-amount" type="number" class="input-field">
+                            <input id="input-amount" type="number" class="input-field" placeholder="USD">
         	            </div>
+                        <hr>
+                        <div class="switch-field">
+                            <label class="switch-item">
+                                <input type="checkbox" id="input-checkbox-recurring">
+                                <span class="slider"></span>
+                            </label>
+                            <label for="input-checkbox-recurring" class="info">Recurring Payment</label>
+                        </div>
                         <hr>
                         <div class="form-item">
                             <button form="filterDate" class="standard-button transform-button flex-center round">
@@ -205,24 +226,24 @@ $amountOfPayments = 5;
                     <h2 id="title">Payment</h2>
                     <p class="info"></p>
                     <div class="container">
-                        <b class="info">Stuff</b>
+                        <b class="info">Account</b>
                         <p id="account-name"><? echo $currentAccountName ?></p>
                     </div>
                     <div class="container">
-                        <b class="info">Stuff</b>
+                        <b class="info">Reciever</b>
                         <p id="account-balance"><? echo $balance ?></p>
                     </div>
                     <div class="container">
-                        <b class="info">Stuff</b>
+                        <b class="info">Date</b>
                         <p id="account-routing-number"><? echo $routingNumber ?></p>
                     </div>
                     <div class="container">
-                        <b class="info">Stuff</b>
-                        <p id="placeholder1"></p>
+                        <b class="info">Amount</b>
+                        <p id="placeholder1">$999999</p>
                     </div>
                     <div class="container">
-                        <b class="info">Stuff</b>
-                        <p id="placeholder2"></p>
+                        <b class="info">Reccuring</b>
+                        <p id="placeholder2">False (This is a one-time payment)</p>
                     </div>
                     <hr>
                     <div class="form-item">
@@ -242,6 +263,18 @@ $amountOfPayments = 5;
 	<script type="text/javascript" src="../Scripts/navigation.js">
 	</script>
 	<script type="text/javascript" src="../Scripts/tabs.js"></script>
+	<script type="text/javascript">
+	    const checkBoxElement = document.getElementById("input-checkbox-recurring");
+	    const dateInputElement = document.getElementById("input-date");
+	
+	    checkBoxElement.addEventListener('change', function() {
+	        if (this.checked) {
+	            dateInputElement.disabled = true;
+	        } else {
+	            dateInputElement.disabled = false;
+	        }
+	    });
+	</script>
 	<script type="text/javascript">
         function showPopUp(ContentId) {
             document.querySelectorAll(".pop-up-item").forEach((element) => {
