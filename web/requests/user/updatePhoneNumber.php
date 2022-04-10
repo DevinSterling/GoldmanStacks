@@ -65,7 +65,7 @@ if (hash_equals($calc, $token)
             $dbMessage = $dbFailMessage;
         }
     } else {
-        $dbMessage = $dbFailMessage;
+        $dbMessage = "Failed match";
     }
 }
 
