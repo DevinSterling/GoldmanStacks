@@ -66,8 +66,10 @@ if (hash_equals($calc, $token)
         $query->close();
         $db->close();
     } else {
-        $dbMessage = "Cannot Connect To Database";
+        $dbMessage = "Cannot connect to service";
     }
+} else {
+    die();
 }
 
 /* Return Outcome */
