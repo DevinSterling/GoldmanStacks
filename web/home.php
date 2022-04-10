@@ -8,8 +8,14 @@ forceHTTPS();
 
 /* Check if the user is logged in already */
 session_start();
-if(!checkIfLoggedIn()) {
+if (!checkIfLoggedIn() || !isClient()) {
     header("Location: signin.php");
+    die();
+}
+
+/* Check if the user has been inactive */
+if (checkInactive()) {
+    header("Location: signin.php?msg=Inactivity%20Detected");
     die();
 }
 
