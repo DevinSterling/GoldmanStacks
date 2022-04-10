@@ -8,6 +8,12 @@ if(!checkIfLoggedIn() || !isClient()) {
     die();
 }
 
+/* Check if the user has been inactive */
+if (checkInactive()) {
+    header("Location: requests/signout.php");
+    die();
+}
+
 /* SESSION Variables */
 $userID = $_SESSION["uid"];
 
