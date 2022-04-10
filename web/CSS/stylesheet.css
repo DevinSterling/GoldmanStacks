@@ -426,6 +426,10 @@ p, h5, h4, h3, h2, h1 {
     transition-duration: 0.3s;
 }
 
+.input-field::placeholder {
+    color: #ff322b;
+}
+
 .switch-field {
     display: flex;
     align-items: center;
