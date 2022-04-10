@@ -79,8 +79,8 @@ p, h5, h4, h3, h2, h1 {
 }
 
 .menulogo {
-	margin: 0 20px;
-	padding: 2.5px 15px;
+	margin: 0 5px 0 20px;
+	padding: 2.5px 5px;
 }
 
 .menulogo a {
@@ -102,7 +102,8 @@ p, h5, h4, h3, h2, h1 {
 	color: #ffffff;
 }
 
-.menuitem:hover {
+.menuitem:hover,
+.menuitem:focus {
 	background-color: #ffffff33;
 	
 	/* animations */
@@ -127,6 +128,43 @@ p, h5, h4, h3, h2, h1 {
     font-weight: bold;
     text-align: center;
     box-shadow: 0 4px 4px -4px #333333;
+}
+
+.notification {
+    cursor: pointer;
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    height: 50px;
+    
+    font-size: 1em;
+    margin: 15px auto 0 auto;
+    padding: 0 20px;
+    color: #fff;
+    background-color: #00000010;
+    border: none;
+    
+    overflow: hidden;
+    
+    animation: opacityAnimation;
+    animation-duration: 0.5s;
+    transition: all 0.2s ease-in-out;
+}
+
+.success {
+    background-color: #30b309;
+}
+
+.failure {
+   background-color: #f05f4f; 
+}
+
+.collapse {
+    background-color: transparent;
+    color: transparent;
+    height: 0;
 }
 
 /*-------------------+
@@ -212,6 +250,10 @@ p, h5, h4, h3, h2, h1 {
 /*--------------------+
 | Content Disposition |
 +--------------------*/
+.max {
+   width: 100%; 
+}
+
 .main {
     width: 55%;
 }
@@ -384,11 +426,74 @@ p, h5, h4, h3, h2, h1 {
     transition-duration: 0.3s;
 }
 
+.switch-field {
+    display: flex;
+    align-items: center;
+}
+
+.switch-field .info {
+    padding-left: 10px;
+}
+
+.switch-item {
+    position: relative;
+    display: inline-block;
+    width: 51px;
+    height: 25px;
+}
+
+.switch-item input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .2s;
+    transition: .2s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 21px;
+    width: 21px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .2s;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #ff9200;
+}
+
+input:focus-visible + .slider {
+    box-shadow: 0 0 0 2px #000;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
 /*-------------+
 | Button Types |
 +-------------*/
 .big-color-button, /* Large button - Enlarges and shifts color when hovered upon */
 .highlight-button, /* Highlight Button - Takes a darker shade when hovered upon */
+.block-button,
 .tab-button,
 .expand-button, /* Expand Button - Expands when hovered upon (Expand direction is specified with another class (ex: .expand-left)) */
 .standard-button { /* Standard Button - Button that changes color when hovered upon*/
@@ -490,10 +595,30 @@ p, h5, h4, h3, h2, h1 {
     color: #ffffff;
 }
 
+.block-button {
+    background-color: #00000010;
+    border: none;
+    margin: 5px;
+    padding: 1.5em 2em;
+    height: 17.5em;
+    width: 40%;
+    
+    display: flex;
+    align-items: flex-end;
+    
+    transition-duration: 0.1s;
+}
+
+.block-button .focused-info {
+    font-weight: bold;
+    font-size: 2em;
+}
+
 /*-----------------------------+
 | Button - Standard Animations |
 +-----------------------------*/
-.big-color-button:hover {
+.big-color-button:hover,
+.big-color-button:focus {
     background-color: #000000;
     color: #ffffff;
     
@@ -510,7 +635,17 @@ p, h5, h4, h3, h2, h1 {
     background-color: #00000015;
 }
 
-.expand-button:hover {
+.block-button:hover,
+.block-button:focus {
+    background-color: #000;
+    color: #fff;
+    
+    transform: scale(1.03);
+    transition-duration: 0.3s;
+}
+
+.expand-button:hover,
+.expand-button:focus {
     background-color: #e0e0e0;
     
     /* animations */
@@ -518,11 +653,13 @@ p, h5, h4, h3, h2, h1 {
 }
 
 /* Expand button direction */
-.extend-left:hover {
+.extend-left:hover,
+.extend-left:focus {
     padding-left: 20px;
 }
 
-.extend-right:hover {
+.extend-right:hover,
+.extend-right:focus {
     padding-right: 20px;
 }
 
@@ -533,7 +670,8 @@ p, h5, h4, h3, h2, h1 {
     display: none;
 }
 
-.transform-button:hover .toggle-button {
+.transform-button:hover .toggle-button,
+.transform-button:focus .toggle-button {
     display: block;
 }
 
@@ -541,12 +679,14 @@ p, h5, h4, h3, h2, h1 {
     transition: transform 0.1s;
 }
 
-.transform-button:hover .animate-left {
+.transform-button:hover .animate-left,
+.transform-button:focus .animate-left {
     transform: translateX(-10px);
     transition: transform 0.3s;
 }
 
-.transform-button:hover .animate-right {
+.transform-button:hover .animate-right,
+.transform-button:focus .animate-right {
     transform: translateX(10px);
     transition: transform 0.3s;
 }
@@ -556,7 +696,8 @@ p, h5, h4, h3, h2, h1 {
     transition: transform 0.1s;
 }
 
-.transform-button:hover .animate-rotate90 {
+.transform-button:hover .animate-rotate90,
+.transform-button:focus .animate-rotate90 {
     transform: rotate(90deg);
     transition: transform 0.2s;
 }
@@ -635,6 +776,13 @@ p, h5, h4, h3, h2, h1 {
     margin: 5px 0;
 }
 
+.big-info {
+    font-size: 1.75em;
+    font-weight: normal;
+    color: #434343;
+}
+
+
 .captilize,
 .focused-info {
     text-transform: uppercase;
@@ -643,6 +791,10 @@ p, h5, h4, h3, h2, h1 {
 .focused-info {
     font-size: 1.5em;
     font-weight: bold;
+}
+
+.block-button .focused-info {
+    font-size: 2.5em;
 }
 
 .info { /* Typically only used with labels*/
@@ -670,6 +822,21 @@ p, h5, h4, h3, h2, h1 {
     }
 }
 
+@keyframes opacityAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+@media all and (max-width: 1400px) {
+    .block-button {
+        width: 48%;
+    }
+}
 /*-----------------------------------------+
 | Medium Screen Sized Device Compatibility |
 +-----------------------------------------*/
@@ -692,6 +859,9 @@ p, h5, h4, h3, h2, h1 {
     }
     .sub {
         width: 40%;
+    }
+    .maximize {
+        width: 100%;
     }
     .flex-center {
 	    column-gap: 0;
@@ -757,5 +927,10 @@ p, h5, h4, h3, h2, h1 {
     }
     .button .secondary { /* divider between buttons and menu links */
         border-bottom: 1px #444 solid;
+    }
+}
+@media all and (max-width: 700px) {
+    .block-button {
+        width: 100%;
     }
 }
