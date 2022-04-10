@@ -4,6 +4,9 @@ require_once('/home/sterlid2/Private/userbase.php');
 /* Check if the user is logged in already */
 session_start();
 if (checkIfLoggedIn()) {
+    // Used to notify if the user has been signed out due to inactivity
+    $isInactive = checkInactive();
+    
     // Unset all session variables.
     $_SESSION = array();
     
@@ -18,6 +21,12 @@ if (checkIfLoggedIn()) {
     
     // Destroy the session.
     session_destroy();
+    
+    // Redirect if inactive
+    if ($isInactive) {
+        header("Location: ../signin.php?timeout=1");
+        die();
+    }
 }
 
 // Redirect
