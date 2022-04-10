@@ -11,15 +11,20 @@ if(checkIfLoggedIn()) {
     die();
 }
 
+/* POST Variables */
 $username = $_POST['username'];
 $password = $_POST['password'];
+$token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
 $dbFailMessage = "Invalid Credentials Provided";
 $dbMessage = "";
 
-if (!(empty($username) || empty($password))) { // if true, non-empty parameters given and passwords match
+/* Confirm token and parameters */
+$calc = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
+if (hash_equals($calc, $token)
+    && !(empty($username) || empty($password))) { // if true, non-empty parameters given and passwords match
     /* DB Connection */
     $db = getUpdateConnection();
     
