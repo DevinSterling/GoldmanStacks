@@ -87,8 +87,8 @@ if (hash_equals($calc, $token) // Check token
                 $password = password_hash($password, PASSWORD_DEFAULT);
                 
                 /* Verify Current Password */
-                $insertClient = $db->prepare("INSERT INTO users (userRole, email, password, firstName, middleName, lastName, ssn) VALUES ('client', ?, ?, ?, ?, ?, ?)");
-                $insertClient->bind_param("ssssss", $email, $password, $firstName, $middleName, $lastName, $ssn);
+                $insertClient = $db->prepare("INSERT INTO users (userRole, email, password, firstName, middleName, lastName, phoneNumber, ssn) VALUES ('client', ?, ?, ?, ?, ?, ?, ?)");
+                $insertClient->bind_param("ssssss", $email, $password, $firstName, $middleName, $lastName, $phoneNumber, $ssn);
                 $insertClient->execute();
               
                 $clientId = $insertClient->insert_id;
