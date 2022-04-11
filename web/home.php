@@ -98,7 +98,7 @@ if ($db === null){
 		        </div>
 		        <?			
 			/* Statement to get client account information */
-			$accountsStatement = $db->prepare('SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?');
+			$accountsStatement = $db->prepare("SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?");
 			$accountsStatement->bind_param("i", 1);
 			$accountsStatement->execute();
 			
