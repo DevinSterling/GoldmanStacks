@@ -127,7 +127,7 @@ if (!in_array($currentAccountName, $accounts)) {
 							FROM transactions T 
 							INNERJOIN accountDirectory A 
 							ON T.clientID=A.clientID 
-							WHERE A.nickName=".$currentAccountName";
+							WHERE A.nickName=".$currentAccountName;
 				$result = $db->query($transactionQuery);
 				$rows = $result->fetch_all(MYSQLI_ASSOC);
 
