@@ -109,7 +109,7 @@ if (hash_equals($calc, $token) // Check token
               
                 $insertAddress->close();
             } else {
-                $dbMessage = "Provided email is registered already".$email;
+                $dbMessage = $result->num_rows."Provided email is registered already".$email;
             }
 
             /* Close Streams */
