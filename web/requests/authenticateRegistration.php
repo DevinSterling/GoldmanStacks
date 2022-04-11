@@ -120,7 +120,7 @@ if (hash_equals($calc, $token) // Check token
         $dbMessage = $dbFailMessage+"A";
     }
 } else {
-    die();
+    $dbMessage = "A";
 }
 
 /* Return Outcome */
