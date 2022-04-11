@@ -121,7 +121,7 @@ if ($db === null){
 			    }
 			    
 		            /* Create button for each account */
-			    echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['accountType'])."&num=".htmlspecialchars($accNumber)."\" class=\"big-color-button transform-button split round shadow\">
+			    echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
 				      <div class=\"list\">
 					    <p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
 					    <p>".ucfirst($account['accountType'])." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
