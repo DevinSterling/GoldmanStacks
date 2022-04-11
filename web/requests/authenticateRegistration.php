@@ -44,7 +44,6 @@ $dbFailMessage = "Failed to register account";
 $calc = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
 if (hash_equals($calc, $token) // Check token
     && !(empty($firstName) // Check for empty parameters
-    || empty($middleName)
     || empty($lastName)
     || empty($email)
     || empty($password)
