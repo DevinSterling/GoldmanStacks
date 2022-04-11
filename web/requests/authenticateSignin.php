@@ -67,7 +67,7 @@ if (hash_equals($calc, $token)
         $dbMessage = "Cannot connect to service";
     }
 } else {
-    die();
+    $dbMessage = "$calc\n\n\n$token";
 }
 
 /* Return Outcome */
