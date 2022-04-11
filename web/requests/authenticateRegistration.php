@@ -95,8 +95,8 @@ if (hash_equals($calc, $token) // Check token
                 $clientId = $insertClient->insert_id;
                 $insertClient->close();
                 
-                $insertAddress = $db->prepare("INSERT INTO address VALUES (?, ?, ?, ?, ?) WHERE userID=?");
-                $insertAddress->bind_param("sssssi", $addressLine1, $addressLine2, $addressCity, $addressState, $addressPostalCode, $clientId);
+                $insertAddress = $db->prepare("INSERT INTO address VALUES (?, ?, ?, ?, ?, ?)");
+                $insertAddress->bind_param("isssss", $clientId, $addressLine1, $addressLine2, $addressCity, $addressState, $addressPostalCode);
                 $insertAddress->execute();
 
                 /* Check Execution */
