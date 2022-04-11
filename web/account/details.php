@@ -28,19 +28,38 @@ if (checkInactive()) {
     die();
 }
 
-/* Passed Variables */
-$currentAccountName = $_GET['acc'];
+/* SESSION Variables */
+$userId = $_SESSION['uid'];
+$userId = 1;
 
-/* temp Variables */
-$balance = "0.00";
+/* GET Variables */
+$currentAccountName = $_GET['nickName'];
+
+/* Variables */
+$accountBalance = 0.00;
 $routingNumber = "123456789";
 $lastVisit = date("F j, Y, g:i a"); // Last time of login
-$accounts = ["Checking", "Savings", "Account 3", "Account 4", "Account 5"]; // User Account names taken from DB
+$accounts = array(); // User Account names taken from DB
 
-/* Main Variables */
-$amountOfAccounts = 5; // This variable will be taken from the DB (Total amount of accounts the user has)
-$amountOfTransactions = 25; // Number of recent transactions to show
+/* Database Connection */
+$db = getUpdateConnection();
 
+/* Check Connection */
+if ($db === null) {
+    header("Location: ");
+    die();
+}
+
+/* Query used to gather account names and then store them in an array */
+$query = 'SELECT nickName FROM accountDirectory WHERE clientID=1';
+$result = $db->query($query);
+$rows = $result->fetch_all(MYSQLI_ASSOC);
+
+foreach ($rows as $acc) {
+    $accounts[] = $acc['nickName']; // User Account names taken from DB
+}
+
+/* Check if the selected account is valid */
 if (!in_array($currentAccountName, $accounts)) {
     header("Location: ../home.php");
     die();
@@ -112,15 +131,31 @@ if (!in_array($currentAccountName, $accounts)) {
                     </thead>
                     <tbody tabindex="0" id="transactions-body">
 		            <?
-	                for ($n = 1; $n <= $amountOfTransactions; $n++) {
-	                    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
-	                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
-	                            <td data-label=\"Type\" class=\"hidden\">Withdrawal</td>
-	                            <td data-label=\"Date\" class=\"date\">$lastVisit</td>
-	                            <td data-label=\"Description\" class=\"desc\">Transaction $n - ".generateRandomString(50)."</td>
-	                            <td data-label=\"Amount\" class=\"amount\">-/+\$1000.00</td>
-	                        </tr>";
-	                }
+				/* Query to get all transactions from the selected account */
+				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 and accountNum LIKE '%".$currentAccountName."'";
+				$result = $db->query($transactionQuery);
+				$rows = $result->fetch_all(MYSQLI_ASSOC);
+
+				foreach ($rows as $transaction) {
+				    $accountBalance += $transaction['transactionAmount'];
+					
+				    $transactionAmount = $transaction['transactionAmount']; // temp variables (will switch to a function later)
+				    if ($transactionAmount < 0) {
+				    	$transactionAmount = "-$".$transactionAmount * -1;
+				    } else {
+				    	$transactionAmount = "$".$transactionAmount;
+				    }
+					
+				    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
+					    <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
+					    <td data-label=\"Type\" class=\"hidden\">Withdrawal</td>
+					    <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
+					    <td data-label=\"Description\" class=\"desc\">Transaction - ".$transaction['type']."</td>
+					    <td data-label=\"Amount\" class=\"amount\">".$transactionAmount."</td>
+					</tr>";
+				}
+				
+				$result->free();
 		            ?>
 		            </tbody>
 	            </table>
@@ -128,7 +163,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	    <div class="list sub">
     	        <div class="container round shadow">
     	            <div class="item-banner top-round">
-    	                <h2 class="big text-center">Balance: $<? echo $balance ?></h2>
+    	                <h2 class="big text-center">Balance: $<? echo $accountBalance ?></h2>
     	            </div>
     	            <div class="item-content bottom-round">
     	                <form id="select-account">
@@ -136,14 +171,14 @@ if (!in_array($currentAccountName, $accounts)) {
     	                    <div class="form-item">
     	                        <select id="choose-account" class="input-field last-field">
     	                            <?
-    	                            for ($n = 0; $n < $amountOfAccounts; $n++) {
+    	                            foreach ($accounts as $account) {
     	                               echo "<option";
     	                               
-    	                               if ($currentAccountName === $accounts[$n]) {
+    	                               if ($currentAccountName === $account) {
     	                                    echo " selected";
     	                               }
     	                               
-    	                               echo ">$accounts[$n]</option>";
+    	                               echo ">$account</option>";
     	                            }
     	                            ?>
     	                        </select>
@@ -326,7 +361,7 @@ if (!in_array($currentAccountName, $accounts)) {
                     </div>
                     <div class="container">
                         <b class="info">Account Balance</b>
-                        <p id="account-balance"><? echo $balance ?></p>
+                        <p id="account-balance"><? echo $accountBalance ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Routing Number</b>
