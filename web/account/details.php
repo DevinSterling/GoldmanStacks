@@ -42,7 +42,7 @@ $amountOfAccounts = 5; // This variable will be taken from the DB (Total amount 
 $amountOfTransactions = 25; // Number of recent transactions to show
 
 if (!in_array($currentAccountName, $accounts)) {
-    header("Location: /~sterlid2/bank/home.php");
+    header("Location: ../home.php");
     die();
 }
 ?>
