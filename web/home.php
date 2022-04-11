@@ -98,7 +98,7 @@ if ($db === null){
 		        </div>
 		        <?			
 			/* Query to get client account information */
-			$accountsQuery = 'SELECT accountNum, accountType, balance FROM accountDirectory WHERE accountNum=clientID=123456'; // Convert to prepared statement
+			$accountsQuery = 'SELECT accountNum, accountType, balance FROM accountDirectory WHERE clientID=123456'; // Convert to prepared statement
 			$accountsResult = $db->query($accountsQuery);
 			$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
 			    
