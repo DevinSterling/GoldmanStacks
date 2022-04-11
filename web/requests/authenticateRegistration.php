@@ -102,7 +102,7 @@ if (hash_equals($calc, $token) // Check token
                     $dbSuccess = true;
                     $dbMessage = "Account has been registered";
                 } else {
-                    $dbMessage = $dbFailMessage;
+                    $dbMessage = "FAIL";
                 }
               
                 $insertClient->close();
