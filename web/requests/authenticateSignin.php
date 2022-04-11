@@ -22,9 +22,9 @@ $dbFailMessage = "Invalid Username or Password";
 $dbMessage = "";
 
 /* Confirm token and parameters */
-$calc = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
-if (hash_equals($calc, $token)
-    && !(empty($username) || empty($password))) { // if true, non-empty parameters given
+//$calc = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
+if (/*hash_equals($calc, $token)
+    &&*/ !(empty($username) || empty($password))) { // if true, non-empty parameters given
     /* DB Connection */
     $db = getUpdateConnection();
     
