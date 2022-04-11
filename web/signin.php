@@ -107,8 +107,8 @@ if (isset($_GET['registered'])) {
 	let timeout = <? echo $timeout ? 'true' : 'false' ?>;
 	
 	if (registered || timeout) {
-	    if (registered) setSuccessNotification("Signed Out Due to Inactivity");
-	    if (timeout) setFailNotification("Registration Request Submitted");
+	    if (timeout) setSuccessNotification("Signed Out Due to Inactivity");
+	    else if (registered) setFailNotification("Registration Request Submitted");
 		
 	    showNotification();
 	}
