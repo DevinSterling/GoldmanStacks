@@ -79,7 +79,7 @@ if (isset($_GET['registered'])) {
     	            <input type="hidden" name="token" value="<? echo $signinToken ?>">
                     <a href="register.php" class="highlight-button transform-button split round">
                         <div class="list">
-                            <p><i class="fas fa-info icon"></i> Don't have an account? Register here</p>
+                            <p><i class="fas fa-info icon"></i>Don't have an account? Register here</p>
                         </div>
                         <div class="animate-left">
             	            <div class="toggle-button">
