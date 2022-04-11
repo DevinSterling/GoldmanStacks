@@ -100,16 +100,16 @@ if (hash_equals($calc, $token) // Check token
                 $insertAddress->execute();
 
                 /* Check Execution */
-                if ($db->affected_rows === 0) {
+                if ($db->affected_rows > 0) {
                     $dbSuccess = true;
                     $dbMessage = "Account has been registered";
                 } else {
-                    $dbMessage = "FAIL:".$db->error;
+                    $dbMessage = $dbFailMessage;
                 }
               
                 $insertAddress->close();
             } else {
-                $dbMessage = $result->num_rows."Provided email is registered already".$email;
+                $dbMessage = "Provided email is registered already";
             }
 
             /* Close Streams */
@@ -123,7 +123,7 @@ if (hash_equals($calc, $token) // Check token
         $dbMessage = $dbFailMessage;
     }
 } else {
-    $dbMessage = "test";
+    die();
 }
 
 /* Return Outcome */
