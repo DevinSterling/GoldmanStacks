@@ -69,8 +69,11 @@ if (hash_equals($calc, $token) // Check token
     $isMatch &= preg_match('/^[A-z ]+$/', $addressState);
     $isMatch &= preg_match('/^[0-9]{5}$/', $addressPostalCode);
     
+    /* Optional Input Validation */
     if (!empty($middleName)) $isMatch &= ctype_alpha($middleName);
+    else $middleName = NULL;
     if (!empty($addressLine2)) $isMatch &= preg_match('/^[A-z0-9#, ]+$/', $addressLine2);
+    else $addressLine2 = NULL;
   
     if ($isMatch) {
         /* DB Connection */
