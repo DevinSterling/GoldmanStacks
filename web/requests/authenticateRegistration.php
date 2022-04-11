@@ -40,6 +40,8 @@ $dbMessage = "";
 
 $dbFailMessage = "Failed to register account";
 
+$dbMessage += $firstName+$middleName+$lastName;
+
 /* Confirm token and parameters */
 $calc = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
 if (hash_equals($calc, $token) // Check token
