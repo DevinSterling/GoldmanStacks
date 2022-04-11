@@ -156,20 +156,28 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        body: formData,
 	        method: 'POST',
             });
-	        
-	    fetch(request)
-	        .then((response) => response.json())
-	        .then((data) => {
-		    showNotification();
-
-	            if (data.response) {
-	                window.location.href = "signin.php?registered=1";
-	            } else {
-	                setFailNotification(data.message);
-			window.scrollTo(0, 0);
-	            }
-	        })
-	        .catch(console.warn);
+		
+            if (formData.get('passowrd') === formData.get('confirm-password')) {
+		window.scrollTo(0, 0);
+		document.getElementById("password").focus();
+		setFailNotification("Passwords Do Not Match");
+	        showNotification();
+	    }
+	    else {
+	        fetch(request)
+	            .then((response) => response.json())
+	            .then((data) => {
+		        showNotification();
+    
+	                if (data.response) {
+	                    window.location.href = "signin.php?registered=1";
+	                } else {
+	                    setFailNotification(data.message);
+			    window.scrollTo(0, 0);
+	                }
+	            })
+	            .catch(console.warn);
+	    }    
     }
     </script>
 </html>
