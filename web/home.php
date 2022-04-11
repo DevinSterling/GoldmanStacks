@@ -98,7 +98,7 @@ if ($db === null){
 		        </div>
 		        <?			
 			/* Query to get client account information */
-			$accountsQuery = 'SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=123456'; // Convert to prepared statement
+			$accountsQuery = 'SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=1'; // Convert to prepared statement
 			$accountsResult = $db->query($accountsQuery);
 			$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
 			    
@@ -174,7 +174,7 @@ if ($db === null){
     		        <div class="item-content bottom-round">
     		            <?    		            
     		            	/* Query to obtain transaction information */
-				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=123456 limit ".$amountOfTransactions;
+				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 limit ".AMOUNT_OF_TRANSACTIONS;
     		            	$transactionResult = $db->query($transactionQuery);
                             	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
 				    
