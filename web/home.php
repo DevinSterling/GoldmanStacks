@@ -97,9 +97,13 @@ if ($db === null){
 		            </a>
 		        </div>
 		        <?			
-			/* Query to get client account information */
-			$accountsQuery = 'SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=1'; // Convert to prepared statement
-			$accountsResult = $db->query($accountsQuery);
+			/* Statement to get client account information */
+			$accountsStatement = $db->prepare('SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?');
+			$accountsStatement->bind_param("i", 1);
+			$accountsStatement->execute();
+			
+			/* Obtain reults */
+			$accountsResult = $accountsStatement->get_result();
 			$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
 			    
 			foreach ($accountsRows as $account) {
@@ -134,6 +138,7 @@ if ($db === null){
 			}
 			
 			$accountsResult->free();
+			$accountsStatement->close();
 			?>
 		    </div>
 		    <div class="list sub">
@@ -173,9 +178,13 @@ if ($db === null){
     		        </div>
     		        <div class="item-content bottom-round">
     		            <?    		            
-    		            	/* Query to obtain transaction information */
-				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 LIMIT ".AMOUNT_OF_TRANSACTIONS;
-    		            	$transactionResult = $db->query($transactionQuery);
+    		            	/* Statement to obtain transaction information */
+				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ?");
+				$transactionStatement->bind_param("ii", 1, AMOUNT_OF_TRANSACTIONS);
+				$transactionStatement->execute();
+				
+				/* Obtain results */
+    		            	$transactionResult = $transactionStatement->get_result();
                             	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
 				    				    
                             	foreach ($transactionRows as $transaction) {
@@ -208,6 +217,7 @@ if ($db === null){
 		                }
 				    
 				$transactionResult->free();
+				$transactionStatement->close();
     		            ?>
     		        </div>
     		    </div>
