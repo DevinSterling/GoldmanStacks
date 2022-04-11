@@ -102,7 +102,7 @@ if (hash_equals($calc, $token) // Check token
                     $dbSuccess = true;
                     $dbMessage = "Account has been registered";
                 } else {
-                    $dbMessage = $dbFailMessage+"C";
+                    $dbMessage = $dbFailMessage;
                 }
               
                 $insertClient->close();
@@ -116,10 +116,10 @@ if (hash_equals($calc, $token) // Check token
             $queryEmail->close();
             $db->close();
         } else {
-            $dbMessage = $dbFailMessage+"B";
+            $dbMessage = $dbFailMessage;
         }
     } else {
-        $dbMessage = $dbFailMessage+"A";
+        $dbMessage = $dbFailMessage;
     }
 } else {
     $dbMessage = $firstName+$lastName;
