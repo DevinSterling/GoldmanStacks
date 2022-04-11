@@ -27,6 +27,7 @@ $userId = 1;
 $currentAccountName = $_GET['acc'];
 
 /* Variables */
+$accountType = '';
 $accountBalance = 0.00;
 $routingNumber = "123456789";
 $lastVisit = date("F j, Y, g:i a"); // Last time of login
@@ -42,7 +43,7 @@ if ($db === null) {
 }
 
 /* Query used to gather account names and then store them in an array */
-$query = 'SELECT nickName, balance FROM accountDirectory WHERE clientID=1';
+$query = 'SELECT nickName, balance, type FROM accountDirectory WHERE clientID=1';
 $result = $db->query($query);
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -51,6 +52,7 @@ foreach ($rows as $acc) {
 	
     if ($acc['nickName'] === $currentAccountName) {
     	$accountBalance = $acc['balance'];
+	$accountType = $acc['type'];
     }
 }
 
@@ -99,7 +101,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	<div class="container flex-center">
     	    <div class="list main">
     	        <div class="container">
-        	        <h2 id="title"><? echo $currentAccountName?> History</h2>
+        	        <h2 id="title"><? echo "$currentAccountName ($accountType)" ?> History</h2>
         	        <div class="split">
             	        <p class="info">Transactions</p>
     		            <button onClick="showPopUp('dateFilter-popup-content')" class="expand-button transform-button extend-left round shadow">
@@ -358,16 +360,16 @@ if (!in_array($currentAccountName, $accounts)) {
                         <p id="account-name"><? echo $currentAccountName ?></p>
                     </div>
                     <div class="container">
+                        <b class="info">Account Type</b>
+                        <p id="account-type"><? echo $accountType ?></p>
+                    </div>
+                    <div class="container">
                         <b class="info">Account Balance</b>
                         <p id="account-balance"><? echo $accountBalance ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Routing Number</b>
                         <p id="account-routing-number"><? echo $routingNumber ?></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Stuff</b>
-                        <p id="placeholder1"></p>
                     </div>
                     <div class="container">
                         <b class="info">Stuff</b>
