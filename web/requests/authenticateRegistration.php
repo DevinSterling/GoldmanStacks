@@ -93,10 +93,11 @@ if (hash_equals($calc, $token) // Check token
                 $insertClient->execute();
               
                 $clientId = $insertClient->insert_id;
-              
-                /*$insertAddress = $db->prepare("INSERT INTO address VALUES (?, ?, ?, ?, ?) WHERE userID=?");
+                $insertClient->close();
+                
+                $insertAddress = $db->prepare("INSERT INTO address VALUES (?, ?, ?, ?, ?) WHERE userID=?");
                 $insertAddress->bind_param("sssssi", $addressLine1, $addressLine2, $addressCity, $addressState, $addressPostalCode, $clientId);
-                $insertAddress->execute();*/
+                $insertAddress->execute();
 
                 /* Check Execution */
                 if ($db->affected_rows === 0) {
