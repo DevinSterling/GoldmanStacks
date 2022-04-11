@@ -157,7 +157,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        method: 'POST',
             });
 		
-            if (formData.get('passowrd') === formData.get('confirm-password')) {
+            if (formData.get('password') === formData.get('confirm-password')) {
 		window.scrollTo(0, 0);
 		document.getElementById("password").focus();
 		setFailNotification("Passwords Do Not Match");
