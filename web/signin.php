@@ -54,17 +54,8 @@ if (isset($_GET['registered'])) {
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hideNotification()" class="notification max transform-button round 
-		    <?
-			if ($timeout) echo "failure";
-			else if ($registered) echo "success";
-			else echo "failure collapse";
-		    ?>">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text">
-		    <? 
-			if ($timeout) echo "Signed Out Due to Inactivity";
-			else if ($registered) echo "Registration Request Submitted";
-		    ?></span></p>
+                <button id="notification" onClick="hideNotification()" class="notification failure max transform-button round collapse">
+                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
@@ -111,6 +102,17 @@ if (isset($_GET['registered'])) {
         </div>
     </body>
 	<script type="text/javascript" src="Scripts/notification.js"></script>
+	<script type="text/javascript">
+	let registered = <? echo $registered ? 'true' : 'false' ?>;
+	let timeout = <? echo $timeout ? 'true' : 'false' ?>;
+	
+	if (registered || timeout) {
+	    if (registered) setSuccessNotification("Signed Out Due to Inactivity");
+	    if (timeout) setFailNotification("Registration Request Submitted");
+		
+	    showNotification();
+	}
+	</script>
 	<script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login').addEventListener('submit', handleForm);
