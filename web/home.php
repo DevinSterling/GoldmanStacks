@@ -180,8 +180,8 @@ if ($db === null){
     		        <div class="item-content bottom-round">
     		            <?    		            
     		            	/* Statement to obtain transaction information */
-				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ?");
-				$transactionStatement->bind_param("ii", $userId, AMOUNT_OF_TRANSACTIONS);
+				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ".AMOUNT_OF_TRANSACTIONS);
+				$transactionStatement->bind_param("i", $userId);
 				$transactionStatement->execute();
 				
 				/* Obtain results */
