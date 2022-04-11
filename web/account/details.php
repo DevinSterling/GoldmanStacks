@@ -123,13 +123,12 @@ if (!in_array($currentAccountName, $accounts)) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?
 				/* Query to get all transactions from the selected account */
-				$transactionQuery = "SELECT accountNum, transactionTime, transactionAmount, type 
-							FROM transactions 
-							WHERE accountNum IN (
-							    SELECT accountNum 
-							    FROM accountDirectory 
-							    WHERE nickName=".$currentAccountName.")";
-				$result = $db->query($transactionQuery);
+				$transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)");
+				$transactionStatement->bind_param("s", $currentAccountName);
+				$transactionStatement->execute();
+				
+				/* Obtain result */
+				$result = $transactionStatement->get_result();
 				$rows = $result->fetch_all(MYSQLI_ASSOC);
 
 				foreach ($rows as $transaction) {
@@ -152,6 +151,7 @@ if (!in_array($currentAccountName, $accounts)) {
 				}
 				
 				$result->free();
+				$transactionStatement.close();
 		            ?>
 		            </tbody>
 	            </table>
