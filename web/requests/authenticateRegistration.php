@@ -15,8 +15,8 @@ if(checkIfLoggedIn()) {
 /* Name related info */
 $firstName = $_POST['first-name'];
 $middleName = $_POST['middle-name'];
-$lastName = $_POST['last-name']
-  ;
+$lastName = $_POST['last-name'];
+
 /* Security related info */
 $email = $_POST['email'];
 $password = $_POST['password'];
