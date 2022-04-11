@@ -44,8 +44,8 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         <div class="flex-center-item">
             <div class="list sub">
                 <div class="container">
-		    <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round <? if (!$timeout) echo "collapse" ?>">
-			    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Signed Out Due to Inactivity" ?></span></p>
+		    <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round collapse">
+			    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
 			    <div class="split">
 				   <div class="toggle-button">
 				    <i class="fas fa-times"></i>
@@ -95,7 +95,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 			    <hr>
 			    <label for="phone-number" class="info">Phone Number</label>
 			    <div class="form-item">
-				    <input id="phone-number" name="phone-number" type="text" pattern="1?\d{3}-?\d{3}-?{4}" placeholder="Required" class="input-field" required>
+				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?{4}$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="ssn" class="info">SSN</label>
 			    <div class="form-item">
