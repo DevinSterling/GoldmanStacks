@@ -163,10 +163,10 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 		    showNotification();
 
 	            if (data.response) {
-			form.reset();
 	                window.location.href = "signin.php?registered=1";
 	            } else {
 	                setFailNotification(data.message);
+			window.scrollTo(0, 0);
 	            }
 	        })
 	        .catch(console.warn);
