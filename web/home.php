@@ -25,6 +25,7 @@ const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
 
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
+$userId = 1;
 
 /* Temp Variables */
 $user = 'User'; // Taken from DB, user account name
@@ -99,7 +100,7 @@ if ($db === null){
 		        <?			
 			/* Statement to get client account information */
 			$accountsStatement = $db->prepare("SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?");
-			$accountsStatement->bind_param("i", 1);
+			$accountsStatement->bind_param("i", $userId);
 			$accountsStatement->execute();
 			
 			/* Obtain reults */
@@ -180,7 +181,7 @@ if ($db === null){
     		            <?    		            
     		            	/* Statement to obtain transaction information */
 				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ?");
-				$transactionStatement->bind_param("ii", 1, AMOUNT_OF_TRANSACTIONS);
+				$transactionStatement->bind_param("ii", $userId, AMOUNT_OF_TRANSACTIONS);
 				$transactionStatement->execute();
 				
 				/* Obtain results */
