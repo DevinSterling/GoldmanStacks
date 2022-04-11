@@ -44,6 +44,14 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         <div class="flex-center-item">
             <div class="list sub">
                 <div class="container">
+		    <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round <? if (!$timeout) echo "collapse" ?>">
+			    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Signed Out Due to Inactivity" ?></span></p>
+			    <div class="split">
+				   <div class="toggle-button">
+				    <i class="fas fa-times"></i>
+				</div>
+			    </div>
+	  	    </button>
                     <a href="signin.php" class="highlight-button transform-button split round">
                         <div class="list">
                             <p><i class="fas fa-info icon"></i> Have an account? Sign in here</p>
