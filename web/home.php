@@ -19,15 +19,28 @@ if (checkInactive()) {
     die();
 }
 
+/* Constants */
+const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
+
+/* SESSION Variables */
+$userId = $_SESSION['uid'];
+
 /* Temp Variables */
-$user = "User"; // Taken from DB, user account name
-$totalAssets = "0.00"; // Sum of all of users' accounts
+$user = 'User'; // Taken from DB, user account name
 $lastVisit = date("F j, Y, g:i a"); // Last time of login
-$accounts = ["Checking", "Savings", "Account 3", "Account 4", "Account 5"]; // User Account names taken from DB
 
 /* Main Variables */
-$amountOfAccounts = 5; // This variable will be taken from the DB (Total amount of accounts the user has)
-$amountOfTransactions = 5; // Number of recent transactions to show
+$totalBalance = 0.00;
+$accounts = array(); // Array that possess the names of the accounts under the current client
+
+/* Get Database Connection */
+$db = getUpdateConnection();
+
+/* Check connection */
+if ($db === null){
+	header("Location: ");
+	die();
+}
 ?>
 
 <!DOCTYPE html>
@@ -82,31 +95,50 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		                </div>
 		            </a>
 		        </div>
-		        <?
-	            for ($i = 0; $i < $amountOfAccounts; $i++) {
-		            echo "<a href=\"account/details.php?acc=".$accounts[$i]."\" class=\"big-color-button transform-button split round shadow\">
-                            <div class=\"list\">
-            		            <p class=\"focused-info\">$accounts[$i]</p>
-            		            <p>Savings Account (*".(1028+$i*402+$i*433).")</p>
-        		            </div>
-        		            <div class=\"split animate-left\">
-            		            <div class=\"list text-right\">
-            		                <p>Available</p>
-                		            <p class=\"focused-info\">\$0.00</p>
-            		            </div>
-            		            <div class=\"toggle-button\">
-            		                <i class=\"fas fa-chevron-right\"></i>
-            		            </div>
-        		            </div>
-            		    </a>";
-                }
-		        ?>
+		        <?			
+			/* Query to get client account information */
+			$accountsQuery = 'SELECT accountNum, accountType, balance FROM accountDirectory WHERE accountNum=clientID=123456'; // Convert to prepared statement
+			$accountsResult = $db->query($accountsQuery);
+			$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
+			    
+			foreach ($accountsRows as $account) {
+		 	    $accounts[] = $account['nickName'];
+			    $accNumber = substr($account['accountNum'], -4); // Temp Variable (to be deleted)
+			    
+			    /* Determine if account type is credit or not */
+			    if ($account['accountType'] == 'credit') {
+				$totalBalance -= $account['balance'];
+				$account_message = "Credit Used";
+			    } else {
+				$totalBalance += $account['balance'];
+				$account_message = "Available";
+			    }
+			    
+		            /* Create button for each account */
+			    echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['accountType'])."&num=".htmlspecialchars($accNumber)."\" class=\"big-color-button transform-button split round shadow\">
+				      <div class=\"list\">
+					    <p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
+					    <p>".$account['accountType']." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
+				      </div>
+				      <div class=\"split animate-left\">
+					    <div class=\"list text-right\">
+						<p>".$account_message."</p>
+						    <p class=\"focused-info\">\$".$account['balance']."</p>
+					    </div>
+					    <div class=\"toggle-button\">
+						<i class=\"fas fa-chevron-right\"></i>
+					    </div>
+				      </div>
+				  </a>";
+			}
+			
+			$accountsResult->free();
+			?>
 		    </div>
 		    <div class="list sub">
 		        <div class="container round shadow">
     		        <div class="item-banner top-round">
-    		            <!--<label class="banner-text">Account Details</label>-->
-    		            <h2 class="big text-center">Total Balance: $<? echo $totalAssets ?></h2>
+    		            <h2 class="big text-center">Total Balance: $<? echo $totalBalance ?></h2>
     		        </div>
     		        <div class="item-content bottom-round">
     		            <p class="info text-center">Last Sign In: <? echo $lastVisit ?></p>
@@ -139,17 +171,21 @@ $amountOfTransactions = 5; // Number of recent transactions to show
     		            <label class="banner-text"> Recent Activity</label>
     		        </div>
     		        <div class="item-content bottom-round">
-    		            <?
-    		            $recentAccount = "Checking"; // temp
-		                for ($n = 1; $n <= $amountOfTransactions; $n++) {
+    		            <?    		            
+    		            	/* Query to obtain transaction information */
+				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=123456 limit ".$amountOfTransactions;
+    		            	$transactionResult = $db->query($transactionQuery);
+                            	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
+				    
+                            	foreach ($transactionRows as $transaction) {
 		                    echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
 		                            <div class=\"list-padded\">
 		                                <h3 class=\"bold\">Transaction $n</h3>
-		                                <p>$lastVisit<p>
+		                                <p>".$transaction['transactionTime']."<p>
 		                            </div>
 		                            <div class=\"split animate-left\">
 		                                <div class=\"list-padded text-right\">
-		                                    <h3>-/+$.00</h3>
+		                                    <h3>$".$transaction['transactionAmount']."</h3>
 		                                    <p>Payment</p>
 		                                </div>
                        		            <div class=\"toggle-button\">
@@ -158,10 +194,12 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 		                            </div>
 		                          </a>";
 		                    
-		                    if ($n != $amountOfTransactions){
+		                    if ($transaction != end($transactionRows)){
 		                        echo "<hr>";
 		                    }
 		                }
+				    
+				$transactionResult->free();
     		            ?>
     		        </div>
     		    </div>
@@ -172,21 +210,15 @@ $amountOfTransactions = 5; // Number of recent transactions to show
     		        <form id="payments" class="item-content bottom-round">
         		        <label class="info" for="PayTo">Pay To</label>
     		            <div class="form-item">
-        		            <select id="PayTo" class="input-field">
-                                <?
-                                for ($i = 0; $i < $amountOfAccounts; $i++) {
-                                    echo "<option>Recipient $i</option>";
-                                }
-                                ?>
-        		            </select>
+        		            <input id="PayTo" class="input-field" type="text" required>
     		            </div>
         		        <label class="info" for="PayFrom">Pay From</label>
     		            <div class="form-item">
         		            <select id="PayFrom" class="input-field">
                                 <?
-                                for ($i = 0; $i < $amountOfAccounts; $i++) {
-                                    echo "<option>$accounts[$i]</option>";
-                                }
+				foreach ($accounts as $account) {
+				    echo "<option>$account</option>";
+				}
                                 ?>
         		            </select>
         		        </div>
@@ -196,7 +228,7 @@ $amountOfTransactions = 5; // Number of recent transactions to show
     		            </div>
     		            <label class="info" for="Amount">Amount</label>
     		            <div class="form-item">
-        		            <input id="Amount" class="input-field" type="number" min="0" max="<? echo $totalAssets ?>">
+        		            <input id="Amount" class="input-field" type="number" min="0" max="<? echo $totalBalance ?>">
     		            </div>
     		            <div class="form-item">
                             <button form="payments" class="standard-button transform-button flex-center round">
@@ -218,3 +250,6 @@ $amountOfTransactions = 5; // Number of recent transactions to show
 	<script type="text/javascript" src="Scripts/post.js">
 	</script>
 </html>
+<?
+$db->close();	
+?>
