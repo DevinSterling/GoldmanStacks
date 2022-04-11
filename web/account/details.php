@@ -143,9 +143,9 @@ if (!in_array($currentAccountName, $accounts)) {
 					
 				    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
 					    <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
-					    <td data-label=\"Type\" class=\"hidden\">Withdrawal</td>
+					    <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
 					    <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
-					    <td data-label=\"Description\" class=\"desc\">Transaction - ".$transaction['type']."</td>
+					    <td data-label=\"Description\" class=\"desc\">Transaction - ".ucfirst($transaction['type'])."</td>
 					    <td data-label=\"Amount\" class=\"amount\">".$transactionAmount."</td>
 					</tr>";
 				}
