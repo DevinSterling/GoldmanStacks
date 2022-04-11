@@ -158,12 +158,6 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
             });
 		
             if (formData.get('password') === formData.get('confirm-password')) {
-		window.scrollTo(0, 0);
-		document.getElementById("password").focus();
-		setFailNotification("Passwords Do Not Match");
-	        showNotification();
-	    }
-	    else {
 	        fetch(request)
 	            .then((response) => response.json())
 	            .then((data) => {
@@ -177,6 +171,12 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	                }
 	            })
 	            .catch(console.warn);
+	    }
+	    else {
+		window.scrollTo(0, 0);
+		document.getElementById("password").focus();
+		setFailNotification("Passwords Do Not Match");
+	        showNotification();
 	    }    
     }
     </script>
