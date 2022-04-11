@@ -83,7 +83,7 @@ if (hash_equals($calc, $token) // Check token
             $result = $queryEmail->get_result();
             
             /* Verify if email is not registered yet */
-            if ($result->num_rows > 0) {
+            if ($result->num_rows !== 0) {
                 /* Encrypt provided password */
                 $password = password_hash($password, PASSWORD_DEFAULT);
                 
