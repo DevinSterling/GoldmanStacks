@@ -123,11 +123,12 @@ if (!in_array($currentAccountName, $accounts)) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?
 				/* Query to get all transactions from the selected account */
-				$transactionQuery = "SELECT T.transactionTime, T.transactionAmount, type 
-							FROM transactions T 
-							INNER JOIN accountDirectory A 
-							ON T.clientID=A.clientID 
-							WHERE A.nickName=".$currentAccountName;
+				$transactionQuery = "SELECT accountNum, transactionTime, transactionAmount, type 
+							FROM transactions 
+							WHERE accountNum IN (
+							    SELECT accountNum 
+							    FROM accountDirectory 
+							    WHERE nickName=".$currentAccountName.")";
 				$result = $db->query($transactionQuery);
 				$rows = $result->fetch_all(MYSQLI_ASSOC);
 
