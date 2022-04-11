@@ -177,16 +177,23 @@ if ($db === null){
 				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 LIMIT ".AMOUNT_OF_TRANSACTIONS;
     		            	$transactionResult = $db->query($transactionQuery);
                             	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
-				    
+				    				    
                             	foreach ($transactionRows as $transaction) {
+				    $transactionAmount = $transaction['transactionAmount']; // temp variables (will switch to a function later)
+				    if ($transactionAmount < 0) {
+				    	$transactionAmount = "-$".$transactionAmount * -1;
+				    } else {
+				    	$transactionAmount = "$".$transactionAmount;
+				    }
+					
 		                    echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
 		                            <div class=\"list-padded\">
-		                                <h3 class=\"bold\">Transaction $n</h3>
+		                                <h3 class=\"bold\">Transaction</h3>
 		                                <p>".$transaction['transactionTime']."<p>
 		                            </div>
 		                            <div class=\"split animate-left\">
 		                                <div class=\"list-padded text-right\">
-		                                    <h3>$".$transaction['transactionAmount']."</h3>
+		                                    <h3>".$transactionAmount."</h3>
 		                                    <p>".ucfirst($transaction['type'])."</p>
 		                                </div>
                        		            <div class=\"toggle-button\">
