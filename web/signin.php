@@ -24,6 +24,12 @@ $timeout = false;
 if (isset($_GET['timeout'])) {
     $timeout = (bool)$_GET['timeout']; // Get timeout value
 };
+
+/* Check if the user has requested to be registered (and redirected here [signin.php]) */
+$registered = false;
+if (isset($_GET['registered'])) {
+    $registered = (bool)$_GET['registered']; // Get timeout value
+};
 ?>
 
 <!DOCTYPE html>
@@ -48,8 +54,17 @@ if (isset($_GET['timeout'])) {
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round <? if (!$timeout) echo "collapse" ?>">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"><? if ($timeout) echo "Signed Out Due to Inactivity" ?></span></p>
+                <button id="notification" onClick="hideNotification()" class="notification max transform-button round 
+		    <?
+			if ($timeout) echo "failure";
+			else if ($registered) echo "success";
+			else echo "failure collapse";
+		    ?>">
+                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text">
+		    <? 
+			if ($timeout) echo "Signed Out Due to Inactivity";
+			else if ($registered) echo "Registration Request Submitted";
+		    ?></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
