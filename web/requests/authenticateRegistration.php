@@ -83,9 +83,12 @@ if (hash_equals($calc, $token) // Check token
             
             /* Verify if email is not registered yet */
             if ($result->num_rows > 0) {
+                /* Encrypt provided password */
+                $password = password_hash($password, PASSWORD_DEFAULT);
+                
                 /* Verify Current Password */
-                $insertClient = $db->prepare("INSERT INTO users (userRole, email, password, firstName, middleName, lastName, lastName, ssn) VALUES ('client', ?, ?, ?, ?, ?, ?, ?)");
-                $insertClient->bind_param("sssssss", $email, $password, $firstName, $middleName, $lastName, $ssn);
+                $insertClient = $db->prepare("INSERT INTO users (userRole, email, password, firstName, middleName, lastName, ssn) VALUES ('client', ?, ?, ?, ?, ?, ?)");
+                $insertClient->bind_param("ssssss", $email, $password, $firstName, $middleName, $lastName, $ssn);
                 $insertClient->execute();
               
                 $clientId = $insertClient->insert_id;
