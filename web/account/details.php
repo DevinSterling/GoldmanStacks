@@ -52,7 +52,7 @@ foreach ($rows as $acc) {
 	
     if ($acc['nickName'] === $currentAccountName) {
     	$accountBalance = $acc['balance'];
-	$accountType = $acc['type'];
+	$accountType = $acc['accountType'];
     }
 }
 
@@ -101,7 +101,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	<div class="container flex-center">
     	    <div class="list main">
     	        <div class="container">
-        	        <h2 id="title"><? echo "$currentAccountName (".ucfirst($accountType).")" ?> History</h2>
+        	        <h2 id="title"><? echo "$currentAccountName History (".ucfirst($accountType).")" ?></h2>
         	        <div class="split">
             	        <p class="info">Transactions</p>
     		            <button onClick="showPopUp('dateFilter-popup-content')" class="expand-button transform-button extend-left round shadow">
