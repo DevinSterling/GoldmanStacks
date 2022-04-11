@@ -125,7 +125,7 @@ if (!in_array($currentAccountName, $accounts)) {
 				/* Query to get all transactions from the selected account */
 				$transactionQuery = "SELECT T.transactionTime, T.transactionAmount, type 
 							FROM transactions T 
-							INNERJOIN accountDirectory A 
+							INNER JOIN accountDirectory A 
 							ON T.clientID=A.clientID 
 							WHERE A.nickName=".$currentAccountName;
 				$result = $db->query($transactionQuery);
