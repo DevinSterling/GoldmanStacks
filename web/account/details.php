@@ -151,7 +151,7 @@ if (!in_array($currentAccountName, $accounts)) {
 				}
 				
 				$result->free();
-				$transactionStatement.close();
+				$transactionStatement->close();
 		            ?>
 		            </tbody>
 	            </table>
