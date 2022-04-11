@@ -122,7 +122,7 @@ if (hash_equals($calc, $token) // Check token
         $dbMessage = $dbFailMessage;
     }
 } else {
-    $dbMessage = $firstName+$lastName;
+    $dbMessage = "test";
 }
 
 /* Return Outcome */
