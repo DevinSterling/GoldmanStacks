@@ -1,6 +1,7 @@
 <?
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/config.php');
 require_once('/home/sterlid2/Private/userbase.php');
 
 /* Force https connection */
