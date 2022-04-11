@@ -107,8 +107,7 @@ if (hash_equals($calc, $token) // Check token
                     $dbMessage = "FAIL:".$db->error;
                 }
               
-                $insertClient->close();
-                //$insertAddress->close();
+                $insertAddress->close();
             } else {
                 $dbMessage = "Provided email is registered already";
             }
