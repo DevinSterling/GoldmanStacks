@@ -119,7 +119,7 @@ if ($db === null){
 			    echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['accountType'])."&num=".htmlspecialchars($accNumber)."\" class=\"big-color-button transform-button split round shadow\">
 				      <div class=\"list\">
 					    <p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
-					    <p>".$account['accountType']." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
+					    <p>".ucfirst($account['accountType'])." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
 				      </div>
 				      <div class=\"split animate-left\">
 					    <div class=\"list text-right\">
@@ -174,7 +174,7 @@ if ($db === null){
     		        <div class="item-content bottom-round">
     		            <?    		            
     		            	/* Query to obtain transaction information */
-				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 limit ".AMOUNT_OF_TRANSACTIONS;
+				$transactionQuery = "SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=1 LIMIT ".AMOUNT_OF_TRANSACTIONS;
     		            	$transactionResult = $db->query($transactionQuery);
                             	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
 				    
@@ -187,7 +187,7 @@ if ($db === null){
 		                            <div class=\"split animate-left\">
 		                                <div class=\"list-padded text-right\">
 		                                    <h3>$".$transaction['transactionAmount']."</h3>
-		                                    <p>Payment</p>
+		                                    <p>".ucfirst($transaction['type'])."</p>
 		                                </div>
                        		            <div class=\"toggle-button\">
                         		            <i class=\"fas fa-chevron-right\"></i>
