@@ -95,7 +95,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 			    <hr>
 			    <label for="phone-number" class="info">Phone Number</label>
 			    <div class="form-item">
-				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?{4}$" placeholder="Required" class="input-field" required>
+				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?\d{4}$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <label for="ssn" class="info">SSN</label>
 			    <div class="form-item">
