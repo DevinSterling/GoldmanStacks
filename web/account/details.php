@@ -24,7 +24,7 @@ $userId = $_SESSION['uid'];
 $userId = 1;
 
 /* GET Variables */
-$currentAccountName = $_GET['nickName'];
+$currentAccountName = $_GET['acc'];
 
 /* Variables */
 $accountBalance = 0.00;
