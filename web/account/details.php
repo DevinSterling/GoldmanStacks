@@ -1,16 +1,7 @@
 <?
-function generateRandomString($length = 10) {
-    $characters = '                            0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-        $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
-    return $randomString;
-}
-
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('/home/sterlid2/Private/config.php');
 require_once('/home/sterlid2/Private/userbase.php');
 
 /* Force https connection */
