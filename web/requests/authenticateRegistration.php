@@ -56,13 +56,14 @@ if (hash_equals($calc, $token) // Check token
     && ($password === $confirmPassword)) { // Check if given passwords match
     
     $phoneNumber = str_replace('-', '', $phoneNumber); // Remove hyphens if provided by user
+    $ssn = str_replace('-', '', $ssn); // Remove hyphens if provided by user
   
     /* Input Validation */
     $isMatch = (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     $isMatch &= ctype_alpha($firstName);
     $isMatch &= ctype_alpha($lastName);
     $isMatch &= preg_match('/^\d{10}$/', $phoneNumber); // Check if phone number matches requirement
-    $isMatch &= preg_match('/^\d{3}-?\d{2}-?\d{4}$/', $ssn);
+    $isMatch &= preg_match('/^\d{9}$/', $ssn);
     $isMatch &= preg_match('/^\d+ [A-z ]+.?$/', $addressLine1);
     $isMatch &= preg_match('/^[A-z. ]+$/', $addressCity);
     $isMatch &= preg_match('/^[A-z ]+$/', $addressState);
