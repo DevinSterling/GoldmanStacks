@@ -60,16 +60,17 @@ if (hash_equals($calc, $token) // Check token
   
     /* Input Validation */
     $isMatch = (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
+    $isMatch &= isalpha($firstName);
+    $isMatch &= isalpha($lastName);
     $isMatch &= preg_match('/^\d{10}$/', $phoneNumber); // Check if phone number matches requirement
     $isMatch &= preg_match('/^\d{3}-?\d{2}-?\d{4}$/', $ssn);
     $isMatch &= preg_match('/^\d+ [A-z ]+.?$/', $addressLine1);
     $isMatch &= preg_match('/^[A-z. ]+$/', $addressCity);
     $isMatch &= preg_match('/^[A-z ]+$/', $addressState);
     $isMatch &= preg_match('/^[0-9]{5}$/', $addressPostalCode);
-  
-    if (!empty($addressLine2)) {
-        $isMatch &= preg_match('/^[A-z0-9#, ]+$/', $addressLine2);
-    }
+    
+    if (!empty($middleName)) $isMatch &= isalpha($middleName);
+    if (!empty($addressLine2)) $isMatch &= preg_match('/^[A-z0-9#, ]+$/', $addressLine2);
   
     if ($isMatch) {
         /* DB Connection */
