@@ -42,12 +42,16 @@ if ($db === null) {
 }
 
 /* Query used to gather account names and then store them in an array */
-$query = 'SELECT nickName FROM accountDirectory WHERE clientID=1';
+$query = 'SELECT nickName, balance FROM accountDirectory WHERE clientID=1';
 $result = $db->query($query);
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 foreach ($rows as $acc) {
     $accounts[] = $acc['nickName']; // User Account names taken from DB
+	
+    if ($acc['nickName'] === $currentAccountName) {
+    	$accountBalance = $acc['balance'];
+    }
 }
 
 /* Check if the selected account is valid */
@@ -131,9 +135,7 @@ if (!in_array($currentAccountName, $accounts)) {
 				$result = $transactionStatement->get_result();
 				$rows = $result->fetch_all(MYSQLI_ASSOC);
 
-				foreach ($rows as $transaction) {
-				    $accountBalance += $transaction['transactionAmount'];
-					
+				foreach ($rows as $transaction) {					
 				    $transactionAmount = $transaction['transactionAmount']; // temp variables (will switch to a function later)
 				    if ($transactionAmount < 0) {
 				    	$transactionAmount = "-$".$transactionAmount * -1;
