@@ -37,7 +37,7 @@ function isAdmin() {
 /* Check if a user has been inactive */
 function checkInactive() {
     if ($_SESSION['last_activity'] < time() - $_SESSION['expiry_time'] ) { // Inactive User Condition
-        header("Location: ../public_html/goldmanstacks/requests/signout.php");
+        header("Location: ../goldmanstacks/requests/signout.php");
         die();
     } else {
         $_SESSION['last_activity'] = time();
@@ -47,13 +47,13 @@ function checkInactive() {
 /* Redirect user to their respective main page */
 function redirect() {
     if (isClient()) {
-        header("Location: ../public_html/goldmanstacks/view/home.php"); // Redirect client to their home page
+        header("Location: ../goldmanstacks/view/home.php"); // Redirect client to their home page
         die();
     } else if (isAdmin()) {
-        header("Location: ../public_html/goldmanstacks/view/workspace/manage.php"); // Redirect admin to workspace
+        header("Location: ../goldmanstacks/view/workspace/manage.php"); // Redirect admin to workspace
         die();
     } else {
-        header("Location: ../public_html/goldmanstacks/view/signin.php"); // Redirect to sign in page
+        header("Location: ../goldmanstacks/view/signin.php"); // Redirect to sign in page
         die();
     }
 }
