@@ -9,16 +9,50 @@ checkVisitorStatus(); // Checks if the user is a visitor
 $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']); 
 
 /* Check if the user can been timed out (and redirected here [signin.php]) */
-$timeout = false;
 if (isset($_GET['timeout'])) {
     $timeout = (bool)$_GET['timeout']; // Get timeout value
-};
+}
 
 /* Check if the user has requested to be registered (and redirected here [signin.php]) */
-$registered = false;
 if (isset($_GET['registered'])) {
     $registered = (bool)$_GET['registered']; // Get timeout value
-};
+}
+
+/* Check if the user has been redirected here due by a server response code */
+if (isset($_GET['error'])) {
+    $error = true;
+}
+
+/* Notification Handling */
+$notificationClasses = "failure collapse";
+$notificationIcon = "fa-times";
+
+if ($timeout || $registered || $error) {
+	/* Check for error notifications */
+	if ($timeout || $error) {
+		if ($timeout) {
+			$notificationMessage = "Signed Out Due to Inactivity";
+		} else {
+			$code = $_GET['error'];
+
+			switch ($code) {
+				case 404:
+					$notificationMessage = "<b>404:</b> Requested Page Not Found";
+					break;
+				case 403:
+					$notificationMessage = "<b>403:</b> Access Denied";
+			}
+		}
+		
+		$notificationClasses = "failure";
+
+	/* Check for success notifications */
+	} else {
+		$notificationMessage = "Registration Request Submitted";
+		$notificationClasses = "success";
+		$notificationIcon = "fa-check";
+	}
+}
 ?>
 
 <!DOCTYPE html>
@@ -38,13 +72,13 @@ if (isset($_GET['registered'])) {
         <!-- Svg Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
         <!-- Different screen size scaling compatability -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hideNotification()" class="notification failure max transform-button round collapse">
-                    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
+                <button id="notification" onClick="hideNotification()" class="notification max transform-button round <?php echo $notificationClasses ?>">
+                    <p><i id="notification-icon" class="fas <?php echo $notificationIcon ?> icon"></i><span id="notification-text"><?php echo $notificationMessage ?></span></p>
                     <div class="split">
                            <div class="toggle-button">
             	            <i class="fas fa-times"></i>
@@ -91,17 +125,6 @@ if (isset($_GET['registered'])) {
         </div>
     </body>
 	<script type="text/javascript" src="../js/notification.js"></script>
-	<script type="text/javascript">
-	let registered = <?php echo $registered ? 'true' : 'false' ?>;
-	let timeout = <?php echo $timeout ? 'true' : 'false' ?>;
-	
-	if (registered || timeout) {
-	    if (registered) setSuccessNotification("Registration Request Submitted");
-	    else if (timeout) setFailNotification("Signed Out Due to Inactivity");
-
-	    showNotification();
-	}
-	</script>
 	<script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login').addEventListener('submit', handleForm);
