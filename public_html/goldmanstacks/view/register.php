@@ -1,5 +1,5 @@
 <?
-require_once('../../private/userbase.php');
+require_once('../../../private/userbase.php');
 
 /* Force https connection */
 forceHTTPS();
