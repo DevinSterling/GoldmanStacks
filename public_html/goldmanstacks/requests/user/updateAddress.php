@@ -1,6 +1,6 @@
 <?
-require_once('/home/sterlid2/Private/config.php');
-require_once('/home/sterlid2/Private/userbase.php');
+require_once('../../../../private/config.php');
+require_once('../../../../private/userbase.php');
 
 /* Check if the user is logged in already and is a client */
 session_start();
