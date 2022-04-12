@@ -47,13 +47,13 @@ function checkInactive() {
 /* Redirect user to their respective main page */
 function redirect() {
     if (isClient()) {
-        header("Location: ../public_html/goldmanstacks/view/home.php"); // Redirect client to their home page
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/home.php'); // Redirect client to their home page
         die();
     } else if (isAdmin()) {
-        header("Location: ../public_html/goldmanstacks/view/workspace/manage.php"); // Redirect admin to workspace
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/workspace/manage.php'); // Redirect admin to workspace
         die();
     } else {
-        header("Location: ../public_html/goldmanstacks/view/signin.php"); // Redirect to sign in page
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/signin.php'); // Redirect to sign in page
         die();
     }
 }
@@ -82,3 +82,8 @@ function checkVisitorStatus() {
         }
     }
 }
+
+ /* Temporary solution/function (only for university): Different home directory compatibility */
+ function getHomeDirectory() {
+     return '/' . strtok($_SERVER["REQUEST_URI"], '/');
+ }

@@ -1,12 +1,11 @@
 <?php
-/* PHP external files */
-require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('../../../../../private/sysNotification.php');
+require_once('../../../../../private/userbase.php');
 ?>
-
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title>Options</title>
+	<title>User</title>
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../../../css/stylesheet.css">
 	<!-- Favicon -->

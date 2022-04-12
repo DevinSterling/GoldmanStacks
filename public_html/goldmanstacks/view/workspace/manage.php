@@ -1,21 +1,18 @@
 <?php
-/* PHP external files */
-require_once('/home/sterlid2/Private/sysNotification.php');
-
-$amountOfUsers = 40;
+require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/userbase.php');
 
 $lastLog = date("F j, Y, g:i a"); // Last time of log
-
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title>Management</title>
-	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../../css/stylesheet.css">
-	<!-- Favicon -->
-	<link rel="icon" href="../../img/logo.ico">
-	<!-- Google Font -->
+		<title>Management</title>
+		<!-- Stylesheet -->
+		<link rel="stylesheet" href="../../css/stylesheet.css">
+		<!-- Favicon -->
+		<link rel="icon" href="../../img/logo.ico">
+		<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -117,6 +114,5 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		    </div>
 		</div>
 	</body>
-	<script type="text/javascript" src="../../js/navigation.js">
-	</script>
+	<script type="text/javascript" src="../../js/navigation.js"></script>
 </html>

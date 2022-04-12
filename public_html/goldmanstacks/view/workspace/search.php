@@ -1,9 +1,8 @@
 <?php
-/* PHP external files */
-require_once('/home/sterlid2/Private/sysNotification.php');
+require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/userbase.php');
 
 $amountOfUsers = 40
-
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
