@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
 
@@ -40,7 +40,7 @@ $amountOfUsers = 40
 		<div class="sys-notification">
 		    <p>Logged as Employee</p>
 		</div>
-		<? notification(); ?>
+		<?php notification(); ?>
 		<div class="container flex-center">
 		    <div class="list main">
 		        <div class="container">
@@ -56,7 +56,7 @@ $amountOfUsers = 40
 	                    </tr>
                     </thead>
                     <tbody>
-		            <?
+		            <?php
 	                for ($n = 1; $n <= $amountOfUsers; $n++) {
 	                    echo "<tr onClick=\"showPopUp('user-details-popup-content', this)\">
 	                            <td data-label=\"User Type\">User</td>

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
 
@@ -27,8 +27,10 @@ $dbMessage = "";
 
 $dbFailMessage = "Failed to update email address";
 
-/* Confirm token and parameters */
+/* Calculate expected token */
 $calc = hash_hmac('sha256', '/updateEmail.php', $_SESSION['key']);
+
+/* Confirm token and user input */
 if (hash_equals($calc, $token)
     && !empty($email)) {
     
@@ -73,4 +75,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>

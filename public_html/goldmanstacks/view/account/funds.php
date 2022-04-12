@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
@@ -61,7 +61,7 @@ $amountOfAccounts = 5;
 			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
-	<? 
+	<?php 
 	notification();
         if (!empty($referencedName)) {
             echo "<div class=\"container flex-center marginless-bottom\">
@@ -83,9 +83,9 @@ $amountOfAccounts = 5;
             </div>";
         }
         ?>
-        <div class="container flex-center <? if ($referencedName !== null) echo "marginless" ?>">
+        <div class="container flex-center <?php if ($referencedName !== null) echo "marginless" ?>">
             <div class="list mini">
-                <button class="tab-button transform-button round <? if ($view === "deposit" || empty($view)) echo "selected" ?>" data-id="deposit-form" data-title="Deposit">
+                <button class="tab-button transform-button round <?php if ($view === "deposit" || empty($view)) echo "selected" ?>" data-id="deposit-form" data-title="Deposit">
                     <div class="split">
                         <div class="text-right">
                             <p>Deposit</p>
@@ -95,7 +95,7 @@ $amountOfAccounts = 5;
         		        </div>
                     </div>
     	        </button>
-                <button class="tab-button transform-button round <? if ($view === "withdraw") echo "selected" ?>"  data-id="withdraw-form" data-title="Withdraw">
+                <button class="tab-button transform-button round <?php if ($view === "withdraw") echo "selected" ?>"  data-id="withdraw-form" data-title="Withdraw">
                     <div class="split">
                         <div class="text-right">
                             <p>Withdraw</p>
@@ -108,17 +108,17 @@ $amountOfAccounts = 5;
     	    </div>
     	    <div class="list sub">
                 <div class="">
-                    <h2 id="title"><?
+                    <h2 id="title"><?php
                         if (empty($view) || $view === "deposit") echo "Deposit";
                         else echo "Withdraw"
                     ?></h2>
                 </div>
-                <form id="deposit-form" class="<? if (!empty($view) && $view !== "deposit") echo "hidden" ?>">
+                <form id="deposit-form" class="<?php if (!empty($view) && $view !== "deposit") echo "hidden" ?>">
                     <p class="info">Deposit funds from account</p><br>
 		            <label for="deposit-account" class="info">Account</label>
 		            <div class="form-item">
     		            <select id="deposit-account" class="input-field">
-                            <?
+                            <?php
                             for ($i = 0; $i < $amountOfAccounts; $i++) {
                                 echo "<option>$accounts[$i]</option>";
                             }
@@ -141,12 +141,12 @@ $amountOfAccounts = 5;
                         </button>
                     </div>
                 </form>
-                <form id="withdraw-form" class="<? if ($view !== "withdraw") echo "hidden" ?>">
+                <form id="withdraw-form" class="<?php if ($view !== "withdraw") echo "hidden" ?>">
                     <p class="info">Withdraw funds from account</p><br>
 		            <label for="withdraw-account" class="info">Account</label>
 		            <div class="form-item">
     		            <select id="withdraw-account" class="input-field">
-                            <?
+                            <?php
                             for ($i = 0; $i < $amountOfAccounts; $i++) {
                                 echo "<option>$accounts[$i]</option>";
                             }

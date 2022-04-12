@@ -1,4 +1,4 @@
-<?
+<?php
 /* variables */
 $broadcast = false;
 $message = "Not indicative of the final product";

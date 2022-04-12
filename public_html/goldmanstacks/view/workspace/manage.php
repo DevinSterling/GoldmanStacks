@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
 
@@ -40,7 +40,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
-		<? notification(); ?>
+		<?php notification(); ?>
 		<div class="container flex-center">
 		    <div class="list main">
 		        <h2 id="title">Management</h2>
@@ -89,7 +89,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
         		    <div class="item-content bottom-round shadow">
         		        <p>Emplyee (name)</p>
         		        <hr>
-        		        <p>Last Log: <? echo $lastLog ?></p>	
+        		        <p>Last Log: <?php echo $lastLog ?></p>	
         		        <hr>
         		        <a href="staff/options.php" class="highlight-button transform-button split round">
                             <div class="list">

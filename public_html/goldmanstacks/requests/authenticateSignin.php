@@ -1,6 +1,7 @@
-<?
+<?php
 require_once('../../../private/config.php');
 require_once('../../../private/userbase.php');
+require_once('../../../private/functions.php');
 
 /* Force https connection */
 forceHTTPS();
@@ -18,13 +19,16 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbFailMessage = "Invalid Username or Password";
 $dbMessage = "";
 
-/* Confirm token and parameters */
+$dbFailMessage = "Invalid Username or Password";
+
+/* Calculate expected token */
 $calc = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
+
+/* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !(empty($username) || empty($password))) { // if true, non-empty parameters given
+    && checkNotEmpty($username, $password)) { // if true, non-empty parameters given
     /* DB Connection */
     $db = getUpdateConnection();
     
@@ -76,4 +80,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>

@@ -1,6 +1,7 @@
-<?
+<?php
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/functions.php');
 
 /* Check if the user is logged in already and is a client */
 session_start();
@@ -31,13 +32,12 @@ $dbMessage = "";
 
 $dbFailMessage = "Failed to update address";
 
-/* Confirm token and parameters */
+/* Calculate expected token */
 $calc = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
+
+/* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !(empty($addressLine1)
-    || empty($addressCity)
-    || empty($addressState)
-    || empty($addressPostalCode))) { // if true, non-empty parameters given
+    && checkNotEmpty(addressLine1, addressCity, addressState, addressPostalCode)) { // if true, non-empty parameters given
     
     /* Input Validation */
     $isMatch = preg_match('/^\d+ [A-z ]+.?$/', $addressLine1);
@@ -86,4 +86,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/config.php');
 require_once('../../../../private/sysNotification.php');
@@ -70,7 +70,7 @@ if ($db === null) {
         		<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
         	</ul>
         </nav>
-        <? notification(); ?>
+        <?php notification(); ?>
         <button id="notification" onClick="hideNotification()" class="notification sub success transform-button round collapse">
             <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
             <div class="split">
@@ -145,7 +145,7 @@ if ($db === null) {
             <div class="list sub">
                 <h2 id="title">Account Overview</h2>
                 <div id="overview">
-                    <?
+                    <?php
                         /* Query */
                         $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber FROM users WHERE userID=?");
                         $queryUser->bind_param("i", $userID);
@@ -160,14 +160,14 @@ if ($db === null) {
                         $queryUser->close();
                     ?>
                     <h5 class="big-info">User Information</h5>
-                    <p class="info"><b>First Name</b>: <? echo htmlspecialchars($user['firstName']) ?></p>
-                    <p class="info"><b>Last Name</b>: <? echo htmlspecialchars($user['lastName']) ?></p>
+                    <p class="info"><b>First Name</b>: <?php echo htmlspecialchars($user['firstName']) ?></p>
+                    <p class="info"><b>Last Name</b>: <?php echo htmlspecialchars($user['lastName']) ?></p>
                     <hr>
                     <h5 class="big-info">Contact Information</h5>
-                    <p class="info"><b>Email Address</b>: <? echo htmlspecialchars($user['email']) ?></p>
-                    <p class="info"><b>Phone Number</b>: <? echo htmlspecialchars($user['phoneNumber']) ?></p>
+                    <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($user['email']) ?></p>
+                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars($user['phoneNumber']) ?></p>
                     <hr>
-                    <?
+                    <?php
                         /* Query */
                         $queryAddress = $db->prepare("SELECT * FROM address WHERE userID=?");
                         $queryAddress->bind_param("i", $userID);
@@ -182,14 +182,14 @@ if ($db === null) {
                         $queryAddress->close();
                     ?>
                     <h5 class="big-info">Address Information</h5>
-                    <p class="info"><b>Line 1</b>: <? echo htmlspecialchars($address['line1']) ?></p>
-                    <?
+                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($address['line1']) ?></p>
+                    <?php
 			if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($address['line2'])."</p>";
                     ?>
-                    <p class="info"><b>City</b>: <? echo htmlspecialchars($address['city']) ?></p>
-                    <p class="info"><b>State</b>: <? echo htmlspecialchars($address['state']) ?></p>
-                    <p class="info"><b>Postal Code</b>: <? echo htmlspecialchars($address['postalCode']) ?></p>
-                    <?
+                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($address['city']) ?></p>
+                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($address['state']) ?></p>
+                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($address['postalCode']) ?></p>
+                    <?php
                         $db->close(); 
                     ?>
                 </div>
@@ -225,7 +225,7 @@ if ($db === null) {
     		            <input id="confirm-password" type="password" name="confirm" class="input-field" required>
     	            </div>
                     <hr>
-                    <input type="hidden" name="token" value="<? echo $passwordToken ?>">
+                    <input type="hidden" name="token" value="<?php echo $passwordToken ?>">
                     <div class="form-item">
                         <button form="change-password" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -259,7 +259,7 @@ if ($db === null) {
                         <input id="address-postal-code" type="text" name="code" class="input-field" required>
                     </div>
                     <hr>
-                    <input type="hidden" name="token" value="<? echo $addressToken ?>">
+                    <input type="hidden" name="token" value="<?php echo $addressToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -277,7 +277,7 @@ if ($db === null) {
                         <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
                     </div>
                     <hr>
-                    <input type="hidden" name="token" value="<? echo $phoneNumberToken ?>">
+                    <input type="hidden" name="token" value="<?php echo $phoneNumberToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -295,7 +295,7 @@ if ($db === null) {
                         <input id="email-address" type="email" name="email" class="input-field" required>
                     </div>
                     <hr>
-                    <input type="hidden" name="token" value="<? echo $emailToken ?>">
+                    <input type="hidden" name="token" value="<?php echo $emailToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">

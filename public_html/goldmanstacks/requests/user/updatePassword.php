@@ -1,6 +1,7 @@
-<?
+<?php
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/functions.php');
 
 /* Force https connection */
 forceHTTPS();
@@ -32,10 +33,12 @@ $dbMessage = "";
 
 $dbFailMessage = "Failed to update password";
 
-/* Confirm token and parameters */
+/* Calculate expected token */
 $calc = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
+
+/* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !(empty($oldPassword) || empty($newPassword))
+    && checkNotEmpty($oldPassword, $newPassword)
     && $newPassword === $confirmPassword) { // if true, non-empty parameters given and passwords match
     
     /* DB Connection */
@@ -93,4 +96,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>

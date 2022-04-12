@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
@@ -61,7 +61,7 @@ $amountOfAccounts = 5;
 			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
-	<? 
+	<?php 
 	notification();
         
         if (!empty($referencedName)) {
@@ -84,9 +84,9 @@ $amountOfAccounts = 5;
             </div>";
         }
         ?>
-        <div class="container flex-center <? if ($referencedName !== null) echo "marginless" ?>">
+        <div class="container flex-center <?php if ($referencedName !== null) echo "marginless" ?>">
             <div class="list mini">
-                <button class="tab-button transform-button round <? if ($referencedName === null) echo "selected" ?>" data-id="Current-Payments" data-title="Current Payments">
+                <button class="tab-button transform-button round <?php if ($referencedName === null) echo "selected" ?>" data-id="Current-Payments" data-title="Current Payments">
                     <div class="split">
                         <div class="text-right">
                             <p>View Payments</p>
@@ -96,7 +96,7 @@ $amountOfAccounts = 5;
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round <? if ($referencedName !== null) echo "selected" ?>" data-id="New-Payment" data-title="New Payment">
+                <button class="tab-button transform-button round <?php if ($referencedName !== null) echo "selected" ?>" data-id="New-Payment" data-title="New Payment">
                     <div class="split">
                         <div class="text-right">
                             <p>New Payment</p>
@@ -111,11 +111,11 @@ $amountOfAccounts = 5;
                 <div class="">
                     <h2 id="title">Payments</h2>
                 </div>
-                <div id="Current-Payments" class="<? if ($referencedName !== null) echo "hidden" ?>">
+                <div id="Current-Payments" class="<?php if ($referencedName !== null) echo "hidden" ?>">
                     <p class="info">Current payments</p><br>
                     <div class="">
                         <hr>
-        	            <?
+        	            <?php
         	            
         	            $recentAccount = "Checking"; // temp
         	            
@@ -141,13 +141,13 @@ $amountOfAccounts = 5;
                         ?>
                     </div>
                 </div>
-                <div id="New-Payment" class="<? if ($referencedName === null) echo "hidden" ?>">
+                <div id="New-Payment" class="<?php if ($referencedName === null) echo "hidden" ?>">
                     <p class="info">Start a new payment</p><br>
                     <form id="filterDate">
                         <label for="input-sender" class="info">From</label>
         	            <div class="form-item">
         		            <select id="input-sender" class="input-field">
-                                <?
+                                <?php
                                 for ($n = 0; $n < $amountOfAccounts; $n++) {
                                     echo "<option";
                                    
@@ -233,15 +233,15 @@ $amountOfAccounts = 5;
                     <p class="info"></p>
                     <div class="container">
                         <b class="info">Account</b>
-                        <p id="account-name"><? echo $currentAccountName ?></p>
+                        <p id="account-name"><?php echo $currentAccountName ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Reciever</b>
-                        <p id="account-balance"><? echo $balance ?></p>
+                        <p id="account-balance"><?php echo $balance ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Date</b>
-                        <p id="account-routing-number"><? echo $routingNumber ?></p>
+                        <p id="account-routing-number"><?php echo $routingNumber ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Amount</b>

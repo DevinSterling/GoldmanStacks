@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
 

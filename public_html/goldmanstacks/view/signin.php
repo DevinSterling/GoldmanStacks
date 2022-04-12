@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('../../../private/userbase.php');
 
 /* Force https connection */
@@ -76,7 +76,7 @@ if (isset($_GET['registered'])) {
     	            <div class="form-item">
     		            <input id="password" class="input-field" name="password" type="password" required>
     	            </div>
-    	            <input type="hidden" name="token" value="<? echo $signinToken ?>">
+    	            <input type="hidden" name="token" value="<?php echo $signinToken ?>">
                     <a href="register.php" class="highlight-button transform-button split round">
                         <div class="list">
                             <p><i class="fas fa-info icon"></i>Don't have an account? Register here</p>
@@ -103,8 +103,8 @@ if (isset($_GET['registered'])) {
     </body>
 	<script type="text/javascript" src="../js/notification.js"></script>
 	<script type="text/javascript">
-	let registered = <? echo $registered ? 'true' : 'false' ?>;
-	let timeout = <? echo $timeout ? 'true' : 'false' ?>;
+	let registered = <?php echo $registered ? 'true' : 'false' ?>;
+	let timeout = <?php echo $timeout ? 'true' : 'false' ?>;
 	
 	if (registered || timeout) {
 	    if (registered) setSuccessNotification("Registration Request Submitted");

@@ -1,4 +1,4 @@
-<?
+<?php
 // Database
 const HOST = "";
 const DATABASE = "";

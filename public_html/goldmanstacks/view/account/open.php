@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
@@ -54,7 +54,7 @@ if (checkInactive()) {
     			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
     		</ul>
     	</nav>
-    	<? notification(); ?>
+    	<?php notification(); ?>
     	<div class="container flex-center">
     	    <div class="list main maximize">
     	        <h2 id="title">Select Account Type</h2>

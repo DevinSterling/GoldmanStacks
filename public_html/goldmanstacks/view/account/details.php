@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/config.php');
@@ -65,7 +65,7 @@ if (!in_array($currentAccountName, $accounts)) {
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title><?echo strtoupper($currentAccountName)?> Account Details</title>
+	<title><?phpecho strtoupper($currentAccountName)?> Account Details</title>
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../../css/stylesheet.css">
 	<!-- Favicon -->
@@ -97,11 +97,11 @@ if (!in_array($currentAccountName, $accounts)) {
 			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
-	<? notification(); ?>
+	<?php notification(); ?>
     	<div class="container flex-center">
     	    <div class="list main">
     	        <div class="container">
-        	        <h2 id="title"><? echo "$currentAccountName History ($accountType)" ?></h2>
+        	        <h2 id="title"><?php echo "$currentAccountName History ($accountType)" ?></h2>
         	        <div class="split">
             	        <p class="info">Transactions</p>
     		            <button onClick="showPopUp('dateFilter-popup-content')" class="expand-button transform-button extend-left round shadow">
@@ -127,7 +127,7 @@ if (!in_array($currentAccountName, $accounts)) {
 	                    </tr>
                     </thead>
                     <tbody tabindex="0" id="transactions-body">
-		            <?
+		            <?php
 				/* Query to get all transactions from the selected account */
 				$transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)");
 				$transactionStatement->bind_param("s", $currentAccountName);
@@ -163,14 +163,14 @@ if (!in_array($currentAccountName, $accounts)) {
     	    <div class="list sub">
     	        <div class="container round shadow">
     	            <div class="item-banner top-round">
-    	                <h2 class="big text-center">Balance: $<? echo $accountBalance ?></h2>
+    	                <h2 class="big text-center">Balance: $<?php echo $accountBalance ?></h2>
     	            </div>
     	            <div class="item-content bottom-round">
     	                <form id="select-account">
     	                    <label for="choose-account" class="info">Selected Account</label>
     	                    <div class="form-item">
     	                        <select id="choose-account" class="input-field last-field">
-    	                            <?
+    	                            <?php
     	                            foreach ($accounts as $account) {
     	                               echo "<option";
     	                               
@@ -202,7 +202,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	                <label class="banner-text">Account Actions</label>
     	            </div>
     	            <div class="item-content bottom-round">
-                        <a href="funds.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="funds.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-plus icon"></i> Deposit Funds</p>
                             </div>
@@ -213,7 +213,7 @@ if (!in_array($currentAccountName, $accounts)) {
                             </div>
                         </a>
                         <hr>
-                        <a href="funds.php?v=withdraw&acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="funds.php?v=withdraw&acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-minus icon"></i> Withdraw Funds</p>
                             </div>
@@ -224,7 +224,7 @@ if (!in_array($currentAccountName, $accounts)) {
                             </div>
                         </a>
                         <hr>
-                        <a id="transfer" href="transfer.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a id="transfer" href="transfer.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-exchange-alt icon"></i> Transfer Funds</p>
                             </div>
@@ -235,7 +235,7 @@ if (!in_array($currentAccountName, $accounts)) {
                             </div>
                         </a>
                         <hr>
-                        <a href="payments.php?acc=<? echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="payments.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
                             </div>
@@ -357,19 +357,19 @@ if (!in_array($currentAccountName, $accounts)) {
                     <p class="info"></p>
                     <div class="container">
                         <b class="info">Account Name</b>
-                        <p id="account-name"><? echo $currentAccountName ?></p>
+                        <p id="account-name"><?php echo $currentAccountName ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Account Type</b>
-                        <p id="account-type"><? echo $accountType ?></p>
+                        <p id="account-type"><?php echo $accountType ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Account Balance</b>
-                        <p id="account-balance"><? echo $accountBalance ?></p>
+                        <p id="account-balance"><?php echo $accountBalance ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Routing Number</b>
-                        <p id="account-routing-number"><? echo $routingNumber ?></p>
+                        <p id="account-routing-number"><?php echo $routingNumber ?></p>
                     </div>
                     <div class="container">
                         <b class="info">Stuff</b>
@@ -475,7 +475,7 @@ if (!in_array($currentAccountName, $accounts)) {
 	});
 	</script>
 	<script type="text/javascript">
-	    let currentAccount = "<? echo $currentAccountName ?>";
+	    let currentAccount = "<?php echo $currentAccountName ?>";
 	
 	    /* Retrieve New DB Details */
         $('#choose-account').on('change', function (e) {

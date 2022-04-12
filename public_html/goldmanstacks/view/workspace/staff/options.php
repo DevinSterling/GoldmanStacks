@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
 
@@ -40,7 +40,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
-		<? notification(); ?>
+		<?php notification(); ?>
         <div class="container flex-center">
             <div class="list mini">
                 <button class="tab-button transform-button round selected"  data-id="change-password" data-title="Change Password">

@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('/home/sterlid2/Private/sysNotification.php');
 ?>
@@ -36,10 +36,10 @@ require_once('/home/sterlid2/Private/sysNotification.php');
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
-		<? notification(); ?>
+		<?php notification(); ?>
 	    <div class="list main">
 	        <div class="container">
-    	        <h2 id="title"><? echo $currentAccountName?> User (id)</h2>
+    	        <h2 id="title"><?php echo $currentAccountName?> User (id)</h2>
     	    </div>
         </div>
 	</body>

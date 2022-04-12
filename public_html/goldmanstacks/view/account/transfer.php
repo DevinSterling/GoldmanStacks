@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
@@ -61,7 +61,7 @@ $amountOfAccounts = 5;
 			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
-	<? 
+	<?php 
 	notification();
         if (!empty($referencedName)) {
             echo "<div class=\"container flex-center marginless-bottom\">
@@ -85,7 +85,7 @@ $amountOfAccounts = 5;
             
         ?>
         
-        <div class="container flex-center <? if ($referencedName !== null) echo "marginless" ?>">
+        <div class="container flex-center <?php if ($referencedName !== null) echo "marginless" ?>">
             <div class="list mini">
                 <button class="tab-button transform-button round selected" data-id="internal" data-title="Internal Transactions">
                     <div class="split">
@@ -116,7 +116,7 @@ $amountOfAccounts = 5;
     	            <label for="internal-sender" class="info">Sender</label>
     	            <div class="form-item">
     		            <select id="internal-sender" class="input-field">
-                            <?
+                            <?php
                             for ($n = 0; $n < $amountOfAccounts; $n++) {
                                echo "<option";
                                
@@ -132,7 +132,7 @@ $amountOfAccounts = 5;
     	            <label for="receiverreceiver" class="info">Receiver</label>
     	            <div class="form-item">
     		            <select id="internal-receiver" class="input-field">
-                            <?
+                            <?php
                             for ($n = 0; $n < $amountOfAccounts; $n++) {
                                echo "<option>$accounts[$n]</option>";
                             }
@@ -160,7 +160,7 @@ $amountOfAccounts = 5;
     	            <label for="external-sender" class="info">Sender</label>
     	            <div class="form-item">
     		            <select id="external-sender" class="input-field">
-                            <?
+                            <?php
                             for ($n = 0; $n < $amountOfAccounts; $n++) {
                                 echo "<option";
                                

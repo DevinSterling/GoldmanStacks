@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('../../../private/userbase.php');
 
 /* Force https connection */
@@ -123,7 +123,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" placeholder="Required" class="input-field" required>
 			    </div>
 			    <hr>
-			    <input type="hidden" name="token" value="<? echo $registrationToken ?>">
+			    <input type="hidden" name="token" value="<?php echo $registrationToken ?>">
 			    <div class="form-item">
 				<button type="submit" class="standard-button transform-button flex-center round">
 				    <div class="split">

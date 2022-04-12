@@ -1,4 +1,4 @@
-<?
+<?php
 require_once('../../../private/config.php');
 require_once('../../../private/userbase.php');
 
@@ -40,21 +40,15 @@ $dbMessage = "";
 
 $dbFailMessage = "Failed to register account";
 
-/* Confirm token and parameters */
+/* Calculate expected token */
 $calc = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
+
+/* Confirm token and user input */
 if (hash_equals($calc, $token) // Check token
-    && !(empty($firstName) // Check for empty parameters
-    || empty($lastName)
-    || empty($email)
-    || empty($password)
-    || empty($phoneNumber)
-    || empty($ssn)
-    || empty($addressLine1)
-    || empty($addressCity)
-    || empty($addressState)
-    || empty($addressPostalCode))
+    && checkNotEmpty($firstName, $lastName, $email, $password, $phoneNumber, $ssn, $addressLine1, $addressCity, $addressState, $addressPostalCode) // Check for empty parameters
     && ($password === $confirmPassword)) { // Check if given passwords match
     
+    /* String Manipulation */
     $phoneNumber = str_replace('-', '', $phoneNumber); // Remove hyphens if provided by user
     $ssn = str_replace('-', '', $ssn); // Remove hyphens if provided by user
   
@@ -135,4 +129,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>

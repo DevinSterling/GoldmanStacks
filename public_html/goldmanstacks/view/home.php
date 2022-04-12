@@ -1,4 +1,4 @@
-<?
+<?php
 /* PHP external files */
 require_once('../../../private/sysNotification.php');
 require_once('../../../private/config.php');
@@ -80,10 +80,10 @@ if ($db === null){
 				<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
 			</ul>
 		</nav>
-		<? notification(); ?>
+		<?php notification(); ?>
 		<div class="container flex-center">
 		    <div class="list main">
-		        <h2 id="title">Welcome, <? echo $user ?></h2>
+		        <h2 id="title">Welcome, <?php echo $user ?></h2>
 		        <div class="split">
 		            <label class="info">Available Accounts</label>
 		            <a href="account/open.php" class="expand-button transform-button extend-left round shadow">
@@ -97,7 +97,7 @@ if ($db === null){
 		                </div>
 		            </a>
 		        </div>
-		        <?			
+		        <?php			
 			/* Statement to get client account information */
 			$accountsStatement = $db->prepare("SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?");
 			$accountsStatement->bind_param("i", $userId);
@@ -145,10 +145,10 @@ if ($db === null){
 		    <div class="list sub">
 		        <div class="container round shadow">
     		        <div class="item-banner top-round">
-    		            <h2 class="big text-center">Total Balance: $<? echo $totalBalance ?></h2>
+    		            <h2 class="big text-center">Total Balance: $<?php echo $totalBalance ?></h2>
     		        </div>
     		        <div class="item-content bottom-round">
-    		            <p class="info text-center">Last Sign In: <? echo $lastVisit ?></p>
+    		            <p class="info text-center">Last Sign In: <?php echo $lastVisit ?></p>
     		            <hr>
                         <a href="account/funds.php" class="highlight-button transform-button split round">
                             <div class="list">
@@ -178,7 +178,7 @@ if ($db === null){
     		            <label class="banner-text"> Recent Activity</label>
     		        </div>
     		        <div class="item-content bottom-round">
-    		            <?    		            
+    		            <?php    		            
     		            	/* Statement to obtain transaction information */
 				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ".AMOUNT_OF_TRANSACTIONS);
 				$transactionStatement->bind_param("i", $userId);
@@ -234,7 +234,7 @@ if ($db === null){
         		        <label class="info" for="PayFrom">Pay From</label>
     		            <div class="form-item">
         		            <select id="PayFrom" class="input-field">
-                                <?
+                                <?php
 				foreach ($accounts as $account) {
 				    echo "<option>$account</option>";
 				}
@@ -247,7 +247,7 @@ if ($db === null){
     		            </div>
     		            <label class="info" for="Amount">Amount</label>
     		            <div class="form-item">
-        		            <input id="Amount" class="input-field" type="number" min="0" max="<? echo $totalBalance ?>">
+        		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>">
     		            </div>
     		            <div class="form-item">
                             <button form="payments" class="standard-button transform-button flex-center round">
@@ -267,6 +267,6 @@ if ($db === null){
 	<script type="text/javascript" src="../js/navigation.js"></script>
 	<script type="text/javascript" src="../js/post.js"></script>
 </html>
-<?
+<?php
 $db->close();	
 ?>
