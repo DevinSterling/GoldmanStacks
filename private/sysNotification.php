@@ -9,7 +9,6 @@ $class = "sys-notification";
 function notification(){ 
     global $broadcast, $message, $class;
     
-    if ($broadcast === false) return;
-    else echo "<div class=\"$class\">$message</div>";
+    if ($broadcast) echo "<div class=\"$class\">$message</div>";
 }
 ?>
