@@ -24,9 +24,9 @@ require_once('../../../../../private/userbase.php');
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="../manage">Goldman Stacks</a></li>
+				<li class="menulogo"><a href="../manager">Goldman Stacks</a></li>
                 		<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="../manage">Manage</a></li>
+				<li class="menuitem"><a href="../manager">Manage</a></li>
 				<li class="menuitem"><a href="../search">Search</a></li>
 			</ul>
 			<ul class="menugroup">

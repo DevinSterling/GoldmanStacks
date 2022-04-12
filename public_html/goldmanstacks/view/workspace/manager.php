@@ -26,9 +26,9 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="manage">Goldman Stacks</a></li>
+				<li class="menulogo"><a href="manager">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="manage">Manage</a></li>
+				<li class="menuitem"><a href="manager">Manage</a></li>
 				<li class="menuitem"><a href="search">Search</a></li>
 			</ul>
 			<ul class="menugroup">
@@ -44,23 +44,14 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		        <label class="info">Available Options</label>
     		    <a href="search" class="big-color-button transform-button split round shadow">
 		            <div class="list">
-		                <p class="focused-info">Manage Users</p>
-		                <p>Mange User Accounts</p>
+		                <p class="focused-info">Userbase</p>
+		                <p>Client Management</p>
 		            </div>
-		            <div class="holder">
-    		            <div class="animate-left">
-        		            <div class="toggle-button">
-        		                <i class="fas fa-chevron-right"></i>
-        		            </div>
-        		        </div>
-        		    </div>
-    		    </a>
-    		    <a href="#" class="big-color-button transform-button split round shadow">
-		            <div class="list">
-		                <p class="focused-info">Manage Button</p>
-		                <p>A Manage Button</p>
-		            </div>
-		            <div class="animate-left">
+		            <div class="split animate-left">
+		                <div class="list text-right">
+						    <p>Clients</p>
+							<p class="focused-info">14</p>
+		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
     		            </div>
@@ -68,10 +59,59 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		    </a>
     		    <a href="#" class="big-color-button transform-button split round shadow">
 		            <div class="list">
-		                <p class="focused-info">Manage Button 2</p>
-		                <p>A Manage Button 2</p>
+		                <p class="focused-info">Client Bank Account Requests</p>
+		                <p>Bank Account Management</p>
 		            </div>
-		            <div class="animate-left">
+		            <div class="split animate-left">
+		                <div class="list text-right">
+						    <p>Requests</p>
+							<p class="focused-info">14</p>
+		                </div>
+    		            <div class="toggle-button">
+    		                <i class="fas fa-chevron-right"></i>
+    		            </div>
+    		        </div>
+    		    </a>
+    		    <a href="#" class="big-color-button transform-button split round shadow">
+		            <div class="list">
+		                <p class="focused-info">Client Close Bank Account Requests</p>
+		                <p>Bank Account Management</p>
+		            </div>
+		            <div class="split animate-left">
+		                <div class="list text-right">
+						    <p>Requests</p>
+							<p class="focused-info">2</p>
+		                </div>
+    		            <div class="toggle-button">
+    		                <i class="fas fa-chevron-right"></i>
+    		            </div>
+    		        </div>
+    		    </a>
+    		    <a href="#" class="big-color-button transform-button split round shadow">
+		            <div class="list">
+		                <p class="focused-info">Client Registration Requests</p>
+		                <p>Registration Management</p>
+		            </div>
+		            <div class="split animate-left">
+		                <div class="list text-right">
+						    <p>Requests</p>
+							<p class="focused-info">91</p>
+		                </div>
+    		            <div class="toggle-button">
+    		                <i class="fas fa-chevron-right"></i>
+    		            </div>
+    		        </div>
+    		    </a>
+    		    <a href="#" class="big-color-button transform-button split round shadow">
+		            <div class="list">
+		                <p class="focused-info">Server Logs</p>
+		                <p>Server Management</p>
+		            </div>
+		            <div class="split animate-left">
+		                <div class="list text-right">
+						    <p>Logs</p>
+							<p class="focused-info">10</p>
+		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
     		            </div>
