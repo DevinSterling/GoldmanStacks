@@ -32,4 +32,3 @@ if (checkIfLoggedIn()) {
 
 /* Redirect user */
 header("Location: ../view/signin.php");
-?>
