@@ -1,23 +1,11 @@
 <?php
-/* PHP external files */
 require_once('../../../../private/config.php');
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
 
-/* Force https connection */
-forceHTTPS();
-
-session_start();
-if(!checkIfLoggedIn() || !isClient()) {
-    header('Location: ../signin.php');
-    die();
-}
-
-/* Check if the user has been inactive */
-if (checkInactive()) {
-    header("Location: ../../requests/signout.php");
-    die();
-}
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkClientStatus(); // Check if the client is signed in
 
 $userID = $_SESSION['uid'];
 

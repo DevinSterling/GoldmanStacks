@@ -2,17 +2,9 @@
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
 
-/* Check if the user is logged in already and is a client */
-session_start();
-if(!checkIfLoggedIn() || !isClient()) {
-    die();
-}
-
-/* Check if the user has been inactive */
-if (checkInactive()) {
-    header("Location: ../signout.php");
-    die();
-}
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkClientStatus(); // Check if the client is signed in
 
 /* SESSION Variables */
 $userID = $_SESSION["uid"];

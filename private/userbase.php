@@ -1,5 +1,5 @@
 <?php
-// Forces https connection
+/* Force browser to use https connection */
 function forceHTTPS() {
     if($_SERVER["HTTPS"] != "on") {
         header("Location: https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
@@ -7,28 +7,78 @@ function forceHTTPS() {
     }
 }
 
-/* Checks the status and determines if a user is a client */
-function checkClientStatus() {
-    forceHTTPS(); // Force client to use https
-    checkIfLoggedIn(); // Check if client is logged in
-
-    if ($_SESSION['role'] !== "client") { // Check if logged in user is a client
-        header("Location: ../public_html/goldmanstacks/index.php");
+/* Check if a user is signed in */
+function checkIfLoggedIn() {
+    if (isset($_SESSION['uid']) && isset($_SESSION['role'])) {
+        return true;
+    } else {
+        return false;
     }
 }
 
-// Determines if a user is logged into the website
-function checkIfLoggedIn() {
-    if (isset($_SESSION['uid']) && isset($_SESSION['role'])) return true;
-    return false;
-}
-
-// Inactivity Detection
-function checkInactive() {
-    if ($_SESSION['last_activity'] < time() - $_SESSION['expiry_time'] ) { // Inactive User Condition
+/* Check if user is a client */
+function isClient() {
+    if ($_SESSION['role'] === "client") {
         return true;
     } else {
-        $_SESSION['last_activity'] = time();
         return false;
+    }
+}
+
+/* Check if user is an admin */
+function isAdmin() {
+    if ($_SESSION['role'] === "admin") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/* Check if a user has been inactive */
+function checkInactive() {
+    if ($_SESSION['last_activity'] < time() - $_SESSION['expiry_time'] ) { // Inactive User Condition
+        header("Location: ../public_html/goldmanstacks/requests/signout.php");
+        die();
+    } else {
+        $_SESSION['last_activity'] = time();
+    }
+}
+
+/* Redirect user to their respective main page */
+function redirect() {
+    if (isClient()) {
+        header("Location: ../public_html/goldmanstacks/view/home.php"); // Redirect client to their home page
+        die();
+    } else if (isAdmin()) {
+        header("Location: ../public_html/goldmanstacks/view/workspace/manage.php"); // Redirect admin to workspace
+        die();
+    } else {
+        header("Location: ../public_html/goldmanstacks/view/signin.php"); // Redirect to sign in page
+        die();
+    }
+}
+
+/* Check the status and determine if a user is a client */
+function checkClientStatus() {
+    if (checkIfLoggedIn()) { // Check if user is logged in
+        if (isClient()) { // Check if user is a client
+            checkInactive(); // Check if the client has been inactive
+            return;
+        }
+    }
+
+    /* Guard Block */
+    redirect();
+}
+
+/* Check the status and determine if a user is a visitor (not signed into the site) */
+function checkVisitorStatus() {
+    if (checkIfLoggedIn()) { // Redirect a signed in user to their main page
+        redirect();
+    } else {
+        /* Generate a key for the visitor for form access (csrf protection) */
+        if (!isset($_SESSION['key'])) {
+            $_SESSION['key'] = bin2hex(random_bytes(32));
+        }
     }
 }

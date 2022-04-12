@@ -1,23 +1,11 @@
 <?php
 require_once('../../../private/userbase.php');
 
-/* Force https connection */
-forceHTTPS();
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkVisitorStatus(); // Checks if the user is a visitor
 
-/* Check if the user is logged in already */
-session_start();
-if(checkIfLoggedIn()) {
-    if (isClient()) {
-        header("Location: home.php");
-        die();
-    }
-}
-
-/* Check if there is a key */
-if (!isset($_SESSION['key'])) {
-    $_SESSION['key'] = bin2hex(random_bytes(32));
-}
-
+/* Registration form csrf token */
 $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
 ?>
 
@@ -38,7 +26,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         <!-- Svg Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
         <!-- Different screen size scaling compatability -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
         <div class="flex-center-item">

@@ -1,24 +1,12 @@
 <?php
-/* PHP external files */
 require_once('../../../private/sysNotification.php');
 require_once('../../../private/config.php');
 require_once('../../../private/userbase.php');
+require_once('../../../private/functions.php');
 
-/* Force https connection */
-forceHTTPS();
-
-/* Check if the user is logged in already */
-session_start();
-if (!checkIfLoggedIn() || !isClient()) {
-    header("Location: signin.php");
-    die();
-}
-
-/* Check if the user has been inactive */
-if (checkInactive()) {
-    header("Location: ../requests/signout.php");
-    die();
-}
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkClientStatus(); // Check if the client is signed in
 
 /* Constants */
 const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
@@ -98,49 +86,49 @@ if ($db === null){
 		            </a>
 		        </div>
 		        <?php			
-			/* Statement to get client account information */
-			$accountsStatement = $db->prepare("SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?");
-			$accountsStatement->bind_param("i", $userId);
-			$accountsStatement->execute();
-			
-			/* Obtain reults */
-			$accountsResult = $accountsStatement->get_result();
-			$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
-			    
-			foreach ($accountsRows as $account) {
-		 	    $accounts[] = $account['nickName'];
-			    $accNumber = substr($account['accountNum'], -4); // Temp Variable (to be deleted)
-			    
-			    /* Determine if account type is credit or not */
-			    if ($account['accountType'] == 'credit') {
-				$totalBalance -= $account['balance'];
-				$account_message = "Credit Used";
-			    } else {
-				$totalBalance += $account['balance'];
-				$account_message = "Available";
-			    }
-			    
-		            /* Create button for each account */
-			    echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
-				      <div class=\"list\">
-					    <p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
-					    <p>".ucfirst($account['accountType'])." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
-				      </div>
-				      <div class=\"split animate-left\">
-					    <div class=\"list text-right\">
-						<p>".$account_message."</p>
-						    <p class=\"focused-info\">\$".$account['balance']."</p>
-					    </div>
-					    <div class=\"toggle-button\">
-						<i class=\"fas fa-chevron-right\"></i>
-					    </div>
-				      </div>
-				  </a>";
-			}
-			
-			$accountsResult->free();
-			$accountsStatement->close();
-			?>
+				/* Statement to get client account information */
+				$accountsStatement = $db->prepare("SELECT accountNum, accountType, balance, nickName FROM accountDirectory WHERE clientID=?");
+				$accountsStatement->bind_param("i", $userId);
+				$accountsStatement->execute();
+				
+				/* Obtain reults */
+				$accountsResult = $accountsStatement->get_result();
+				$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
+					
+				foreach ($accountsRows as $account) {
+					$accounts[] = $account['nickName'];
+					$accNumber = substr($account['accountNum'], -4); // Temp Variable (to be deleted)
+					
+					/* Determine if account type is credit or not */
+					if ($account['accountType'] == 'credit') {
+					$totalBalance -= $account['balance'];
+					$account_message = "Credit Used";
+					} else {
+					$totalBalance += $account['balance'];
+					$account_message = "Available";
+					}
+					
+						/* Create button for each account */
+					echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
+						<div class=\"list\">
+							<p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
+							<p>".ucfirst($account['accountType'])." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
+						</div>
+						<div class=\"split animate-left\">
+							<div class=\"list text-right\">
+							<p>".$account_message."</p>
+								<p class=\"focused-info\">\$".$account['balance']."</p>
+							</div>
+							<div class=\"toggle-button\">
+							<i class=\"fas fa-chevron-right\"></i>
+							</div>
+						</div>
+					</a>";
+				}
+				
+				$accountsResult->free();
+				$accountsStatement->close();
+				?>
 		    </div>
 		    <div class="list sub">
 		        <div class="container round shadow">
@@ -179,46 +167,39 @@ if ($db === null){
     		        </div>
     		        <div class="item-content bottom-round">
     		            <?php    		            
-    		            	/* Statement to obtain transaction information */
-				$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ".AMOUNT_OF_TRANSACTIONS);
-				$transactionStatement->bind_param("i", $userId);
-				$transactionStatement->execute();
+						/* Statement to obtain transaction information */
+						$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ".AMOUNT_OF_TRANSACTIONS);
+						$transactionStatement->bind_param("i", $userId);
+						$transactionStatement->execute();
+						
+						/* Obtain results */
+						$transactionResult = $transactionStatement->get_result();
+						$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
+												
+						foreach ($transactionRows as $transaction) {							
+							echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
+									<div class=\"list-padded\">
+										<h3 class=\"bold\">Transaction</h3>
+										<p>".$transaction['transactionTime']."<p>
+									</div>
+									<div class=\"split animate-left\">
+										<div class=\"list-padded text-right\">
+											<h3>".convertToCurrency($transaction['transactionAmount'])."</h3>
+											<p>".ucfirst($transaction['type'])."</p>
+										</div>
+										<div class=\"toggle-button\">
+											<i class=\"fas fa-chevron-right\"></i>
+										</div>
+									</div>
+								</a>";
+							
+							if ($transaction != end($transactionRows)){
+								echo "<hr>";
+							}
+						}
 				
-				/* Obtain results */
-    		            	$transactionResult = $transactionStatement->get_result();
-                            	$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
-				    				    
-                            	foreach ($transactionRows as $transaction) {
-				    $transactionAmount = $transaction['transactionAmount']; // temp variables (will switch to a function later)
-				    if ($transactionAmount < 0) {
-				    	$transactionAmount = "-$".$transactionAmount * -1;
-				    } else {
-				    	$transactionAmount = "$".$transactionAmount;
-				    }
-					
-		                    echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
-		                            <div class=\"list-padded\">
-		                                <h3 class=\"bold\">Transaction</h3>
-		                                <p>".$transaction['transactionTime']."<p>
-		                            </div>
-		                            <div class=\"split animate-left\">
-		                                <div class=\"list-padded text-right\">
-		                                    <h3>".$transactionAmount."</h3>
-		                                    <p>".ucfirst($transaction['type'])."</p>
-		                                </div>
-                       		            <div class=\"toggle-button\">
-                        		            <i class=\"fas fa-chevron-right\"></i>
-                        		        </div>
-		                            </div>
-		                          </a>";
-		                    
-		                    if ($transaction != end($transactionRows)){
-		                        echo "<hr>";
-		                    }
-		                }
-				    
-				$transactionResult->free();
-				$transactionStatement->close();
+						$transactionResult->free();
+						$transactionStatement->close();
     		            ?>
     		        </div>
     		    </div>
@@ -235,9 +216,9 @@ if ($db === null){
     		            <div class="form-item">
         		            <select id="PayFrom" class="input-field">
                                 <?php
-				foreach ($accounts as $account) {
-				    echo "<option>$account</option>";
-				}
+								foreach ($accounts as $account) {
+									echo "<option>$account</option>";
+								}
                                 ?>
         		            </select>
         		        </div>
@@ -268,5 +249,4 @@ if ($db === null){
 	<script type="text/javascript" src="../js/post.js"></script>
 </html>
 <?php
-$db->close();	
-?>
+$db->close();

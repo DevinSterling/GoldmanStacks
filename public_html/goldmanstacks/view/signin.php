@@ -1,20 +1,9 @@
 <?php
 require_once('../../../private/userbase.php');
 
-/* Force https connection */
-forceHTTPS();
-
-/* Check if the user is logged in already */
-session_start();
-if(checkIfLoggedIn()) {
-    header("Location: home.php");
-    die();
-}
-
-/* Check if there is a key */
-if (!isset($_SESSION['key'])) {
-    $_SESSION['key'] = bin2hex(random_bytes(32));
-}
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkVisitorStatus(); // Checks if the user is a visitor
 
 /* Signin form csrf token */
 $signinToken = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']); 
@@ -39,7 +28,7 @@ if (isset($_GET['registered'])) {
     	<!-- Stylesheet -->
     	<link rel="stylesheet" href="../css/stylesheet.css">
     	<!-- Favicon -->
-	<link rel="icon" href="../img/logo.ico">
+		<link rel="icon" href="../img/logo.ico">
     	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->

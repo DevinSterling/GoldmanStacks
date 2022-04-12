@@ -8,3 +8,15 @@ function checkNotEmpty(...$params) {
 	
 	return true;
 }
+
+function convertToCurrency($amount) {
+    $currency = '$';
+
+    if ($amount < 0) { // Negative amount
+        $currency = '-' . $currency . $amount * -1;
+    } else { // Positive amount
+        $currency = $currency . $amount;
+    }
+
+    return $currency;
+}

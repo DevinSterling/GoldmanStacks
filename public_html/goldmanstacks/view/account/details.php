@@ -1,23 +1,12 @@
 <?php
-/* PHP external files */
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/functions.php');
 
-/* Force https connection */
-forceHTTPS();
-
-session_start();
-if(!checkIfLoggedIn() || !isClient()) {
-    header("Location: ../signin.php");
-    die();
-}
-
-/* Check if the user has been inactive */
-if (checkInactive()) {
-    header("Location: ../../requests/signout.php");
-    die();
-}
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkClientStatus(); // Check if the client is signed in
 
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
@@ -65,12 +54,12 @@ if (!in_array($currentAccountName, $accounts)) {
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title><?php echo strtoupper($currentAccountName)?> Account Details</title>
-	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../../css/stylesheet.css">
-	<!-- Favicon -->
-	<link rel="icon" href="../../img/logo.ico">
-	<!-- Google Font -->
+        <title><?php echo strtoupper($currentAccountName)?> Account Details</title>
+        <!-- Stylesheet -->
+        <link rel="stylesheet" href="../../css/stylesheet.css">
+        <!-- Favicon -->
+        <link rel="icon" href="../../img/logo.ico">
+        <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,7 +68,7 @@ if (!in_array($currentAccountName, $accounts)) {
         <!-- Svg Icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
         <!-- Different screen size scaling compatability -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
 	<nav class="menubar">
@@ -128,34 +117,27 @@ if (!in_array($currentAccountName, $accounts)) {
                     </thead>
                     <tbody tabindex="0" id="transactions-body">
 		            <?php
-				/* Query to get all transactions from the selected account */
-				$transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)");
-				$transactionStatement->bind_param("s", $currentAccountName);
-				$transactionStatement->execute();
-				
-				/* Obtain result */
-				$result = $transactionStatement->get_result();
-				$rows = $result->fetch_all(MYSQLI_ASSOC);
+                    /* Query to get all transactions from the selected account */
+                    $transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)");
+                    $transactionStatement->bind_param("s", $currentAccountName);
+                    $transactionStatement->execute();
+                    
+                    /* Obtain result */
+                    $result = $transactionStatement->get_result();
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-				foreach ($rows as $transaction) {					
-				    $transactionAmount = $transaction['transactionAmount']; // temp variables (will switch to a function later)
-				    if ($transactionAmount < 0) {
-				    	$transactionAmount = "-$".$transactionAmount * -1;
-				    } else {
-				    	$transactionAmount = "$".$transactionAmount;
-				    }
-					
-				    echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
-					    <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
-					    <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
-					    <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
-					    <td data-label=\"Description\" class=\"desc\">Transaction - ".ucfirst($transaction['type'])."</td>
-					    <td data-label=\"Amount\" class=\"amount\">".$transactionAmount."</td>
-					</tr>";
-				}
-				
-				$result->free();
-				$transactionStatement->close();
+                    foreach ($rows as $transaction) {					
+                        echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
+                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
+                            <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
+                            <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
+                            <td data-label=\"Description\" class=\"desc\">Transaction - ".ucfirst($transaction['type'])."</td>
+                            <td data-label=\"Amount\" class=\"amount\">".convertToCurrency($transaction['transactionAmount'])."</td>
+                        </tr>";
+                    }
+                    
+                    $result->free();
+                    $transactionStatement->close();
 		            ?>
 		            </tbody>
 	            </table>

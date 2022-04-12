@@ -2,14 +2,11 @@
 require_once('../../../private/config.php');
 require_once('../../../private/userbase.php');
 
-/* Force https connection */
-forceHTTPS();
+forceHTTPS(); // Force https connection
+session_start(); // Start session
 
-/* Check if the user is logged in already */
-session_start();
-if(checkIfLoggedIn()) {
-    die();
-}
+/* Check if a user is logged in already */
+if (checkIfLoggedIn()) die();
 
 /* POST Variables */
 /* Name related info */

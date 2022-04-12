@@ -1,16 +1,17 @@
 <?php
 require_once('../../../private/userbase.php');
 
-/* Check if the user is logged in already */
-session_start();
+session_start(); // start session
+
+/* Check if the user is signed in to sign out */
 if (checkIfLoggedIn()) {
-    // Used to notify if the user has been signed out due to inactivity
+    /* Used to notify if the user has been signed out due to inactivity */
     $isInactive = checkInactive();
     
-    // Unset all session variables.
+    /* Unset all session variables. */
     $_SESSION = array();
     
-    // Delete the session cookie
+    /* Delete the session cookie */
     if (ini_get("session.use_cookies")) {
         $params = session_get_cookie_params();
         setcookie(session_name(), '', time() - 42000,
@@ -19,16 +20,16 @@ if (checkIfLoggedIn()) {
         );
     }
     
-    // Destroy the session.
+    /* Destroy the session. */
     session_destroy();
     
-    // Redirect if inactive
+    /* Redirect if inactive */
     if ($isInactive) {
         header("Location: ../view/signin.php?timeout=1");
         die();
     }
 }
 
-// Redirect
+/* Redirect user */
 header("Location: ../view/signin.php");
 ?>
