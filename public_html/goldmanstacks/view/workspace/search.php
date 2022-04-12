@@ -26,14 +26,14 @@ $amountOfUsers = 40
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="manage.php">Goldman Stacks</a></li>
+				<li class="menulogo"><a href="manage">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="manage.php">Manage</a></li>
-				<li class="menuitem"><a href="search.php">Search</a></li>
+				<li class="menuitem"><a href="manage">Manage</a></li>
+				<li class="menuitem"><a href="search">Search</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="staff/options.php">Options</a></li>
-				<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="staff/options">Options</a></li>
+				<li class="menuitem"><a href="../login">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">

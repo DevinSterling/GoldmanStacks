@@ -45,17 +45,17 @@ if ($db === null) {
 	<body>
         <nav class="menubar">
         	<ul class="menugroup">
-        		<li class="menulogo"><a href="../home.php">Goldman Stacks</a></li>
+        		<li class="menulogo"><a href="../home">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-        		<li class="menuitem"><a href="../home.php">Home</a></li>
-        		<li class="menuitem"><a href="../account/transfer.php">Transfer</a></li>
-        		<li class="menuitem"><a href="../account/payments.php">Payments</a></li>
-        		<li class="menuitem"><a href="../account/open.php">Open New Account</a></li>
-        		<li class="menuitem"><a href="../account/statement.php">Statement</a></li>
+        		<li class="menuitem"><a href="../home">Home</a></li>
+        		<li class="menuitem"><a href="../account/transfer">Transfer</a></li>
+        		<li class="menuitem"><a href="../account/payments">Payments</a></li>
+        		<li class="menuitem"><a href="../account/open">Open New Account</a></li>
+        		<li class="menuitem"><a href="../account/statement">Statement</a></li>
         	</ul>
         	<ul class="menugroup">
-        		<li class="menuitem"><a href="options.php">Options</a></li>
-        		<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
+        		<li class="menuitem"><a href="options">Options</a></li>
+        		<li class="menuitem"><a href="../../requests/signout">Sign Out</a></li>
         	</ul>
         </nav>
         <?php notification(); ?>
@@ -69,7 +69,7 @@ if ($db === null) {
         </button>
         <div class="container flex-center">
             <div class="list mini">
-                <a href="options.php" class="tab-button transform-button round selected" data-id="overview" data-title="Account Overview">
+                <a href="options" class="tab-button transform-button round selected" data-id="overview" data-title="Account Overview">
                     <div class="split">
                         <div class="text-right">
                             <p>Overview</p>

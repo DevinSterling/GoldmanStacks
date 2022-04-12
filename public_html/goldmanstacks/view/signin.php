@@ -66,7 +66,7 @@ if (isset($_GET['registered'])) {
     		            <input id="password" class="input-field" name="password" type="password" required>
     	            </div>
     	            <input type="hidden" name="token" value="<?php echo $signinToken ?>">
-                    <a href="register.php" class="highlight-button transform-button split round">
+                    <a href="register" class="highlight-button transform-button split round">
                         <div class="list">
                             <p><i class="fas fa-info icon"></i>Don't have an account? Register here</p>
                         </div>

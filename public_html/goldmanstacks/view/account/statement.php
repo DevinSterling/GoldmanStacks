@@ -29,17 +29,17 @@ checkClientStatus(); // Check if the client is signed in
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-			<li class="menulogo"><a href="../home.php">Goldman Stacks</a></li>
+			<li class="menulogo"><a href="../home">Goldman Stacks</a></li>
 			<li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-			<li class="menuitem"><a href="../home.php">Home</a></li>
-			<li class="menuitem"><a href="transfer.php">Transfer</a></li>
-			<li class="menuitem"><a href="payments.php">Payments</a></li>
-			<li class="menuitem"><a href="open.php">Open New Account</a></li>
-			<li class="menuitem"><a href="statement.php">Statement</a></li>
+			<li class="menuitem"><a href="../home">Home</a></li>
+			<li class="menuitem"><a href="transfer">Transfer</a></li>
+			<li class="menuitem"><a href="payments">Payments</a></li>
+			<li class="menuitem"><a href="open">Open New Account</a></li>
+			<li class="menuitem"><a href="statement">Statement</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="../user/options.php">Options</a></li>
-				<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
+				<li class="menuitem"><a href="../user/options">Options</a></li>
+				<li class="menuitem"><a href="../../requests/signout">Sign Out</a></li>
 			</ul>
 		</nav>
 		<?php notification(); ?>

@@ -26,14 +26,14 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	<body>
 		<nav class="menubar">
 			<ul class="menugroup">
-				<li class="menulogo"><a href="manage.php">Goldman Stacks</a></li>
+				<li class="menulogo"><a href="manage">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
-				<li class="menuitem"><a href="manage.php">Manage</a></li>
-				<li class="menuitem"><a href="search.php">Search</a></li>
+				<li class="menuitem"><a href="manage">Manage</a></li>
+				<li class="menuitem"><a href="search">Search</a></li>
 			</ul>
 			<ul class="menugroup">
-				<li class="menuitem"><a href="staff/options.php">Options</a></li>
-				<li class="menuitem"><a href="../login.php">Sign Out</a></li>
+				<li class="menuitem"><a href="staff/options">Options</a></li>
+				<li class="menuitem"><a href="../login">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
@@ -42,7 +42,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		    <div class="list main">
 		        <h2 id="title">Management</h2>
 		        <label class="info">Available Options</label>
-    		    <a href="search.php" class="big-color-button transform-button split round shadow">
+    		    <a href="search" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Manage Users</p>
 		                <p>Mange User Accounts</p>
@@ -88,7 +88,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
         		        <hr>
         		        <p>Last Log: <?php echo $lastLog ?></p>	
         		        <hr>
-        		        <a href="staff/options.php" class="highlight-button transform-button split round">
+        		        <a href="staff/options" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p>Options</p>
                             </div>
@@ -99,7 +99,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
                             </div>
         		        </a>
                         <hr>
-        		        <a href="../login.php" class="highlight-button transform-button split round">
+        		        <a href="../login" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p>Sign Out</p>
                             </div>
