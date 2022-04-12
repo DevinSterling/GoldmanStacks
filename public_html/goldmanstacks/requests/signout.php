@@ -24,11 +24,11 @@ if (checkIfLoggedIn()) {
     
     // Redirect if inactive
     if ($isInactive) {
-        header("Location: ../signin.php?timeout=1");
+        header("Location: ../view/signin.php?timeout=1");
         die();
     }
 }
 
 // Redirect
-header("Location: ../signin.php");
+header("Location: ../view/signin.php");
 ?>
