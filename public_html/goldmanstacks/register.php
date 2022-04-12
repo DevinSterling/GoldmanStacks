@@ -1,5 +1,5 @@
 <?
-require_once('/home/sterlid2/Private/userbase.php');
+require_once('../../private/userbase.php');
 
 /* Force https connection */
 forceHTTPS();
