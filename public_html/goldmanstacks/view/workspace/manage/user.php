@@ -8,9 +8,9 @@ require_once('/home/sterlid2/Private/sysNotification.php');
 	<head>
 	<title>Options</title>
 	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../../CSS/stylesheet.css">
+	<link rel="stylesheet" href="../../../css/stylesheet.css">
 	<!-- Favicon -->
-	<link rel="icon" href="../../Images/logo.ico">
+	<link rel="icon" href="../../../img/logo.ico">
 	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->

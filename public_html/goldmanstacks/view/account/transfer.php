@@ -1,7 +1,7 @@
 <?
 /* PHP external files */
-require_once('../../../private/sysNotification.php');
-require_once('../../../private/userbase.php');
+require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/userbase.php');
 
 /* Force https connection */
 forceHTTPS();
@@ -14,7 +14,7 @@ if(!checkIfLoggedIn() || !isClient()) {
 
 /* Check if the user has been inactive */
 if (checkInactive()) {
-    header("Location: ../requests/signout.php");
+    header("Location: ../../requests/signout.php");
     die();
 }
 
@@ -31,9 +31,9 @@ $amountOfAccounts = 5;
 	<head>
 	<title>Transfer</title>
 	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../CSS/stylesheet.css">
+	<link rel="stylesheet" href="../../css/stylesheet.css">
 	<!-- Favicon -->
-	<link rel="icon" href="../Images/logo.ico">
+	<link rel="icon" href="../../img/logo.ico">
 	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -58,7 +58,7 @@ $amountOfAccounts = 5;
 		</ul>
 		<ul class="menugroup">
 			<li class="menuitem"><a href="../user/options.php">Options</a></li>
-			<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
+			<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
 		</ul>
 	</nav>
 	<? 
@@ -198,6 +198,6 @@ $amountOfAccounts = 5;
             <div class="list mini"></div>
     	</div>
 	</body>
-	<script type="text/javascript" src="../Scripts/navigation.js"></script>
-	<script type="text/javascript" src="../Scripts/tabs.js"></script>
+	<script type="text/javascript" src="../../js/navigation.js"></script>
+	<script type="text/javascript" src="../../js/tabs.js"></script>
 </html>

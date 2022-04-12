@@ -12,9 +12,9 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	<head>
 	<title>Management</title>
 	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../CSS/stylesheet.css">
+	<link rel="stylesheet" href="../../css/stylesheet.css">
 	<!-- Favicon -->
-	<link rel="icon" href="../Images/logo.ico">
+	<link rel="icon" href="../../img/logo.ico">
 	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -117,6 +117,6 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		    </div>
 		</div>
 	</body>
-	<script type="text/javascript" src="../Scripts/navigation.js">
+	<script type="text/javascript" src="../../js/navigation.js">
 	</script>
 </html>

@@ -1,8 +1,8 @@
 <?
 /* PHP external files */
-require_once('../../../private/config.php');
-require_once('../../../private/sysNotification.php');
-require_once('../../../private/userbase.php');
+require_once('../../../../private/config.php');
+require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/userbase.php');
 
 /* Force https connection */
 forceHTTPS();
@@ -15,7 +15,7 @@ if(!checkIfLoggedIn() || !isClient()) {
 
 /* Check if the user has been inactive */
 if (checkInactive()) {
-    header("Location: ../requests/signout.php");
+    header("Location: ../../requests/signout.php");
     die();
 }
 
@@ -40,9 +40,9 @@ if ($db === null) {
 	<head>
 	    <title>User Options</title>
 	    <!-- Stylesheet -->
-	    <link rel="stylesheet" href="../CSS/stylesheet.css">
+	    <link rel="stylesheet" href="../../css/stylesheet.css">
 	    <!-- Favicon -->
-	    <link rel="icon" href="../Images/logo.ico">
+	    <link rel="icon" href="../../img/logo.ico">
 	    <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -67,7 +67,7 @@ if ($db === null) {
         	</ul>
         	<ul class="menugroup">
         		<li class="menuitem"><a href="options.php">Options</a></li>
-        		<li class="menuitem"><a href="../requests/signout.php">Sign Out</a></li>
+        		<li class="menuitem"><a href="../../requests/signout.php">Sign Out</a></li>
         	</ul>
         </nav>
         <? notification(); ?>
@@ -210,7 +210,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-password"  data-url="../requests/user/updatePassword.php" class="hidden">
+                <form id="change-password"  data-url="../../requests/user/updatePassword.php" class="hidden">
                     <label for="current-password" class="info">Current Password</label>
     	            <div class="form-item">
     		            <input id="current-password" type="password" name="old" class="input-field" required>
@@ -237,7 +237,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-address" data-url="../requests/user/updateAddress.php" class="hidden">
+                <form id="change-address" data-url="../../requests/user/updateAddress.php" class="hidden">
                     <label for="address-line-1" class="info">Address Line 1</label>
                     <div class="form-item">
                         <input id="address-line-1" type="text" name="line1" class="input-field" required>
@@ -271,7 +271,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-phone" data-url="../requests/user/updatePhoneNumber.php" class="hidden">
+                <form id="change-phone" data-url="../../requests/user/updatePhoneNumber.php" class="hidden">
                     <label for="phone-number" class="info">Phone Number</label>
                     <div class="form-item">
                         <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
@@ -289,7 +289,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-email" data-url="../requests/user/updateEmail.php" class="hidden">
+                <form id="change-email" data-url="../../requests/user/updateEmail.php" class="hidden">
                     <label for="email-address" class="info">Email Address</label>
                     <div class="form-item">
                         <input id="email-address" type="email" name="email" class="input-field" required>
@@ -313,10 +313,10 @@ if ($db === null) {
             </div>
     	</div>
 	</body>
-	<script type="text/javascript" src="../Scripts/navigation.js"></script>
-	<script type="text/javascript" src="../Scripts/tabs.js"></script>
-	<script type="text/javascript" src="../Scripts/post.js"></script>
-	<script type="text/javascript" src="../Scripts/notification.js"></script>
+	<script type="text/javascript" src="../../js/navigation.js"></script>
+	<script type="text/javascript" src="../../js/tabs.js"></script>
+	<script type="text/javascript" src="../../js/post.js"></script>
+	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('change-password').addEventListener('submit', handlePasswordForm);

@@ -26,9 +26,9 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
     <head>
     	<title>Register</title>
     	<!-- Stylesheet -->
-    	<link rel="stylesheet" href="CSS/stylesheet.css">
+    	<link rel="stylesheet" href="../css/stylesheet.css">
     	<!-- Favicon -->
-	    <link rel="icon" href="Images/logo.ico">
+	    <link rel="icon" href="../img/logo.ico">
     	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -139,7 +139,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
             </div>
         </div>
     </body>
-    <script type="text/javascript" src="Scripts/notification.js"></script>
+    <script type="text/javascript" src="../js/notification.js"></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('register').addEventListener('submit', handleForm);
@@ -151,7 +151,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
             let form = event.target;
             let formData = new FormData(form);
 	        
-            let url = "requests/authenticateRegistration.php";
+            let url = "../requests/authenticateRegistration.php";
             let request = new Request(url, {
 	        body: formData,
 	        method: 'POST',

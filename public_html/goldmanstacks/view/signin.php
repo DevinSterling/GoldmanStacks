@@ -37,9 +37,9 @@ if (isset($_GET['registered'])) {
     <head>
     	<title>Sign In</title>
     	<!-- Stylesheet -->
-    	<link rel="stylesheet" href="CSS/stylesheet.css">
+    	<link rel="stylesheet" href="../css/stylesheet.css">
     	<!-- Favicon -->
-	<link rel="icon" href="Images/logo.ico">
+	<link rel="icon" href="../img/logo.ico">
     	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
@@ -101,7 +101,7 @@ if (isset($_GET['registered'])) {
             </div>
         </div>
     </body>
-	<script type="text/javascript" src="Scripts/notification.js"></script>
+	<script type="text/javascript" src="../js/notification.js"></script>
 	<script type="text/javascript">
 	let registered = <? echo $registered ? 'true' : 'false' ?>;
 	let timeout = <? echo $timeout ? 'true' : 'false' ?>;
@@ -124,7 +124,7 @@ if (isset($_GET['registered'])) {
 	        let form = event.target;
 	        let formData = new FormData(form);
 	        
-	        let url = "requests/authenticateSignin.php";
+	        let url = "../requests/authenticateSignin.php";
 	        let request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
