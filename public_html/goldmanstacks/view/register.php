@@ -54,7 +54,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	  	    </button>
                     <a href="signin.php" class="highlight-button transform-button split round">
                         <div class="list">
-                            <p><i class="fas fa-info icon"></i> Have an account? Sign in here</p>
+                            <p><i class="fas fa-info icon"></i>Have an account? Sign in here</p>
                         </div>
                         <div class="animate-left">
             	            <div class="toggle-button">
