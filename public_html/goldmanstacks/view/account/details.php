@@ -65,7 +65,7 @@ if (!in_array($currentAccountName, $accounts)) {
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title><?phpecho strtoupper($currentAccountName)?> Account Details</title>
+	<title><?php echo strtoupper($currentAccountName)?> Account Details</title>
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../../css/stylesheet.css">
 	<!-- Favicon -->
