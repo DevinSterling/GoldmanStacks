@@ -172,7 +172,7 @@ if ($db === null) {
                     <h5 class="big-info">Address Information</h5>
                     <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($address['line1']) ?></p>
                     <?php
-			if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($address['line2'])."</p>";
+			        if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($address['line2'])."</p>";
                     ?>
                     <p class="info"><b>City</b>: <?php echo htmlspecialchars($address['city']) ?></p>
                     <p class="info"><b>State</b>: <?php echo htmlspecialchars($address['state']) ?></p>
@@ -198,7 +198,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-password"  data-url="../../requests/user/updatePassword.php" class="hidden">
+                <form id="change-password"  data-url="../../requests/user/updatePassword" class="hidden">
                     <label for="current-password" class="info">Current Password</label>
     	            <div class="form-item">
     		            <input id="current-password" type="password" name="old" class="input-field" required>
@@ -225,7 +225,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-address" data-url="../../requests/user/updateAddress.php" class="hidden">
+                <form id="change-address" data-url="../../requests/user/updateAddress" class="hidden">
                     <label for="address-line-1" class="info">Address Line 1</label>
                     <div class="form-item">
                         <input id="address-line-1" type="text" name="line1" class="input-field" required>
@@ -259,7 +259,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-phone" data-url="../../requests/user/updatePhoneNumber.php" class="hidden">
+                <form id="change-phone" data-url="../../requests/user/updatePhoneNumber" class="hidden">
                     <label for="phone-number" class="info">Phone Number</label>
                     <div class="form-item">
                         <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
@@ -277,7 +277,7 @@ if ($db === null) {
                         </button>
                     </div>
                 </form>
-                <form id="change-email" data-url="../../requests/user/updateEmail.php" class="hidden">
+                <form id="change-email" data-url="../../requests/user/updateEmail" class="hidden">
                     <label for="email-address" class="info">Email Address</label>
                     <div class="form-item">
                         <input id="email-address" type="email" name="email" class="input-field" required>

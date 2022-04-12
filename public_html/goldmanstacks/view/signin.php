@@ -113,7 +113,7 @@ if (isset($_GET['registered'])) {
 	        let form = event.target;
 	        let formData = new FormData(form);
 	        
-	        let url = "../requests/authenticateSignin.php";
+	        let url = "../requests/authenticateSignin";
 	        let request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
@@ -126,7 +126,7 @@ if (isset($_GET['registered'])) {
 
 	                if (data.response) {
 	                    setSuccessNotification(data.message);
-	                    window.location.href = "home.php";
+	                    window.location.href = "home";
 	                } else {
 	                    setFailNotification(data.message);
 	                }

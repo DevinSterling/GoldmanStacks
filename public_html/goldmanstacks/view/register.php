@@ -139,7 +139,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
             let form = event.target;
             let formData = new FormData(form);
 	        
-            let url = "../requests/authenticateRegistration.php";
+            let url = "../requests/authenticateRegistration";
             let request = new Request(url, {
 	        body: formData,
 	        method: 'POST',
