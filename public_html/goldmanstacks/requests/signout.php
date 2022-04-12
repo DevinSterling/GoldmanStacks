@@ -1,5 +1,5 @@
 <?
-require_once('/home/sterlid2/Private/userbase.php');
+require_once('../../../private/userbase.php');
 
 /* Check if the user is logged in already */
 session_start();
