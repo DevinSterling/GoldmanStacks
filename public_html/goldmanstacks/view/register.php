@@ -187,7 +187,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         const passwordField = document.getElementById('password');
         const confirmPasswordField = document.getElementById('confirm-password');
         const ageField = document.getElementById('birth-date');
-        
+
         /* Event Listeneres */
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('register').addEventListener('submit', handleForm);
@@ -201,7 +201,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         
         function checkPasswords() {
             if (passwordField.value !== confirmPasswordField.value) {
-        		window.scrollTo(0, 0);
+        		window.scrollTo({ top: 0, behavior: 'smooth' })
         		setFailNotification("Passwords Do Not Match");
     	        showNotification();
     	        
@@ -213,7 +213,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         
         function checkAge() {
             if (~~ ((Date.now() - new Date(ageField.value)) / (31557600000)) < 18) {
-        		window.scrollTo(0, 0);
+        		window.scrollTo({ top: 0, behavior: 'smooth' })
         		setFailNotification("Age requirement not met");
     	        showNotification();
     	        
@@ -235,8 +235,8 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        method: 'POST',
             });
 		
-            if (checkAge()) {}
-            else if (checkPasswords()) {}
+            if (checkAge()) passwordField.focus();
+            else if (checkPasswords()) ageField.focus();
             else {
     	        fetch(request)
     	            .then((response) => response.json())
@@ -247,7 +247,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	                    window.location.href = "signin.php?registered=1";
 	                } else {
 	                    setFailNotification(data.message);
-    			        window.scrollTo(0, 0);
+    			        window.scrollTo({ top: 0, behavior: 'smooth' })
     	                }
     	            })
     	            .catch(console.warn);
