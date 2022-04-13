@@ -161,9 +161,14 @@ p, h5, h4, h3, h2, h1 {
    background-color: #f05f4f; 
 }
 
+.margin-bottom {
+    margin-bottom: 19px;
+}
+
 .collapse {
     background-color: transparent;
     color: transparent;
+    margin: 0;
     height: 0;
 }
 
@@ -730,6 +735,7 @@ input:checked + .slider:before {
 .marginless-bottom {
     margin-bottom: 0;
 }
+
 .side-margins {
     margin: 0 10px;
 }
