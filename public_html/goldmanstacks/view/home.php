@@ -112,7 +112,7 @@ if ($db === null){
 					echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
 						<div class=\"list\">
 							<p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
-							<p>".ucfirst($account['accountType'])." account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
+							<p>".ucfirst($account['accountType'])." Account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
 						</div>
 						<div class=\"split animate-left\">
 							<div class=\"list text-right\">
@@ -168,7 +168,7 @@ if ($db === null){
     		        <div class="item-content bottom-round">
     		            <?php    		            
 						/* Statement to obtain transaction information */
-						$transactionStatement = $db->prepare("SELECT transactionTime, transactionAmount, type FROM transactions WHERE clientID=? LIMIT ".AMOUNT_OF_TRANSACTIONS);
+						$transactionStatement = $db->prepare("SELECT T.transactionTime, T.transactionAmount, T.type, A.nickName, A.accountType FROM transactions T INNER JOIN accountDirectory A ON T.accountNum=A.accountNum WHERE T.clientID=? ORDER BY T.transactionTime DESC LIMIT ".AMOUNT_OF_TRANSACTIONS);
 						$transactionStatement->bind_param("i", $userId);
 						$transactionStatement->execute();
 						
@@ -179,7 +179,7 @@ if ($db === null){
 						foreach ($transactionRows as $transaction) {							
 							echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
 									<div class=\"list-padded\">
-										<h3 class=\"bold\">Transaction</h3>
+										<h3 class=\"bold\">" . $transaction['nickName'] . " (" . ucfirst($transaction['accountType']) . ")" . "</h3>
 										<p>".$transaction['transactionTime']."<p>
 									</div>
 									<div class=\"split animate-left\">
