@@ -168,7 +168,7 @@ p, h5, h4, h3, h2, h1 {
 .collapse {
     background-color: transparent;
     color: transparent;
-    margin: 0;
+    margin: 0 auto 0 auto;
     height: 0;
 }
 
