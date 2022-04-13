@@ -50,10 +50,9 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
             	            </div>
                         </div>
                     </a>
-                    <div class="accent-border top-round">
+                    <div class="accent-border top-round margin-bottom">
                         <h2 class="big"><b>Goldman Stacks</b><!-- <span class="info">Registration</span>--><h2>
                     </div>
-                    <br>
                     <form id="register">
         			    <label for="first-name" class="info">First Name</label>
         			    <div class="form-item">
