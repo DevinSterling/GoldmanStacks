@@ -184,9 +184,44 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
     </body>
     <script type="text/javascript" src="../js/notification.js"></script>
     <script type="text/javascript">
+        const passwordField = document.getElementById('password');
+        const confirmPasswordField = document.getElementById('confirm-password');
+        const ageField = document.getElementById('birth-date');
+        
+        /* Event Listeneres */
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('register').addEventListener('submit', handleForm);
         });
+        confirmPasswordField.addEventListener('focusout', (event) => {
+            checkPasswords();
+        });
+        ageField.addEventListener('focusout', (event) => {
+            checkAge();
+        });
+        
+        function checkPasswords() {
+            if (passwordField.value !== confirmPasswordField.value) {
+        		window.scrollTo(0, 0);
+        		setFailNotification("Passwords Do Not Match");
+    	        showNotification();
+    	        
+    	        return false;
+            }
+            
+            return true;
+        }
+        
+        function checkAge() {
+            if (~~ ((Date.now() - new Date(ageField.value)) / (31557600000)) < 18) {
+        		window.scrollTo(0, 0);
+        		setFailNotification("Age requirement not met");
+    	        showNotification();
+    	        
+    	        return false;
+            }
+            
+            return true;
+        }
         
         function handleForm(event) {
             event.preventDefault();
@@ -200,17 +235,9 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        method: 'POST',
             });
 		
-            if (formData.get('password') !== formData.get('confirm-password')) {
-        		window.scrollTo(0, 0);
-        		document.getElementById("password").focus();
-        		setFailNotification("Passwords Do Not Match");
-    	        showNotification();
-            } else if (~~ ((Date.now() - new Date(formData.get('birth-date'))) / (31557600000)) < 18) {
-        		window.scrollTo(0, 0);
-        		document.getElementById("birth-date").focus();
-        		setFailNotification("Age requirement not met");
-    	        showNotification();
-            } else {
+            if (checkAge()) {}
+            else if (checkPasswords()) {}
+            else {
     	        fetch(request)
     	            .then((response) => response.json())
     	            .then((data) => {
