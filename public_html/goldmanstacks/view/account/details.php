@@ -22,6 +22,9 @@ $routingNumber = "123456789";
 $lastVisit = date("F j, Y, g:i a"); // Last time of login
 $accounts = array(); // User Account names taken from DB
 
+/* csrf token */
+$updateNickNameToken = hash_hmac('sha256', '/updateAccountNickname.php', $_SESSION['key']); 
+
 /* Database Connection */
 $db = getUpdateConnection();
 
@@ -89,8 +92,16 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	<?php notification(); ?>
     	<div class="container flex-center">
     	    <div class="list main">
+            <button id="notification" onClick="hideNotification()" class="notification max success transform-button round collapse">
+                <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
+                <div class="split">
+       	            <div class="toggle-button">
+    		            <i class="fas fa-times"></i>
+    		        </div>
+                </div>
+            </button>
     	        <div class="container">
-        	        <h2 id="title"><?php echo "$currentAccountName History ($accountType)" ?></h2>
+        	        <h2 id="title"><span id="title-account-name"><?php echo $currentAccountName ?></span> History <span id="title-account-type">(<?php echo $accountType ?>)</span></h2>
         	        <div class="split">
             	        <p class="info">Transactions</p>
     		            <button onClick="showPopUp('dateFilter-popup-content')" class="expand-button transform-button extend-left round shadow">
@@ -118,7 +129,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?php
                     /* Query to get all transactions from the selected account */
-                    $transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)");
+                    $transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?) ORDER BY transactionTime DESC");
                     $transactionStatement->bind_param("s", $currentAccountName);
                     $transactionStatement->execute();
                     
@@ -372,14 +383,16 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 <div id="edit-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Edit Account</h2>
                     <p class="info">Change account nickname</p><br>
-                    <form id="edit">
+                    <form id="change-nickname" action="../../requests/account/updateAccountNickname">
         	            <label for="name" class="info">Account Name</label>
         	            <div class="form-item">
-        		            <input id="name" class="input-field" type="text">
+        		            <input id="name" class="input-field" name="new" type="text" required>
         	            </div>
                         <hr>
+                        <input id="current-account-name" type="hidden" name="old" value="<?php echo $currentAccountName ?>" required>
+                        <input type="hidden" name="token" value="<?php echo $updateNickNameToken ?>" required>
                         <div class="form-item">
-                            <button form="edit" class="standard-button transform-button flex-center round">
+                            <button type="submit" class="standard-button transform-button flex-center round">
                                 <div class="split">
                                     <p class="animate-left">Apply<p>
                    		            <div class="toggle-button">
@@ -395,7 +408,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	</body>
     <script type="text/javascript" src="../../js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
-	<script type="text/javascript" src="../../js/post.js"></script>
+	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
         function showPopUp(ContentId, entity = null) {
             document.querySelectorAll('.pop-up-item').forEach((element) => {
@@ -424,7 +437,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
             document.getElementById('pup-up-element').classList.add('hidden');
         }
 	</script>
-	<script>
+	<script type="text/javascript">
 	let transactionsTable = document.getElementById('transactions-body');
 	
 	document.addEventListener('keydown', (event) => {
@@ -460,4 +473,40 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
         window.location.href = "details?acc=" + element.value;
     }
 	</script>
+	<script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('change-nickname').addEventListener('submit', handleForm);
+        });
+        
+        function handleForm(event) {
+	        event.preventDefault();
+	        
+	        let form = event.target;
+	        let formData = new FormData(form);
+	        
+	        let url = form.action;
+	        let request = new Request(url, {
+	            body: formData,
+	            method: 'POST',
+	        });
+	        
+	        fetch(request)
+	            .then((response) => response.json())
+	            .then((data) => {
+	                if (data.response) {
+	                    setSuccessNotification(data.message);
+	                    document.getElementById('title-account-name').textContent = formData.get('new');
+	                    document.getElementById('choose-account').selectedOptions[0].text = formData.get('new') + ' ' + document.getElementById('title-account-type').textContent + '';
+	                    document.getElementById('current-account-name').value = formData.get('new');
+	                    history.pushState(null, '', '<? echo getHomeDirectory() /* TEMP */?>/goldmanstacks/view/account/details?acc=' + formData.get('new'));    
+	                } else {
+	                    setFailNotification(data.message);
+	                }
+	            })
+	            .catch(console.warn);
+	        
+            hidePopUp();
+		    showNotification();
+	    }
+    </script>
 </html>
