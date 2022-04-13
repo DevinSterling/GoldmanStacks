@@ -62,7 +62,7 @@ if (hash_equals($calc, $token) // Check token
     $isMatch &= preg_match('/^[A-z. ]+$/', $addressCity);
     $isMatch &= preg_match('/^[A-Z]{2}$/', $addressState);
     $isMatch &= preg_match('/^[0-9]{5}$/', $addressPostalCode);
-    $isMatch &= date_diff(date_create('02-12-1998'), date_create('now'))->y > 18;
+    $isMatch &= date_diff(date_create($birthDate), date_create('now'))->y > 18;
 
     /* Optional Input Validation */
     if (!empty($middleName)) $isMatch &= ctype_alpha($middleName);
