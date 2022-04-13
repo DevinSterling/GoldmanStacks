@@ -33,23 +33,39 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
 
         if ($db !== null) {
-            /* Prepared Statement */
-            $stmt = $db->prepare("UPDATE users SET phoneNumber=? WHERE userID=?");
-            $stmt->bind_param("si", $phoneNumber, $userID);
-            $stmt->execute();
-
-            /* Check Execution */
-            if ($db->affected_rows === 0) { // If 0, update failed to execute
-                $dbMessage = $dbFailMessage;
+            /* Query to search if phone number is registered already */
+            $queryPhoneNumber = $db->prepare("SELECT phoneNumber FROM users WHERE phoneNumber=?");
+            $queryPhoneNumber->bind_param("s", $phoneNumber);
+            $queryPhoneNumber->execute();
+            
+            /* Get result and close */
+            $result = $queryPhoneNumber->get_result();
+            $queryPhoneNumber->close();
+            
+            /* Verify if phone number is not registered yet */
+            if ($result->num_rows === 0) {
+                /* Prepared Statement */
+                $stmt = $db->prepare("UPDATE users SET phoneNumber=? WHERE userID=?");
+                $stmt->bind_param("si", $phoneNumber, $userID);
+                $stmt->execute();
+    
+                /* Check Execution */
+                if ($db->affected_rows === 0) { // If 0, update failed to execute
+                    $dbMessage = $dbFailMessage;
+                }
+                else {
+                    $dbSuccess = true;
+                    $dbMessage = "Phone number has been updated";
+                }
+    
+                /* Close Streams */
+                $stmt->close();
+                $db->close();
+            } else {
+                $dbMessage = "Provided phone number is registered already";
             }
-            else {
-                $dbSuccess = true;
-                $dbMessage = "Phone number has been updated";
-            }
-
-            /* Close Streams */
-            $stmt->close();
-            $db->close();
+            
+            $result->free();
         } else {
             $dbMessage = $dbFailMessage;
         }
@@ -66,4 +82,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>
