@@ -151,7 +151,7 @@ if (!in_array($currentAccountName, $accounts)) {
     	                <form id="select-account">
     	                    <label for="choose-account" class="info">Selected Account</label>
     	                    <div class="form-item">
-    	                        <select id="choose-account" class="input-field last-field">
+    	                        <select id="choose-account" onChange="changeAccount(this)" class="input-field last-field">
     	                            <?php
     	                            foreach ($accounts as $account) {
     	                               echo "<option";
@@ -455,22 +455,9 @@ if (!in_array($currentAccountName, $accounts)) {
         	    }
 	    }
 	});
-	</script>
-	<script type="text/javascript">
-	    let currentAccount = "<?php echo $currentAccountName ?>";
 	
-	    /* Retrieve New DB Details */
-        $('#choose-account').on('change', function (e) {
-            let optionSelected = $('option:selected', this);
-            currentAccount = this.value;
-            
-            document.getElementById('title').textContent = currentAccount+' History';
-            document.getElementById('transfer').href = '/~sterlid2/bank/account/transfer.php?acc='+currentAccount;
-            document.title = currentAccount.toUpperCase()+' Account Details';
-            
-            document.getElementById('account-name').textContent = currentAccount;
-            document.getElementById('account-balance').textContent = '$0.00';
-            document.getElementById('account-routing-number').textContent = '123456789';
-        });
-    </script>
+    function changeAccount(element) {
+        window.location.href = "details?acc=" + element.value;
+    }
+	</script>
 </html>
