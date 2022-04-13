@@ -1,18 +1,47 @@
 <?php
 require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkClientStatus(); // Check if the client is signed in
 
-/* Passed Variables */
+/* SESSION Variables */
+$userID = $_SESSION['uid'];
+$userID = 1;
+
+/* GET Variables */
 $referencedName = $_GET['acc'];
 
-/* Temp Variables*/
-$accounts = ["Checking", "Savings", "Account 3", "Account 4", "Account 5"]; // User Account names taken from DB
+/* Variables */
+$accounts = array();
 
-$amountOfAccounts = 5;
+/* Get Database Connection */
+$db = getUpdateConnection();
+
+/* Check Database Connection */
+if ($db === null) {
+    header("Location: ../error/error.php");
+    die();
+}
+
+/* Get client accounts */
+$queryAccounts = $db->prepare("SELECT nickName, accountType, accountNum FROM accountDirectory WHERE clientID=?");
+$queryAccounts->bind_param("i", $userID);
+$queryAccounts->execute();
+
+$resultAccounts = $queryAccounts->get_result();
+$rowAccounts = $resultAccounts->fetch_all(MYSQLI_ASSOC);
+
+foreach ($rowAccounts as $account) {
+    /* Create three dimensional associative array */
+    $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType'], 'number' => $account['accountNum']);
+}
+
+$resultAccounts->free();
+$queryAccounts->close();
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -105,14 +134,14 @@ $amountOfAccounts = 5;
     	            <div class="form-item">
     		            <select id="internal-sender" class="input-field">
                             <?php
-                            for ($n = 0; $n < $amountOfAccounts; $n++) {
-                               echo "<option";
+                            foreach ($accounts as $account) {
+                                echo "<option value=\"" . $account['number'] . "\"";
                                
-                               if ($referencedName === $accounts[$n]) {
+                                if ($referencedName === $account['nickName']) {
                                     echo " selected";
-                               }
+                                }
                                
-                               echo ">$accounts[$n]</option>";
+                                echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
                             }
                             ?>
     		            </select>
@@ -121,8 +150,8 @@ $amountOfAccounts = 5;
     	            <div class="form-item">
     		            <select id="internal-receiver" class="input-field">
                             <?php
-                            for ($n = 0; $n < $amountOfAccounts; $n++) {
-                               echo "<option>$accounts[$n]</option>";
+                            foreach ($accounts as $account) {
+                                echo "<option value=\"" . $account['number'] . "\">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
                             }
                             ?>
                         </select>
@@ -149,19 +178,19 @@ $amountOfAccounts = 5;
     	            <div class="form-item">
     		            <select id="external-sender" class="input-field">
                             <?php
-                            for ($n = 0; $n < $amountOfAccounts; $n++) {
-                                echo "<option";
+                            foreach ($accounts as $account) {
+                                echo "<option value=\"" . $account['number'] . "\"";
                                
-                                if ($referencedName === $accounts[$n]) {
+                                if ($referencedName === $account['nickName']) {
                                     echo " selected";
                                 }
                                
-                                echo ">$accounts[$n]</option>";
+                                echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
                             }
                             ?>
     		            </select>
     	            </div>
-    	            <label for="external-receiver" class="info">Receiver Address</label>
+    	            <label for="external-receiver" class="info">Receiver Bank Account Number</label>
     	            <div class="form-item">
                         <input id="external-receiver" class="input-field" type="text">
     		        </div>
