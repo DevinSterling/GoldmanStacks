@@ -86,11 +86,11 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         			    <hr>
         			    <label for="phone-number" class="info">Phone Number</label>
         			    <div class="form-item">
-        				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?\d{4}$" maxlength="10" placeholder="Required" class="input-field" required>
+        				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?\d{4}$" maxlength="13" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="ssn" class="info">SSN</label>
         			    <div class="form-item">
-        				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" maxlength="9" placeholder="Required" class="input-field" required>
+        				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" maxlength="11" placeholder="Required" class="input-field" required>
         			    </div>
         			    <hr>
         			    <label for="address-line1" class="info">Address Line 1</label>
