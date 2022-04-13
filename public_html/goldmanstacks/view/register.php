@@ -32,7 +32,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         <div class="flex-center-item">
             <div class="list sub">
                 <div class="container">
-        		    <button id="notification" onClick="hideNotification()" class="notification max failure transform-button margin-bottom round collapse">
+        		    <button id="notification" onClick="hideNotification()" class="notification max failure transform-button round margin-bottom collapse">
         			    <p><i id="notification-icon" class="fas fa-times icon"></i><span id="notification-text"></span></p>
         			    <div class="split">
         				   <div class="toggle-button">
@@ -56,54 +56,54 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
                     <form id="register">
         			    <label for="first-name" class="info">First Name</label>
         			    <div class="form-item">
-        				    <input id="first-name" name="first-name" type="text" pattern="^[A-z]+$" placeholder="Required" class="input-field" required>
+        				    <input id="first-name" name="first-name" type="text" pattern="^[A-z]+$" maxlength="43" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="middle-name" class="info">Middle Name</label>
         			    <div class="form-item">
-        				    <input id="middle-name" name="middle-name" type="text" pattern="^[A-z]+$" class="input-field">
+        				    <input id="middle-name" name="middle-name" type="text" pattern="^[A-z]+$" maxlength="43" class="input-field">
         			    </div>
         			    <label for="last-name" class="info">Last Name</label>
         			    <div class="form-item">
-        				    <input id="last-name" name="last-name" type="text" pattern="^[A-z]+$" placeholder="Required" class="input-field" required>
+        				    <input id="last-name" name="last-name" type="text" pattern="^[A-z]+$" maxlength="43" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="birth-date" class="info">Date of Birth</label>
         			    <div class="form-item">
-        				    <input id="birth-date" name="birth-date" type="date" placeholder="Required" class="input-field" required>
+        				    <input id="birth-date" name="birth-date" type="date" max="<?php echo date("Y-m-d") ?>" maxlength="10" placeholder="Required (YYYY-MM-DD, example: <?php echo date("Y-m-d") ?>)" class="input-field" required>
         			    </div>
         			    <hr>
         			    <label for="email" class="info">Email</label>
         			    <div class="form-item">
-        				    <input id="email" name="email" type="email" placeholder="Required" class="input-field" required>
+        				    <input id="email" name="email" type="email" maxlength="254" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="password" class="info">Password</label>
         			    <div class="form-item">
-        				    <input id="password" name="password" type="password" placeholder="Required" class="input-field"required>
+        				    <input id="password" name="password" type="password" maxlength="100" placeholder="Required" class="input-field"required>
         			    </div>
         			    <label for="confirm-password" class="info">Confirm Password</label>
         			    <div class="form-item">
-        				    <input id="confirm-password" name="confirm-password" type="password" placeholder="Required" class="input-field" required>
+        				    <input id="confirm-password" name="confirm-password" type="password" maxlength="100" placeholder="Required" class="input-field" required>
         			    </div>
         			    <hr>
         			    <label for="phone-number" class="info">Phone Number</label>
         			    <div class="form-item">
-        				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?\d{4}$" placeholder="Required" class="input-field" required>
+        				    <input id="phone-number" name="phone-number" type="text" pattern="^1?\d{3}-?\d{3}-?\d{4}$" maxlength="10" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="ssn" class="info">SSN</label>
         			    <div class="form-item">
-        				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" placeholder="Required" class="input-field" required>
+        				    <input id="ssn" name="ssn" type="text" pattern="^\d{3}-?\d{2}-?\d{4}$" maxlength="9" placeholder="Required" class="input-field" required>
         			    </div>
         			    <hr>
         			    <label for="address-line1" class="info">Address Line 1</label>
         			    <div class="form-item">
-        				    <input id="address-line1" name="address-line1" type="text" pattern="^\d+ [A-z ]+.?$" placeholder="Required" class="input-field" required>
+        				    <input id="address-line1" name="address-line1" type="text" pattern="^\d+ [A-z ]+.?$" maxlength="50" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="address-line2" class="info">Address Line 2</label>
         			    <div class="form-item">
-        				    <input id="address-line2" name="address-line2" type="text" pattern="^[A-z0-9#, ]+$" class="input-field">
+        				    <input id="address-line2" name="address-line2" type="text" pattern="^[A-z0-9#, ]+$" maxlength="50" class="input-field">
         			    </div>
         			    <label for="address-city" class="info">City</label>
         			    <div class="form-item">
-        				    <input id="address-city" name="address-city" type="text" pattern="^[A-z. ]+$" placeholder="Required" class="input-field" required>
+        				    <input id="address-city" name="address-city" type="text" pattern="^[A-z. ]+$" maxlength="30" placeholder="Required" class="input-field" required>
         			    </div>
         			    <label for="address-state" class="info">State</label>
         			    <div class="form-item">
@@ -163,7 +163,7 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         			    </div>
         			    <label for="address-postal-code" class="info">Postal Code</label>
         			    <div class="form-item">
-        				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" placeholder="Required" class="input-field" required>
+        				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" maxlength="5" placeholder="Required" class="input-field" required>
         			    </div>
         			    <hr>
         			    <input type="hidden" name="token" value="<?php echo $registrationToken ?>">
@@ -200,27 +200,32 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        method: 'POST',
             });
 		
-            if (formData.get('password') === formData.get('confirm-password')) {
-	        fetch(request)
-	            .then((response) => response.json())
-	            .then((data) => {
-		        showNotification();
-    
+            if (formData.get('password') !== formData.get('confirm-password')) {
+        		window.scrollTo(0, 0);
+        		document.getElementById("password").focus();
+        		setFailNotification("Passwords Do Not Match");
+    	        showNotification();
+            } else if (~~ ((Date.now() - new Date(formData.get('birth-date'))) / (31557600000)) < 18) {
+        		window.scrollTo(0, 0);
+        		document.getElementById("birth-date").focus();
+        		setFailNotification("Age requirement not met");
+    	        showNotification();
+            } else {
+    	        fetch(request)
+    	            .then((response) => response.json())
+    	            .then((data) => {
+    		        showNotification();
+        
 	                if (data.response) {
 	                    window.location.href = "signin.php?registered=1";
 	                } else {
 	                    setFailNotification(data.message);
-			    window.scrollTo(0, 0);
-	                }
-	            })
-	            .catch(console.warn);
-	    }
-	    else {
-		window.scrollTo(0, 0);
-		document.getElementById("password").focus();
-		setFailNotification("Passwords Do Not Match");
-	        showNotification();
-	    }    
-    }
+    			        window.scrollTo(0, 0);
+    	                }
+    	            })
+    	            .catch(console.warn);
+        	    
+    	    }    
+        }
     </script>
 </html>
