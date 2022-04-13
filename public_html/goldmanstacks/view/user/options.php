@@ -357,10 +357,11 @@ if ($db === null) {
 	            .then((data) => {          
 	                if (data.response) setSuccessNotification(data.message);
 	                else setFailNotification(data.message);
-			
-	                showNotification();
 	            })
 	            .catch(console.warn);
+		    
+		showNotification();
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	    }
 	</script>
 </html>
