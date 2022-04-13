@@ -1,10 +1,29 @@
 <?php
 require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkClientStatus(); // Check if the client is signed in
+
+/* SESSION Variables */
+$userID = $_SESSION['uid'];
+
+/* Requestable accounts */
+$accountTypes = array('debit', 'savings', 'credit');
+
+/* Create csrf token for account request form */
+$requestAccountToken = hash_hmac('sha256', '/requestAccount.php', $_SESSION['key']);
+
+/* Get database connection */
+$db = getUpdateConnection();
+
+/* Check Database Connection */
+if ($db === null) {
+    header("Location: ../error/error.php");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -42,30 +61,53 @@ checkClientStatus(); // Check if the client is signed in
     		</ul>
     	</nav>
     	<?php notification(); ?>
+        <button id="notification" onClick="hideNotification()" class="notification main success transform-button round collapse">
+            <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
+            <div class="split">
+   	            <div class="toggle-button">
+		            <i class="fas fa-times"></i>
+		        </div>
+            </div>
+        </button>
     	<div class="container flex-center">
     	    <div class="list main maximize">
     	        <h2 id="title">Select Account Type</h2>
     	        <label class="info">Request to open a new account</label>
     	        <hr>
         	    <div class="split">
-        	        <button class="block-button round" onClick="showPopUp('debit')">
-        	            <div class="text-left">
-            	            <p class="focused-info">DEBIT</p>
-            	            <p>Account</p>
-        	            </div>
-        	        </button>
-        	        <button class="block-button round" onClick="showPopUp('savings')">
-        	            <div class="text-left">
-        	                <p class="focused-info">SAVINGS</p>
-        	                <p>Account</p>
-        	            </div>
-        	        </button>
-        	        <button class="block-button round" onClick="showPopUp('credit')">
-        	            <div class="text-left">
-        	                <p class="focused-info">CREDIT</p>
-        	                <p>Account</p>
-        	            </div>
-        	        </button>
+        	        <?php
+        	        /* Find accounts that is still pending for the current client  */
+                    $queryAccountRequests = $db->prepare("SELECT accountType FROM accountRequests WHERE clientID=? AND verified=0");
+                    $queryAccountRequests->bind_param("i", $userID);
+                    $queryAccountRequests->execute();
+                    
+                    $resultAccountRequests = $queryAccountRequests->get_result();
+                    $rowsAccountRequests = $resultAccountRequests->fetch_all(MYSQLI_ASSOC);
+        	        
+        	        foreach ($accountTypes as $account) {
+         	            $isRequested = in_array($account, array_column($rowsAccountRequests, 'accountType'));
+        	            
+        	            echo "<button id=\"request-$account-button\" type=\"button\" class=\"block-button round\"";
+        	            
+        	            if ($isRequested) {
+        	                echo "disabled>";
+        	                $requestInformation = "Request Pending";
+        	            } else {
+        	                echo "onClick=\"showPopUp('$account')\">";
+        	                $requestInformation = "Request Account";
+        	            }
+
+        	            echo "<div class=\"text-left\">
+            	                <p class=\"focused-info\">$account</p>
+            	                <p id=\"request-$account-information\">$requestInformation</p>
+        	                </div>
+        	            </button>";
+        	        }
+        	        
+			$resultAccountRequests->free();
+			$queryAccountRequests->close();
+        	        $db->close();
+        	        ?>
         	    </div>
     	    </div>
     	</div>
@@ -85,18 +127,15 @@ checkClientStatus(); // Check if the client is signed in
                 </button>
                 <br>
                 <br>
-                <h2 id="title">Open New Account</h2>
-                <p class="info">Enter an account nickname for the requested account.</p><br>
-                <form id="edit">
-    	            <label for="name" class="info">Account Nickame</label>
-    	            <div class="form-item">
-    		            <input id="name" class="input-field" type="text">
-    	            </div>
-                    <hr>
+                <h2 id="title">Open New <span id="account-type-title"></span> Account</h2>
+                <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p><br>
+                <form id="request-account">
+                    <input id="account-type" type="hidden" value="" name="type" required>
+                    <input type="hidden" value="<?php echo $requestAccountToken ?>" name="token" required>
                     <div class="form-item">
-                        <button form="edit" class="standard-button transform-button flex-center round">
+                        <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
-                                <p class="animate-left">Request New Account<p>
+                                <p class="animate-left">Submit Request<p>
                		            <div class="toggle-button">
                 		            <i class="fas fa-chevron-right"></i>
                 		        </div>
@@ -108,10 +147,19 @@ checkClientStatus(); // Check if the client is signed in
         </div>
 	</body>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
-	<script>
+	<script type="text/javascript" src="../../js/notification.js"></script>
+	<script type="text/javascript">
+	    const popupTitleType = document.getElementById('account-type-title');
+	    const popupDescriptionType = document.getElementById('account-type-description');
+	    const inputAccountType = document.getElementById('account-type');
+	    
         function showPopUp(type) {
             document.getElementById("pop-up").classList.add("show-popup-content");
             document.getElementById("pup-up-element").classList.remove("hidden");
+            
+            popupTitleType.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            popupDescriptionType.textContent = type;
+            inputAccountType.value = type;
         }
         
         function hidePopUp() {
@@ -119,4 +167,40 @@ checkClientStatus(); // Check if the client is signed in
             document.getElementById("pup-up-element").classList.add("hidden");
         }
 	</script>
+	<script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('request-account').addEventListener('submit', handleForm);
+        });
+        
+        function handleForm(event) {
+	        event.preventDefault();
+	        
+	        let form = event.target;
+	        let formData = new FormData(form);
+	        
+	        let url = "../../requests/account/requestAccount";
+	        let request = new Request(url, {
+	            body: formData,
+	            method: 'POST',
+	        });
+	        
+	        fetch(request)
+	            .then((response) => response.json())
+	            .then((data) => {          
+	                if (data.response) {
+	                    setSuccessNotification(data.message);
+	                    document.getElementById("request-" +  inputAccountType.value + "-button").disabled = true;
+	                    document.getElementById("request-" +  inputAccountType.value + "-information").textContent = "Request Pending";
+	                } else {
+	                    setFailNotification(data.message);
+	                }
+			
+	                showNotification();
+	            })
+	            .catch(console.warn);
+	            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            hidePopUp();
+	    }
+    </script>
 </html>
