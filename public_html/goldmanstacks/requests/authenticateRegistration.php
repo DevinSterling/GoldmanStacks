@@ -84,7 +84,10 @@ if (hash_equals($calc, $token) // Check token
             $queryEmail = $db->prepare("SELECT email FROM users WHERE email=?");
             $queryEmail->bind_param("s", $email);
             $queryEmail->execute();
+            
+            /* Get result and close */
             $result = $queryEmail->get_result();
+            $queryEmail->close();
             
             /* Verify if email is not registered yet */
             if ($result->num_rows === 0) {
@@ -92,8 +95,11 @@ if (hash_equals($calc, $token) // Check token
                 $queryPhoneNumber = $db->prepare("SELECT phoneNumber FROM users WHERE phoneNumber=?");
                 $queryPhoneNumber->bind_param("s", $phoneNumber);
                 $queryPhoneNumber->execute();
-                $result = $queryPhoneNumber->get_result();
                 
+                /* Get result and close */
+                $result = $queryPhoneNumber->get_result();
+                $queryPhoneNumber->close();
+                    
                 /* Verify if phone number is not registered yet */
                 if ($result->num_rows === 0) {
                     /* Encrypt provided password */
