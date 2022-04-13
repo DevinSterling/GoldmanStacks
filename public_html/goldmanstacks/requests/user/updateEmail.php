@@ -34,23 +34,39 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
 
         if ($db !== null) {
-            /* Prepared Statement */
-            $stmt = $db->prepare("UPDATE users SET email=? WHERE userID=?");
-            $stmt->bind_param("si", $email, $userID);
-            $stmt->execute();
-
-            /* Check Execution */
-            if ($db->affected_rows === 0) { // If 0, update failed to execute
-                $dbMessage = $dbFailMessage;
+            /* Query to search if email is registered already */
+            $queryEmail = $db->prepare("SELECT email FROM users WHERE email=?");
+            $queryEmail->bind_param("s", $email);
+            $queryEmail->execute();
+            
+            /* Get result and close */
+            $result = $queryEmail->get_result();
+            $queryEmail->close();
+            
+            /* Verify if email is not registered yet */
+            if ($result->num_rows === 0) {
+                /* Prepared Statement */
+                $stmt = $db->prepare("UPDATE users SET email=? WHERE userID=?");
+                $stmt->bind_param("si", $email, $userID);
+                $stmt->execute();
+    
+                /* Check Execution */
+                if ($db->affected_rows === 0) { // If 0, update failed to execute
+                    $dbMessage = $dbFailMessage;
+                }
+                else {
+                    $dbSuccess = true;
+                    $dbMessage = "Email address has been updated";
+                }
+    
+                /* Close Streams */
+                $stmt->close();
+                $db->close();
+            } else {
+                $dbMessage = "Provided email is registered already";
             }
-            else {
-                $dbSuccess = true;
-                $dbMessage = "Email address has been updated";
-            }
-
-            /* Close Streams */
-            $stmt->close();
-            $db->close();
+            
+            $result->free();
         } else {
             $dbMessage = $dbFailMessage;
         }
