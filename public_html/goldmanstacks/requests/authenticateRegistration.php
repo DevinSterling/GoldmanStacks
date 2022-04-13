@@ -51,6 +51,11 @@ if (hash_equals($calc, $token) // Check token
     $phoneNumber = str_replace('-', '', $phoneNumber); // Remove hyphens if provided by user
     $ssn = str_replace('-', '', $ssn); // Remove hyphens if provided by user
     $birthDate = date("Y-m-d", strtotime($birthDate)); // Convert HTML date to SQL compatible date
+    
+    /* Make names lowercase, then capitalize */
+    $firstName = ucfirst(strtolower($firstName));
+    $middleName = ucfirst(strtolower($middleName));
+    $lastName = ucfirst(strtolower($lastName));
 
     /* Input Validation */
     $isMatch = (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
