@@ -36,17 +36,17 @@ $query = 'SELECT balance, accountType, nickName FROM accountDirectory WHERE clie
 $result = $db->query($query);
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-foreach ($rows as $acc) {
-    $accounts[] = $acc['nickName']; // User Account names taken from DB
+foreach ($rows as $account) {
+    $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']); // User Account names taken from DB
 	
-    if ($acc['nickName'] === $currentAccountName) {
-    	$accountBalance = $acc['balance'];
-	$accountType = ucfirst($acc['accountType']);
+    if ($account['nickName'] === $currentAccountName) {
+    	$accountBalance = $account['balance'];
+	$accountType = ucfirst($account['accountType']);
     }
 }
 
 /* Check if the selected account is valid */
-if (!in_array($currentAccountName, $accounts)) {
+if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     header("Location: ../home.php");
     die();
 }
@@ -154,13 +154,13 @@ if (!in_array($currentAccountName, $accounts)) {
     	                        <select id="choose-account" onChange="changeAccount(this)" class="input-field last-field">
     	                            <?php
     	                            foreach ($accounts as $account) {
-    	                               echo "<option";
+    	                               echo "<option value=\"" . $account['nickName'] . "\"";
     	                               
-    	                               if ($currentAccountName === $account) {
+    	                               if ($currentAccountName === $account['nickName']) {
     	                                    echo " selected";
     	                               }
     	                               
-    	                               echo ">$account</option>";
+    	                               echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")" . "</option>";
     	                            }
     	                            ?>
     	                        </select>
