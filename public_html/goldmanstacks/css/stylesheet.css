@@ -645,13 +645,17 @@ input:checked + .slider:before {
     background-color: #00000015;
 }
 
-.block-button:hover,
-.block-button:focus {
+.block-button:not(:disabled):hover,
+.block-button:not(:disabled):focus {
     background-color: #000;
     color: #fff;
     
     transform: scale(1.03);
     transition-duration: 0.3s;
+}
+
+.block-button:disabled {
+    cursor: default;
 }
 
 .expand-button:hover,
