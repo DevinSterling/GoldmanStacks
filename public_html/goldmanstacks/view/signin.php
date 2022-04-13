@@ -77,7 +77,7 @@ if ($timeout || $registered || $error) {
     <body>
         <div class="flex-center-item">
             <div class="list fixed-sub round">
-                <button id="notification" onClick="hideNotification()" class="notification max transform-button round <?php echo $notificationClasses ?>">
+                <button id="notification" onClick="hideNotification()" class="notification max transform-button round margin-bottom <?php echo $notificationClasses ?>">
                     <p><i id="notification-icon" class="fas <?php echo $notificationIcon ?> icon"></i><span id="notification-text"><?php echo $notificationMessage ?></span></p>
                     <div class="split">
                            <div class="toggle-button">
@@ -85,11 +85,9 @@ if ($timeout || $registered || $error) {
             	        </div>
                     </div>
                 </button>
-                <br>
-                <div class="accent-border top-round">
+                <div class="accent-border top-round margin-bottom">
                     <h2 class="big"><b>Goldman Stacks</b><h2>
                 </div>
-                <br>
                 <form id="login">
                     <label for="username" class="info">Username</label>
     	            <div class="form-item">
