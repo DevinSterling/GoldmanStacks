@@ -78,7 +78,7 @@ function checkVisitorStatus() {
     } else {
         /* Generate a key for the visitor for form access (csrf protection) */
         if (!isset($_SESSION['key'])) {
-            $_SESSION['key'] = bin2hex(random_bytes(32));
+            $_SESSION['key'] = bin2hex(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
         }
     }
 }
