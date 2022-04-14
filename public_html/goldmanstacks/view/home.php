@@ -13,7 +13,6 @@ const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
 
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
-$userId = 1;
 
 /* Temp Variables */
 $user = 'User'; // Taken from DB, user account name
