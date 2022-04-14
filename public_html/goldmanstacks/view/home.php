@@ -230,7 +230,7 @@ if ($db === null){
         		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>" placeholder="USD">
     		            </div>
     		            <div class="form-item">
-                            <button form="payments" class="standard-button transform-button flex-center round">
+                            <button form="payments" class="standard-button small-tag transform-button flex-center round">
                                 <div class="split">
                                     <p class="animate-left">Schedule Payment<p>
                    		            <div class="toggle-button">
