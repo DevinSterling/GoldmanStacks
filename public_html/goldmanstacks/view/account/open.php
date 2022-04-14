@@ -128,7 +128,7 @@ if ($db === null) {
                 <br>
                 <br>
                 <h2 id="title">Open New <span id="account-type-title"></span> Account</h2>
-                <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p><br>
+                <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p>
                 <form id="request-account">
                     <input id="account-type" type="hidden" value="" name="type" required>
                     <input type="hidden" value="<?php echo $requestAccountToken ?>" name="token" required>
