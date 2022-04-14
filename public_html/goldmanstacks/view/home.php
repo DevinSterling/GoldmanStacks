@@ -96,16 +96,16 @@ if ($db === null){
 				$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
 					
 				foreach ($accountsRows as $account) {
-					$accounts[] = $account['nickName'];
+					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']);
 					$accNumber = substr($account['accountNum'], -4); // Temp Variable (to be deleted)
 					
 					/* Determine if account type is credit or not */
 					if ($account['accountType'] == 'credit') {
-					$totalBalance -= $account['balance'];
-					$account_message = "Credit Used";
+					    $totalBalance -= $account['balance'];
+					    $account_message = "Credit Used";
 					} else {
-					$totalBalance += $account['balance'];
-					$account_message = "Available";
+					    $totalBalance += $account['balance'];
+					    $account_message = "Available";
 					}
 					
 						/* Create button for each account */
@@ -177,9 +177,9 @@ if ($db === null){
 						$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
 												
 						foreach ($transactionRows as $transaction) {							
-							echo "<a href=\"account/details.php?acc=".$recentAccount."\" class=\"highlight-button transform-button split round\">
+							echo "<a href=\"account/details.php?acc=" . $transaction['nickName'] . "\" class=\"highlight-button transform-button split round\">
 									<div class=\"list-padded\">
-										<h3 class=\"bold\">" . $transaction['nickName'] . " (" . ucfirst($transaction['accountType']) . ")" . "</h3>
+										<h3 class=\"bold\">" . $transaction['nickName'] . " (" . ucfirst($transaction['accountType']) . ")</h3>
 										<p>".$transaction['transactionTime']."<p>
 									</div>
 									<div class=\"split animate-left\">
@@ -208,27 +208,27 @@ if ($db === null){
     		            <label class="banner-text">Quick Payments</label>
     		        </div>
     		        <form id="payments" class="item-content bottom-round">
-        		        <label class="info" for="PayTo">Pay To</label>
-    		            <div class="form-item">
-        		            <input id="PayTo" class="input-field" type="text" required>
-    		            </div>
-        		        <label class="info" for="PayFrom">Pay From</label>
+        		        <label class="info" for="PayFrom">Sender</label>
     		            <div class="form-item">
         		            <select id="PayFrom" class="input-field">
                                 <?php
 								foreach ($accounts as $account) {
-									echo "<option>$account</option>";
+									echo "<option>" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
 								}
                                 ?>
         		            </select>
         		        </div>
+        		        <label class="info" for="PayTo">Receiver Bank Account Number</label>
+    		            <div class="form-item">
+        		            <input id="PayTo" class="input-field" type="text" required>
+    		            </div>
     		            <label class="info" for="Date">Date</label>
     		            <div class="form-item">
         		            <input id="Date" class="input-field" type="date" placeholder="yyyy-mm-dd">
     		            </div>
     		            <label class="info" for="Amount">Amount</label>
     		            <div class="form-item">
-        		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>">
+        		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>" placeholder="USD">
     		            </div>
     		            <div class="form-item">
                             <button form="payments" class="standard-button transform-button flex-center round">
