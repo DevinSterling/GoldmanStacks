@@ -206,39 +206,29 @@ if ($db === null){
     		        <div class="item-banner top-round">
     		            <label class="banner-text">Quick Payments</label>
     		        </div>
-    		        <form id="payments" class="item-content bottom-round">
+    		        <form id="payments" class="flex-form item-content bottom-round">
         		        <label class="info" for="PayFrom">Sender</label>
-    		            <div class="form-item">
-        		            <select id="PayFrom" class="input-field">
-                                <?php
-								foreach ($accounts as $account) {
-									echo "<option>" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
-								}
-                                ?>
-        		            </select>
-        		        </div>
+    		            <select id="PayFrom" class="input-field">
+                            <?php
+							foreach ($accounts as $account) {
+								echo "<option>" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
+							}
+                            ?>
+    		            </select>
         		        <label class="info" for="PayTo">Receiver Bank Account Number</label>
-    		            <div class="form-item">
-        		            <input id="PayTo" class="input-field" type="text" required>
-    		            </div>
+        		        <input id="PayTo" class="input-field" type="text" required>
     		            <label class="info" for="Date">Date</label>
-    		            <div class="form-item">
-        		            <input id="Date" class="input-field" type="date" placeholder="yyyy-mm-dd">
-    		            </div>
+        		        <input id="Date" class="input-field" type="date" placeholder="yyyy-mm-dd">
     		            <label class="info" for="Amount">Amount</label>
-    		            <div class="form-item">
-        		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>" placeholder="USD">
-    		            </div>
-    		            <div class="form-item">
-                            <button form="payments" class="standard-button small-gap transform-button flex-center round">
-                                <div class="split">
-                                    <p class="animate-left">Schedule Payment<p>
-                   		            <div class="toggle-button">
-                    		            <i class="fas fa-chevron-right"></i>
-                    		        </div>
-                                </div>
-                            </button>
-    		            </div>
+    		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>" placeholder="USD">
+                        <button form="payments" class="standard-button transform-button flex-center round">
+                            <div class="split">
+                                <p class="animate-left">Schedule Payment<p>
+               		            <div class="toggle-button">
+                		            <i class="fas fa-chevron-right"></i>
+                		        </div>
+                            </div>
+                        </button>
     		        </form>
     		    </div>
 		    </div>
