@@ -108,7 +108,7 @@ if ($db === null){
 					}
 					
 						/* Create button for each account */
-					echo "<a href=\"account/details.php?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
+					echo "<a href=\"account/details?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
 						<div class=\"list\">
 							<p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
 							<p>".ucfirst($account['accountType'])." Account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
@@ -176,7 +176,7 @@ if ($db === null){
 						$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
 												
 						foreach ($transactionRows as $transaction) {							
-							echo "<a href=\"account/details.php?acc=" . $transaction['nickName'] . "\" class=\"highlight-button transform-button split round\">
+							echo "<a href=\"account/details?acc=" . $transaction['nickName'] . "\" class=\"highlight-button transform-button split round\">
 									<div class=\"list-padded\">
 										<h3 class=\"bold\">" . $transaction['nickName'] . " (" . ucfirst($transaction['accountType']) . ")</h3>
 										<p>".$transaction['transactionTime']."<p>
