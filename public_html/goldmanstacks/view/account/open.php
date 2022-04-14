@@ -129,19 +129,17 @@ if ($db === null) {
                 <br>
                 <h2 id="title">Open New <span id="account-type-title"></span> Account</h2>
                 <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p>
-                <form id="request-account">
+                <form id="request-account" class="flex-center">
                     <input id="account-type" type="hidden" value="" name="type" required>
                     <input type="hidden" value="<?php echo $requestAccountToken ?>" name="token" required>
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Submit Request<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Submit Request<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
             </div>
         </div>
