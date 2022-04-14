@@ -11,7 +11,7 @@ checkClientStatus(); // Check if the client is signed in
 $userID = $_SESSION['uid'];
 
 /* Requestable accounts */
-$accountTypes = array('debit', 'savings', 'credit');
+$accountTypes = array('checking', 'savings', 'credit');
 
 /* Create csrf token for account request form */
 $requestAccountToken = hash_hmac('sha256', '/requestAccount.php', $_SESSION['key']);
