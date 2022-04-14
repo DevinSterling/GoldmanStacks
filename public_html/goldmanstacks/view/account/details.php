@@ -186,23 +186,21 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     	                <h2 class="big text-center">Balance: $<?php echo $accountBalance ?></h2>
     	            </div>
     	            <div class="item-content bottom-round">
-    	                <form id="select-account">
+    	                <form id="select-account" class="flex-form">
     	                    <label for="choose-account" class="info">Selected Account</label>
-    	                    <div class="form-item">
-    	                        <select id="choose-account" onChange="changeAccount(this)" class="input-field last-field">
-    	                            <?php
-    	                            foreach ($accounts as $account) {
-    	                               echo "<option value=\"" . $account['nickName'] . "\"";
-    	                               
-    	                               if ($currentAccountName === $account['nickName']) {
-    	                                    echo " selected";
-    	                               }
-    	                               
-    	                               echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")" . "</option>";
-    	                            }
-    	                            ?>
-    	                        </select>
-    	                    </div>
+	                        <select id="choose-account" onChange="changeAccount(this)" class="input-field last-field">
+	                            <?php
+	                            foreach ($accounts as $account) {
+	                               echo "<option value=\"" . $account['nickName'] . "\"";
+	                               
+	                               if ($currentAccountName === $account['nickName']) {
+	                                    echo " selected";
+	                               }
+	                               
+	                               echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")" . "</option>";
+	                            }
+	                            ?>
+	                        </select>
     	                </form>
     	                <hr>
                         <button onClick="showPopUp('account-popup-content')" class="highlight-button transform-button split round">
@@ -315,25 +313,19 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	            <div id="dateFilter-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Date</h2>
                     <p class="info">Please specify the time frame</p><br>
-                    <form id="filterDate">
+                    <form id="filterDate" class="flex-center">
                         <label for="date1" class="info">From</label>
-        	            <div class="form-item">
                         <input id="date1" type="date" class="input-field">
-        	            </div>
                         <label for="date2" class="info">To</label>
-        	            <div class="form-item">
                         <input id="date2" type="date" class="input-field">
-        	            </div>
-                        <div class="form-item">
-                            <button form="filterDate" class="standard-button transform-button flex-center round">
-                                <div class="split">
-                                    <p class="animate-left">Apply<p>
-                   		            <div class="toggle-button">
-                    		            <i class="fas fa-chevron-right"></i>
-                    		        </div>
-                                </div>
-                            </button>
-                        </div>
+                        <button form="filterDate" class="standard-button transform-button flex-center round">
+                            <div class="split">
+                                <p class="animate-left">Apply<p>
+               		            <div class="toggle-button">
+                		            <i class="fas fa-chevron-right"></i>
+                		        </div>
+                            </div>
+                        </button>
                     </form>
                 </div>
 	            <div id="transaction-popup-content" class="pop-up-item hidden">
@@ -407,23 +399,19 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 <div id="edit-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Edit Account</h2>
                     <p class="info">Change account nickname</p><br>
-                    <form id="change-nickname" action="../../requests/account/updateAccountNickname">
+                    <form id="change-nickname" action="../../requests/account/updateAccountNickname" class="flex-form">
         	            <label for="name" class="info">Account Name</label>
-        	            <div class="form-item">
-        		            <input id="name" class="input-field" name="new" type="text" required>
-        	            </div>
+        		        <input id="name" class="input-field" name="new" type="text" required>
                         <input id="current-account-name" type="hidden" name="old" value="<?php echo $currentAccountName ?>" required>
                         <input type="hidden" name="token" value="<?php echo $updateNickNameToken ?>" required>
-                        <div class="form-item">
-                            <button type="submit" class="standard-button transform-button flex-center round">
-                                <div class="split">
-                                    <p class="animate-left">Apply<p>
-                   		            <div class="toggle-button">
-                    		            <i class="fas fa-chevron-right"></i>
-                    		        </div>
-                                </div>
-                            </button>
-                        </div>
+                        <button type="submit" class="standard-button transform-button flex-center round">
+                            <div class="split">
+                                <p class="animate-left">Apply<p>
+               		            <div class="toggle-button">
+                		            <i class="fas fa-chevron-right"></i>
+                		        </div>
+                            </div>
+                        </button>
                     </form>
                 </div>
             </div>
