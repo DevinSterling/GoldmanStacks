@@ -222,7 +222,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     	                <label class="banner-text">Account Actions</label>
     	            </div>
     	            <div class="item-content bottom-round">
-                        <a href="funds.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="funds?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-plus icon"></i> Deposit Funds</p>
                             </div>
@@ -233,7 +233,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </a>
                         <hr>
-                        <a href="funds.php?v=withdraw&acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="funds?v=withdraw&acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-minus icon"></i> Withdraw Funds</p>
                             </div>
@@ -244,7 +244,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </a>
                         <hr>
-                        <a id="transfer" href="transfer.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a id="transfer" href="transfer?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-exchange-alt icon"></i> Transfer Funds</p>
                             </div>
@@ -255,7 +255,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </a>
                         <hr>
-                        <a href="payments.php?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="payments?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
                             </div>
