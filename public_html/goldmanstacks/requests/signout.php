@@ -6,7 +6,7 @@ session_start(); // start session
 /* Check if the user is signed in to sign out */
 if (checkIfLoggedIn()) {
     /* Used to notify if the user has been signed out due to inactivity */
-    $isInactive = checkInactive();
+    $isInactive = (bool)$_GET['timeout'];
     
     /* Unset all session variables. */
     $_SESSION = array();
