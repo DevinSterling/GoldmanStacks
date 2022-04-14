@@ -165,7 +165,6 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         			    <div class="form-item">
         				    <input id="address-postal-code" name="address-postal-code" type="text" pattern="^[0-9]{5}$" maxlength="5" placeholder="Required" class="input-field" required>
         			    </div>
-        			    <hr>
         			    <input type="hidden" name="token" value="<?php echo $registrationToken ?>">
         			    <div class="form-item">
             				<button type="submit" class="standard-button transform-button flex-center round">
