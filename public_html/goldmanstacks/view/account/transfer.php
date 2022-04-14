@@ -142,89 +142,71 @@ $db->close();
                 <h2 id="title">Internal Transactions</h2>
                 <p class="info">Transfer funds between accounts</p>
                 <br>
-                <form id="internal-transfer" action="../../requests/account/newInternalTransfer">
+                <form id="internal-transfer" action="../../requests/account/newInternalTransfer" class="flex-form">
     	            <label for="internal-sender" class="info">Sender</label>
-    	            <div class="form-item">
-    		            <select id="internal-sender" name="from" class="input-field" required>
-                            <?php
-                            foreach ($accounts as $account) {
-                                echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
-                               
-                                if ($referencedName === $account['nickName']) {
-                                    echo " selected";
-                                }
-                               
-                                echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+		            <select id="internal-sender" name="from" class="input-field" required>
+                        <?php
+                        foreach ($accounts as $account) {
+                            echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
+                           
+                            if ($referencedName === $account['nickName']) {
+                                echo " selected";
                             }
-                            ?>
-    		            </select>
-    	            </div>
+                           
+                            echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                        }
+                        ?>
+		            </select>
     	            <label for="receiverreceiver" class="info">Receiver</label>
-    	            <div class="form-item">
-    		            <select id="internal-receiver" name="to" class="input-field" required>
-                            <?php
-                            foreach ($accounts as $account) {
-                                echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
-                            }
-                            ?>
-                        </select>
-    		        </div>
+		            <select id="internal-receiver" name="to" class="input-field" required>
+                        <?php
+                        foreach ($accounts as $account) {
+                            echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                        }
+                        ?>
+                    </select>
     		        <hr>
     	            <label for="internal-amount" class="info">Amount</label>
-    	            <div class="form-item">
-    		            <input id="internal-amount" name="usd" type="number" min="0" placeholder="USD" class="input-field" required>
-    	            </div>
-                    <hr>
+    		        <input id="internal-amount" name="usd" type="number" min="0" placeholder="USD" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $internalTransferToken ?>" required>
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
-                <form id="external-transfer" action="../../requests/account/newExternalTransfer" class="hidden">
+                <form id="external-transfer" action="../../requests/account/newExternalTransfer" class="flex-form hidden">
     	            <label for="external-sender" class="info">Sender</label>
-    	            <div class="form-item">
-    		            <select id="external-sender" name="from" class="input-field" required>
-                            <?php
-                            foreach ($accounts as $account) {
-                                echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
-                               
-                                if ($referencedName === $account['nickName']) {
-                                    echo " selected";
-                                }
-                               
-                                echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+		            <select id="external-sender" name="from" class="input-field" required>
+                        <?php
+                        foreach ($accounts as $account) {
+                            echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
+                           
+                            if ($referencedName === $account['nickName']) {
+                                echo " selected";
                             }
-                            ?>
-    		            </select>
-    	            </div>
+                           
+                            echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                        }
+                        ?>
+		            </select>
     	            <label for="external-receiver" class="info">Receiver Bank Account Number</label>
-    	            <div class="form-item">
-                        <input id="external-receiver" name="to" class="input-field" type="text" required>
-    		        </div>
+                    <input id="external-receiver" name="to" class="input-field" type="text" required>
     		        <hr>
     	            <label for="external-amount" class="info">Amount</label>
-    	            <div class="form-item">
-    		            <input id="external-amount" name="usd" class="input-field" type="number" min="0" placeholder="USD" required>
-    	            </div>
-                    <hr>
+    		        <input id="external-amount" name="usd" class="input-field" type="number" min="0" placeholder="USD" required>
                     <input type="hidden" name="token" value="<?php echo $externalTransferToken ?>" required>
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
             </div>
             <div class="list mini"></div>
