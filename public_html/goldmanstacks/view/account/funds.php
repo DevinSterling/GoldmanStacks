@@ -101,61 +101,47 @@ $amountOfAccounts = 5;
                         else echo "Withdraw"
                     ?></h2>
                 </div>
-                <form id="deposit-form" class="<?php if (!empty($view) && $view !== "deposit") echo "hidden" ?>">
+                <form id="deposit-form" class="flex-form <?php if (!empty($view) && $view !== "deposit") echo "hidden" ?>">
                     <p class="info">Deposit funds from account</p><br>
 		            <label for="deposit-account" class="info">Account</label>
-		            <div class="form-item">
-    		            <select id="deposit-account" class="input-field">
-                            <?php
-                            for ($i = 0; $i < $amountOfAccounts; $i++) {
-                                echo "<option>$accounts[$i]</option>";
-                            }
-                            ?>
-    		            </select>
-		            </div>
+		            <select id="deposit-account" class="input-field">
+                        <?php
+                        for ($i = 0; $i < $amountOfAccounts; $i++) {
+                            echo "<option>$accounts[$i]</option>";
+                        }
+                        ?>
+		            </select>
                     <label for="deposit-amount" class="info">Amount</label>
-    	            <div class="form-item">
-                        <input id="deposit-amount" type="number" class="input-field">
-    	            </div>
-                    <hr>
-                    <div class="form-item">
-                        <button form="filterDate" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Deposit<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <input id="deposit-amount" type="number" class="input-field">
+                    <button form="filterDate" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Deposit<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
-                <form id="withdraw-form" class="<?php if ($view !== "withdraw") echo "hidden" ?>">
+                <form id="withdraw-form" class="flex-form <?php if ($view !== "withdraw") echo "hidden" ?>">
                     <p class="info">Withdraw funds from account</p><br>
 		            <label for="withdraw-account" class="info">Account</label>
-		            <div class="form-item">
-    		            <select id="withdraw-account" class="input-field">
-                            <?php
-                            for ($i = 0; $i < $amountOfAccounts; $i++) {
-                                echo "<option>$accounts[$i]</option>";
-                            }
-                            ?>
-    		            </select>
-		            </div>
+		            <select id="withdraw-account" class="input-field">
+                        <?php
+                        for ($i = 0; $i < $amountOfAccounts; $i++) {
+                            echo "<option>$accounts[$i]</option>";
+                        }
+                        ?>
+		            </select>
                     <label for="withdraw-amount" class="info">Amount</label>
-    	            <div class="form-item">
-                        <input id="withdraw-amount" type="number" class="input-field">
-    	            </div>
-                    <hr>
-                    <div class="form-item">
-                        <button form="filterDate" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Withdraw<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <input id="withdraw-amount" type="number" class="input-field">
+                    <button form="filterDate" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Withdraw<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
     	    </div>
     	    <div class="list mini">
