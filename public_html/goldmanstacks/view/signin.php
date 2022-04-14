@@ -109,7 +109,7 @@ if ($timeout || $registered || $error) {
                         </div>
                     </a>
                     <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
+                        <button type="submit" class="standard-button small-gap transform-button flex-center round">
                             <div class="split">
                                 <p class="animate-left">Sign In<p>
                		        <div class="toggle-button">
