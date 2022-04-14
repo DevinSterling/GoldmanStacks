@@ -11,7 +11,6 @@ checkClientStatus(); // Check if the client is signed in
 /* SESSION Variables */
 $userID = $_SESSION['uid'];
 $key = $_SESSION['key'];
-$userID = 1;
 
 /* GET Variables */
 $referencedName = $_GET['acc'];
@@ -205,14 +204,14 @@ $db->close();
                             ?>
     		            </select>
     	            </div>
-    	            <label for="external-receiver" name="to" class="info">Receiver Bank Account Number</label>
+    	            <label for="external-receiver" class="info">Receiver Bank Account Number</label>
     	            <div class="form-item">
-                        <input id="external-receiver" name="usd" class="input-field" type="text" required>
+                        <input id="external-receiver" name="to" class="input-field" type="text" required>
     		        </div>
     		        <hr>
     	            <label for="external-amount" class="info">Amount</label>
     	            <div class="form-item">
-    		            <input id="external-amount" class="input-field" type="number" min="0" placeholder="USD" required>
+    		            <input id="external-amount" name="usd" class="input-field" type="number" min="0" placeholder="USD" required>
     	            </div>
                     <hr>
                     <input type="hidden" name="token" value="<?php echo $externalTransferToken ?>" required>
@@ -237,9 +236,12 @@ $db->close();
 	<script type="text/javascript">
 	    let internalSender = document.getElementById('internal-sender');
 	    let internalReceiver = document.getElementById('internal-receiver');
+	    let externalSender = document.getElementById('external-sender');
+	    let externalReceiver = document.getElementById('external-receiver');
 	
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('internal-transfer').addEventListener('submit', handleForm);
+            document.getElementById('external-transfer').addEventListener('submit', handleForm);
         });
         
         function handleForm(event) {
@@ -259,7 +261,7 @@ $db->close();
 	            .then((data) => {          
 	                if (data.response) {
 	                    if (form.id === 'internal-transfer') setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
-	                    
+	                    else setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
 	                    form.reset();
 	                } else {
 	                    setFailNotification(data.message);
