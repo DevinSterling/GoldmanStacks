@@ -10,7 +10,6 @@ checkClientStatus(); // Check if the client is signed in
 
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
-$userId = 1;
 
 /* GET Variables */
 $currentAccountName = $_GET['acc'];
