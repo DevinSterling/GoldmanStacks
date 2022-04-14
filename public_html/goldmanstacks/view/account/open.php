@@ -73,7 +73,7 @@ if ($db === null) {
     	    <div class="list main maximize">
     	        <h2 id="title">Select Account Type</h2>
     	        <label class="info">Request to open a new account</label>
-    	        <hr>
+    	        <br>
         	    <div class="split">
         	        <?php
         	        /* Find accounts that is still pending for the current client  */
@@ -129,7 +129,7 @@ if ($db === null) {
                 <br>
                 <h2 id="title">Open New <span id="account-type-title"></span> Account</h2>
                 <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p>
-                <form id="request-account" class="flex-center">
+                <form id="request-account" class="flex-form">
                     <input id="account-type" type="hidden" value="" name="type" required>
                     <input type="hidden" value="<?php echo $requestAccountToken ?>" name="token" required>
                     <button type="submit" class="standard-button transform-button flex-center round">
