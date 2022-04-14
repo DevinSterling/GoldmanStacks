@@ -324,7 +324,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
         	            <div class="form-item">
                         <input id="date2" type="date" class="input-field">
         	            </div>
-                        <br>
                         <div class="form-item">
                             <button form="filterDate" class="standard-button transform-button flex-center round">
                                 <div class="split">
@@ -360,7 +359,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                         <b class="info">Balance Afterward</b>
                         <p id="transaction-balance"></p>
                     </div>
-                    <br>
                     <div class="form-item">
                         <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -395,7 +393,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                         <b class="info">Stuff</b>
                         <p id="placeholder2"></p>
                     </div>
-                    <br>
                     <div class="form-item">
                         <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -415,7 +412,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
         	            <div class="form-item">
         		            <input id="name" class="input-field" name="new" type="text" required>
         	            </div>
-                        <br>
                         <input id="current-account-name" type="hidden" name="old" value="<?php echo $currentAccountName ?>" required>
                         <input type="hidden" name="token" value="<?php echo $updateNickNameToken ?>" required>
                         <div class="form-item">
