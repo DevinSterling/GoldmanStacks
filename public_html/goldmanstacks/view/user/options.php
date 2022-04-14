@@ -181,114 +181,70 @@ if ($db === null) {
                         $db->close(); 
                     ?>
                 </div>
-                <form id="change-username" class="hidden">
-                    <label for="username" class="info">New Username</label>
-    	            <div class="form-item">
-    		            <input id="username" class="input-field" type="text">
-    	            </div>
-                    <div class="form-item">
-                        <button form="change-username" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
-                </form>
-                <form id="change-password"  data-url="../../requests/user/updatePassword" class="hidden">
+                <form id="change-password" action="../../requests/user/updatePassword" class="flex-form hidden">
                     <label for="current-password" class="info">Current Password</label>
-    	            <div class="form-item">
-    		            <input id="current-password" type="password" name="old" class="input-field" required>
-    	            </div>
+    		    <input id="current-password" type="password" name="old" class="input-field" required>
     	            <hr>
     	            <label for="new-password" class="info">New Password</label>
-    	            <div class="form-item">
-    		            <input id="new-password" type="password" name="new" class="input-field" required>
-    	            </div>
+    		    <input id="new-password" type="password" name="new" class="input-field" required>
     	            <label for="confirm-password" class="info">Confirm Password</label>
-    	            <div class="form-item">
-    		            <input id="confirm-password" type="password" name="confirm" class="input-field" required>
-    	            </div>
+    		    <input id="confirm-password" type="password" name="confirm" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $passwordToken ?>">
-                    <div class="form-item">
-                        <button form="change-password" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button form="change-password" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
-                <form id="change-address" data-url="../../requests/user/updateAddress" class="hidden">
+                <form id="change-address" action="../../requests/user/updateAddress" class="flex-form hidden">
                     <label for="address-line-1" class="info">Address Line 1</label>
-                    <div class="form-item">
-                        <input id="address-line-1" type="text" name="line1" class="input-field" required>
-                    </div>
+                    <input id="address-line-1" type="text" name="line1" class="input-field" required>
                     <label for="address-line-2" class="info">Address Line 2</label>
-                    <div class="form-item">
-                        <input id="address-line-2" type="text" name="line2" class="input-field">
-                    </div>
+                    <input id="address-line-2" type="text" name="line2" class="input-field">
                     <label for="address-city" class="info">City</label>
-                    <div class="form-item">
-                        <input id="address-city" type="text" name="city" class="input-field" required>
-                    </div>
+                    <input id="address-city" type="text" name="city" class="input-field" required>
                     <label for="address-state" class="info">State</label>
-                    <div class="form-item">
-                        <input id="address-state" type="text" name="state" class="input-field" required>
-                    </div>
+                    <input id="address-state" type="text" name="state" class="input-field" required>
                     <label for="address-postal-code" class="info">Postal Code</label>
-                    <div class="form-item">
-                        <input id="address-postal-code" type="text" name="code" class="input-field" required>
-                    </div>
+                    <input id="address-postal-code" type="text" name="code" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $addressToken ?>">
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
-                <form id="change-phone" data-url="../../requests/user/updatePhoneNumber" class="hidden">
+                <form id="change-phone" action="../../requests/user/updatePhoneNumber" class="flex-form hidden">
                     <label for="phone-number" class="info">Phone Number</label>
-                    <div class="form-item">
-                        <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
-                    </div>
+                    <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
                     <input type="hidden" name="token" value="<?php echo $phoneNumberToken ?>">
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
-                <form id="change-email" data-url="../../requests/user/updateEmail" class="hidden">
+                <form id="change-email" action="../../requests/user/updateEmail" class="flex-form hidden">
                     <label for="email-address" class="info">Email Address</label>
-                    <div class="form-item">
-                        <input id="email-address" type="email" name="email" class="input-field" required>
-                    </div>
+                    <input id="email-address" type="email" name="email" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $emailToken ?>">
-                    <div class="form-item">
-                        <button type="submit" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Apply<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
             </div>
             <div class="list mini">
@@ -314,7 +270,7 @@ if ($db === null) {
 	        let form = event.target;
 	        let formData = new FormData(form);
 	        
-	        let url = form.dataset.url;
+	        let url = form.action;
 	        let request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
@@ -329,7 +285,7 @@ if ($db === null) {
 	        let form = event.target;
 	        let formData = new FormData(form);
 	        
-	        let url = form.dataset.url;
+	        let url = form.action;
 	        let request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
