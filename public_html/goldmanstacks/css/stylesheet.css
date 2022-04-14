@@ -32,6 +32,10 @@ p, h5, h4, h3, h2, h1 {
     margin: 0;  
 }
 
+hr {
+    border-width: 1px 0 0 0;
+}
+
 #title {
     font-size: 2.25em;
     margin: 0 0 0.6em;
@@ -391,7 +395,11 @@ p, h5, h4, h3, h2, h1 {
     align-items: flex-start;
 }
 
-.form-item button, .form-item input[type="submit"] {
+.form-item button:not(.small-gap) {
+    margin-top: 19px;
+}
+
+.small-gap {
     margin-top: 5px;
 }
 
@@ -742,6 +750,10 @@ input:checked + .slider:before {
 
 .side-margins {
     margin: 0 10px;
+}
+
+.top-margin {
+    margin-top: 19px;
 }
 
 .shadow {
