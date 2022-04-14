@@ -17,7 +17,7 @@ $token = $_POST['token'];
 $dbSuccess = false;
 $dbMessage = "";
 
-$accountTypes = array('debit', 'savings', 'credit');
+$accountTypes = array('checking', 'savings', 'credit');
 
 $dbFailMessage = "Failed to request";
 
@@ -80,4 +80,3 @@ $myObj->response = $dbSuccess;
 $myObj->message = $dbMessage;
 $myJSON = json_encode($myObj);
 echo $myJSON;
-?>
