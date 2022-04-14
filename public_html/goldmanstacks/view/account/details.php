@@ -35,7 +35,7 @@ if ($db === null) {
 }
 
 /* Query used to gather account names and then store them in an array */
-$query = 'SELECT balance, accountType, nickName FROM accountDirectory WHERE clientID=1';
+$query = 'SELECT balance, accountType, accountNum, nickName FROM accountDirectory WHERE clientID=1';
 $result = $db->query($query);
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -44,7 +44,8 @@ foreach ($rows as $account) {
 	
     if ($account['nickName'] === $currentAccountName) {
     	$accountBalance = $account['balance'];
-	$accountType = ucfirst($account['accountType']);
+	    $accountType = ucfirst($account['accountType']);
+	    $accountNumber = $account['accountNum'];
     }
 }
 
@@ -129,20 +130,44 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?php
                     /* Query to get all transactions from the selected account */
-                    $transactionStatement = $db->prepare("SELECT accountNum, transactionTime, transactionAmount, type FROM transactions WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?) ORDER BY transactionTime DESC");
-                    $transactionStatement->bind_param("s", $currentAccountName);
+                    $transactionStatement = $db->prepare("SELECT accountNum, recipientAccount, transactionTime, transactionAmount, type 
+                                                            FROM transactions 
+                                                            WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?) 
+                                                            OR recipientAccount IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)
+                                                            ORDER BY transactionTime DESC");
+                    $transactionStatement->bind_param("ss", $currentAccountName, $currentAccountName);
                     $transactionStatement->execute();
                     
                     /* Obtain result */
                     $result = $transactionStatement->get_result();
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-                    foreach ($rows as $transaction) {					
+                    foreach ($rows as $transaction) {
+                        switch ($transaction['type']) {
+                            case 'transfer':
+                                if ($transaction['accountNum'] != $accountNumber) {
+                                    $description = "Transfer from (*" . substr($transaction['accountNum'], -4) . ")";
+                                    $transaction['transactionAmount'] *= -1;
+                                } else {
+                                    $description = "Transfer to (*" . substr($transaction['recipientAccount'], -4) . ")";
+                                }
+                                break;
+                            case 'deposit':
+                                $description = "Deposit into account";
+                                break;
+                            case 'withdraw':
+                                $description = "Withdraw from account";
+                                break;
+                            case 'payment':
+                                $description = "Payment to";
+                        }
+                        
+                        
                         echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
                             <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
                             <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
                             <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
-                            <td data-label=\"Description\" class=\"desc\">Transaction - ".ucfirst($transaction['type'])."</td>
+                            <td data-label=\"Description\" class=\"desc\">$description</td>
                             <td data-label=\"Amount\" class=\"amount\">".convertToCurrency($transaction['transactionAmount'])."</td>
                         </tr>";
                     }
