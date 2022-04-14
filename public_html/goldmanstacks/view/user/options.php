@@ -186,7 +186,6 @@ if ($db === null) {
     	            <div class="form-item">
     		            <input id="username" class="input-field" type="text">
     	            </div>
-                    <hr>
                     <div class="form-item">
                         <button form="change-username" class="standard-button transform-button flex-center round">
                             <div class="split">
@@ -212,7 +211,6 @@ if ($db === null) {
     	            <div class="form-item">
     		            <input id="confirm-password" type="password" name="confirm" class="input-field" required>
     	            </div>
-                    <hr>
                     <input type="hidden" name="token" value="<?php echo $passwordToken ?>">
                     <div class="form-item">
                         <button form="change-password" class="standard-button transform-button flex-center round">
@@ -246,7 +244,6 @@ if ($db === null) {
                     <div class="form-item">
                         <input id="address-postal-code" type="text" name="code" class="input-field" required>
                     </div>
-                    <hr>
                     <input type="hidden" name="token" value="<?php echo $addressToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
@@ -264,7 +261,6 @@ if ($db === null) {
                     <div class="form-item">
                         <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
                     </div>
-                    <hr>
                     <input type="hidden" name="token" value="<?php echo $phoneNumberToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
@@ -282,7 +278,6 @@ if ($db === null) {
                     <div class="form-item">
                         <input id="email-address" type="email" name="email" class="input-field" required>
                     </div>
-                    <hr>
                     <input type="hidden" name="token" value="<?php echo $emailToken ?>">
                     <div class="form-item">
                         <button type="submit" class="standard-button transform-button flex-center round">
