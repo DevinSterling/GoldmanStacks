@@ -88,15 +88,11 @@ if ($timeout || $registered || $error) {
                 <div class="accent-border top-round margin-bottom">
                     <h2 class="big"><b>Goldman Stacks</b><h2>
                 </div>
-                <form id="login">
+                <form id="login" class="flex-form">
                     <label for="username" class="info">Username</label>
-    	            <div class="form-item">
-    		            <input id="username" class="input-field" name="username" type="text" required>
-    	            </div>
+    		        <input id="username" class="input-field" name="username" type="text" required>
     	            <label for="password" class="info">Password</label>
-    	            <div class="form-item">
-    		            <input id="password" class="input-field" name="password" type="password" required>
-    	            </div>
+    		        <input id="password" class="input-field" name="password" type="password" required>
     	            <input type="hidden" name="token" value="<?php echo $signinToken ?>">
                     <a href="register" class="highlight-button transform-button split round">
                         <div class="list">
@@ -108,16 +104,14 @@ if ($timeout || $registered || $error) {
             	            </div>
                         </div>
                     </a>
-                    <div class="form-item">
-                        <button type="submit" class="standard-button small-gap transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Sign In<p>
-               		        <div class="toggle-button">
-                		    <i class="fas fa-chevron-right"></i>
-                		</div>
-                            </div>
-                        </button>
-                    </div>
+                    <button type="submit" class="standard-button small-gap transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Sign In<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
                 </form>
             </div>
         </div>
