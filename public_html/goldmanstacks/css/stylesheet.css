@@ -34,6 +34,8 @@ p, h5, h4, h3, h2, h1 {
 
 hr {
     border-width: 1px 0 0 0;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 #title {
@@ -390,12 +392,26 @@ hr {
 /*-----------+
 | Form Input |
 +-----------*/
+.flex-form {
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.flex-form .info {
+    margin-bottom: 0;
+}
+
+.flex-form hr {
+    margin: 14px 0 10px 0;
+}
+
 .form-item {
     display: flex;
     align-items: flex-start;
 }
 
-.form-item button:not(.small-gap) {
+.form-item button:not(.small-gap),
+.flex-form button:not(.small-gap) {
     margin-top: 19px;
 }
 
@@ -451,6 +467,7 @@ hr {
 
 .switch-field .info {
     padding-left: 10px;
+    margin: 0;
 }
 
 .switch-item {
