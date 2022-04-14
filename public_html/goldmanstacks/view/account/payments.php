@@ -162,36 +162,28 @@ $amountOfPayments = 5;
                 </div>
                 <div id="New-Payment" class="<?php if ($referencedName === null) echo "hidden" ?>">
                     <p class="info">Start a new payment</p><br>
-                    <form id="filterDate">
+                    <form id="filterDate" class="flex-form">
                         <label for="input-sender" class="info">From</label>
-        	            <div class="form-item">
-        		            <select id="input-sender" class="input-field">
-                                <?php
-                                foreach ($accounts as $account) {
-                                    echo "<option value=\"" . $account['number'] . "\"";
-                                   
-                                    if ($referencedName === $account['nickName']) {
-                                        echo " selected";
-                                    }
-                                   
-                                    echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+    		            <select id="input-sender" class="input-field">
+                            <?php
+                            foreach ($accounts as $account) {
+                                echo "<option value=\"" . $account['number'] . "\"";
+                               
+                                if ($referencedName === $account['nickName']) {
+                                    echo " selected";
                                 }
-                                ?>
-        		            </select>
-        	            </div>
+                               
+                                echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                            }
+                            ?>
+    		            </select>
         	            <label for="input-receiver" class="info">Receiver Bank Account Number</label>
-        	            <div class="form-item">
-                            <input id="input-receiver" class="input-field" type="text">
-        		        </div>
+                        <input id="input-receiver" class="input-field" type="text">
         	            <hr>
                         <label for="input-date" class="info">Date</label>
-        	            <div class="form-item">
-                            <input id="input-date" type="date" class="input-field">
-        	            </div>
+                        <input id="input-date" type="date" class="input-field">
                         <label for="input-amount" class="info">Amount</label>
-        	            <div class="form-item">
-                            <input id="input-amount" type="number" class="input-field" placeholder="USD">
-        	            </div>
+                        <input id="input-amount" type="number" class="input-field" placeholder="USD">
                         <hr>
                         <div class="switch-field">
                             <label class="switch-item">
@@ -200,7 +192,6 @@ $amountOfPayments = 5;
                             </label>
                             <label for="input-checkbox-recurring" class="info">Recurring Payment</label>
                         </div>
-                        <hr>
                         <div class="form-item">
                             <button form="filterDate" class="standard-button transform-button flex-center round">
                                 <div class="split">
