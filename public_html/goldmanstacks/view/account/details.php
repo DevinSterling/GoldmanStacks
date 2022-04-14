@@ -34,8 +34,11 @@ if ($db === null) {
 }
 
 /* Query used to gather account names and then store them in an array */
-$query = 'SELECT balance, accountType, accountNum, nickName FROM accountDirectory WHERE clientID=1';
-$result = $db->query($query);
+$query = $db->prepare('SELECT balance, accountType, accountNum, nickName FROM accountDirectory WHERE clientID=?');
+$query->bind_param("i", $userId);
+$query->execute();
+
+$result = $query->get_result();
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 foreach ($rows as $account) {
