@@ -46,7 +46,7 @@ if (hash_equals($calc, $token)
                 
                 $_SESSION['uid'] = $user['userID']; // Set User Id for Session
                 $_SESSION['role'] = $user['userRole']; // Set User Role for Session
-                $_SESSION['key'] = bin2hex(random_bytes(32)); // Create Session Key for CSRF tokens
+                $_SESSION['key'] = bin2hex(SODIUM_CRYPTO_SECRETBOX_KEYBYTES); // Create Session Key for CSRF tokens
                 
                 $_SESSION['last_activity'] = time(); // Set active time (used for inactivity detection)
                 $_SESSION['expiry_time'] = 10 * 60; // Time till timeout (10 minutes)
