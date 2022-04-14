@@ -270,7 +270,6 @@ $amountOfPayments = 5;
                         <b class="info">Reccuring</b>
                         <p id="placeholder2">False (This is a one-time payment)</p>
                     </div>
-                    <br>
                     <div class="form-item">
                         <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                             <div class="split">
