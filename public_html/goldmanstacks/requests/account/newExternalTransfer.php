@@ -75,7 +75,7 @@ if (hash_equals($calc, $token)
                     
                     if ($db->affected_rows > 0) {
                         $dbSuccess = true;
-                        $dbMessage = "Transfered $" . $amount . " to (*" . substr($receiver, -4) . ")";
+                        $dbMessage = "Transferred $" . $amount . " to (*" . substr($receiver, -4) . ")";
                     } else {
                         $dbMessage = $dbFailMessage;
                     }
