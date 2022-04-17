@@ -37,7 +37,7 @@ function isAdmin() {
 /* Check if a user has been inactive */
 function checkInactive() {
     if ($_SESSION['last_activity'] < time() - $_SESSION['expiry_time'] ) { // Inactive User Condition
-        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/requests/signout.php');
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/requests/signout.php?timeout=1');
         die();
     } else {
         $_SESSION['last_activity'] = time();
