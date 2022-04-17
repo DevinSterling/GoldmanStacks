@@ -313,6 +313,8 @@ $db->close();
 	        formData = new FormData(form);
 	        
 	        if (verifyUserInput()) {
+	            hideNotification(); // Hide notification if visible
+	            
                 transactionAmount.textContent = '$' + formData.get('usd');
                 
                 popUpBackground.classList.add('show-popup-content');
@@ -367,13 +369,17 @@ $db->close();
 	            .then((response) => response.json())
 	            .then((data) => {          
 	                if (data.response) {
-	                    if (form.id === 'internal-transfer') setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
-	                    else setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
+	                    form.reset();
 
-	                    internalSender.dispatchEvent(new Event('change'));
-	                    externalSender.dispatchEvent(new Event('change'));
-	                    
-	                    if (internalReceiverBalance.textContent !== '0.00') internalReceiver.dispatchEvent(new Event('change'));
+	                    if (form.id === 'internal-transfer') {
+	                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
+	                        internalSender.dispatchEvent(new Event('change'));
+	                        internalReceiverBalance.textContent = '0.00';
+	                    }
+	                    else {
+	                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
+	                        externalSender.dispatchEvent(new Event('change'));
+	                    }
 	                } else {
 	                    setFailNotification(data.message);
 	                }
@@ -384,8 +390,6 @@ $db->close();
 	            
             window.scrollTo({ top: 0, behavior: 'smooth' });
             hidePopUp();
-            
-            
 	    }
 	    
 	    async function retreiveInternalSenderBalance(event) {
