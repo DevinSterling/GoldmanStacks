@@ -28,5 +28,5 @@ function showNotification() {
 }
 
 function hideNotification() {
-    notification.classList.add('collapse');
+    if (!notification.classList.contains('collapse')) notification.classList.add('collapse');
 }
