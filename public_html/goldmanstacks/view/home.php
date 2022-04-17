@@ -14,10 +14,6 @@ const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
 
-/* Temp Variables */
-$user = 'User'; // Taken from DB, user account name
-$lastVisit = date("F j, Y, g:i a"); // Last time of login
-
 /* Main Variables */
 $totalBalance = 0.00;
 $accounts = array(); // Array that possess the names of the accounts under the current client
@@ -30,6 +26,16 @@ if ($db === null){
 	header("Location: ");
 	die();
 }
+
+/* Get firstname and last sign in */
+$queryFirstName = $db->prepare("SELECT firstName, lastSignin FROM users WHERE userID=?");
+$queryFirstName->bind_param("i", $userId);
+$queryFirstName->execute();
+$queryFirstName->store_result();
+
+$queryFirstName->bind_result($firstName, $lastSignin);
+$queryFirstName->fetch();
+$queryFirstName->close();
 ?>
 
 <!DOCTYPE html>
@@ -70,7 +76,7 @@ if ($db === null){
 		<?php notification(); ?>
 		<div class="container flex-center">
 		    <div class="list main">
-		        <h2 id="title">Welcome, <?php echo $user ?></h2>
+		        <h2 id="title">Welcome, <?php echo $firstName ?></h2>
 		        <div class="split">
 		            <label class="info">Available Accounts</label>
 		            <a href="account/open" class="expand-button transform-button extend-left round shadow">
@@ -134,7 +140,7 @@ if ($db === null){
     		            <h2 class="big text-center">Total Balance: $<?php echo number_format($totalBalance, 2) ?></h2>
     		        </div>
     		        <div class="item-content bottom-round">
-    		            <p class="info text-center">Last Sign In: <?php echo $lastVisit ?></p>
+    		            <p class="info text-center">Last Sign In: <?php echo $lastSignin ?></p>
     		            <hr>
                         <a href="account/funds" class="highlight-button transform-button split round">
                             <div class="list">
