@@ -330,10 +330,8 @@ $db->close();
 	        if (form.id === 'internal-transfer') {
 	            if (internalSender.selectedOptions[0].text === internalReceiver.selectedOptions[0].text) {
 	                setFailNotification("Accounts selected are the same");
-	                return;
 	            } else if (formData.get('usd') > Number(internalSenderBalance.textContent.replace(',', ''))) {
 	                setFailNotification("Requested amount is over the current balance");
-	                return;
 	            } else {
                     transactionSender.textContent = internalSender.selectedOptions[0].text;
                     transactionReceiver.textContent = internalReceiver.selectedOptions[0].text;
@@ -342,7 +340,6 @@ $db->close();
 	        } else {
                 if (Number(formData.get('usd')) > Number(externalSenderBalance.textContent.replace(',', ''))) {
 	                setFailNotification("Requested amount is over the current balance");
-	                return;
 	            } else {
                     transactionSender.textContent = externalSender.selectedOptions[0].text;
                     transactionReceiver.textContent = externalReceiver.value.substring(externalReceiver.value.length - 4);
