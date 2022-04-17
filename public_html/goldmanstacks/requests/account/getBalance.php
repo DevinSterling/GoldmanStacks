@@ -36,7 +36,7 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
         
         if ($db !== null) {
-            /* Check if both internal accounts exist */
+            /* Check if the account exists */
             $queryBalance = $db->prepare("SELECT balance FROM accountDirectory WHERE clientID=? AND accountNum=?");
             $queryBalance->bind_param("ii", $userID, $accountNumber);
             $queryBalance->execute();
