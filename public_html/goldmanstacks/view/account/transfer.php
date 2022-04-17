@@ -179,7 +179,7 @@ $db->close();
 		            <p class="info">Balance: $<span id="internal-receiver-balance"><?php echo number_format(0, 2) ?></span></p>
 		            <hr>
     	            <label for="internal-amount" class="info">Amount</label>
-    		        <input id="internal-amount" name="usd" type="number" min="0" placeholder="USD" class="input-field" required>
+    		        <input id="internal-amount" name="usd" type="number" pattern="[0-9]{10}" placeholder="USD" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $internalTransferToken ?>" required>
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
@@ -216,7 +216,7 @@ $db->close();
                     <input id="external-receiver" name="to" class="input-field" type="text" required>
     		        <hr>
     	            <label for="external-amount" class="info">Amount</label>
-    		        <input id="external-amount" name="usd" class="input-field" type="number" min="0" placeholder="USD" required>
+    		        <input id="external-amount" name="usd" class="input-field" type="number" pattern="[0-9]{10}" placeholder="USD" required>
                     <input type="hidden" name="token" value="<?php echo $externalTransferToken ?>" required>
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
@@ -270,21 +270,24 @@ $db->close();
 	<script type="text/javascript" src="../../js/tabs.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
+	    /* PopUp Contents */
 	    const popUpBackground = document.getElementById('pop-up');
 	    const popUpElemement = document.getElementById('pup-up-element')
-	
 	    const popupTitleType = document.getElementById('account-type-title');
 	    const popupDescriptionType = document.getElementById('account-type-description');
 	    
+	    /* PopUp Confirmation Contents */
 	    const transactionSender = document.getElementById('transfer-sender');
 	    const transactionReceiver = document.getElementById('transfer-receiver');
 	    const transactionAmount = document.getElementById('transfer-amount');
 	    
+	    /* Form User Input */
 	    const internalSender = document.getElementById('internal-sender');
 	    const internalReceiver = document.getElementById('internal-receiver');
 	    const externalSender = document.getElementById('external-sender');
 	    const externalReceiver = document.getElementById('external-receiver');
-	    
+
+        /* Form Balance*/
 	    const internalSenderBalance = document.getElementById('internal-sender-balance');
 	    const internalReceiverBalance = document.getElementById('internal-receiver-balance');
 	    const externalSenderBalance = document.getElementById('external-sender-balance');
@@ -309,18 +312,43 @@ $db->close();
 	        form = event.target;
 	        formData = new FormData(form);
 	        
-	        if (form.id === 'internal-transfer') {
-                transactionSender.textContent = internalSender.selectedOptions[0].text;
-                transactionReceiver.textContent = internalReceiver.selectedOptions[0].text;
+	        if (verifyUserInput()) {
+                transactionAmount.textContent = '$' + formData.get('usd');
+                
+                popUpBackground.classList.add('show-popup-content');
+                popUpElemement.classList.remove('hidden');
 	        } else {
-                transactionSender.textContent = externalSender.selectedOptions[0].text;
-                transactionReceiver.textContent = externalReceiver.value.substring(externalReceiver.value.length - 4);
+                showNotification();
 	        }
+        }
+        
+        function verifyUserInput() {
+            let verified = false;
             
-            transactionAmount.textContent = '$' + formData.get('usd');
-            
-            popUpBackground.classList.add('show-popup-content');
-            popUpElemement.classList.remove('hidden');
+	        if (form.id === 'internal-transfer') {
+	            if (internalSender.selectedOptions[0].text === internalReceiver.selectedOptions[0].text) {
+	                setFailNotification("Accounts selected are the same");
+	                return;
+	            } else if (formData.get('usd') > Number(internalSenderBalance.textContent.replace(',', ''))) {
+	                setFailNotification("Requested amount is over the current balance");
+	                return;
+	            } else {
+                    transactionSender.textContent = internalSender.selectedOptions[0].text;
+                    transactionReceiver.textContent = internalReceiver.selectedOptions[0].text;
+                    verified = true;
+	            }
+	        } else {
+                if (Number(formData.get('usd')) > Number(externalSenderBalance.textContent.replace(',', ''))) {
+	                setFailNotification("Requested amount is over the current balance");
+	                return;
+	            } else {
+                    transactionSender.textContent = externalSender.selectedOptions[0].text;
+                    transactionReceiver.textContent = externalReceiver.value.substring(externalReceiver.value.length - 4);
+                    verified = true;
+	            }
+	        }
+	        
+	        return verified;
         }
         
         function hidePopUp() {
@@ -339,8 +367,8 @@ $db->close();
 	            .then((response) => response.json())
 	            .then((data) => {          
 	                if (data.response) {
-	                    if (form.id === 'internal-transfer') setSuccessNotification('Transferred $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
-	                    else setSuccessNotification('Transferred $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
+	                    if (form.id === 'internal-transfer') setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
+	                    else setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
 
 	                    internalSender.dispatchEvent(new Event('change'));
 	                    externalSender.dispatchEvent(new Event('change'));
