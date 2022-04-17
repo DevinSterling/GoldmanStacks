@@ -339,8 +339,8 @@ $db->close();
 	            .then((response) => response.json())
 	            .then((data) => {          
 	                if (data.response) {
-	                    if (form.id === 'internal-transfer') setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
-	                    else setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
+	                    if (form.id === 'internal-transfer') setSuccessNotification('Transferred $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
+	                    else setSuccessNotification('Transferred $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
 
 	                    internalSender.dispatchEvent(new Event('change'));
 	                    externalSender.dispatchEvent(new Event('change'));
