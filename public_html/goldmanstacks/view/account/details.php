@@ -124,7 +124,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	                    <tr>
 	                        <th class="date">Date</th>
 	                        <th class="desc">Description</th>
-	                        <th class="amount">Amount</th>
+	                        <th class="amount text-right">Amount</th>
 	                        <th class="hidden">Balance After</th>
 	                        <th class="hidden">Type</th>
 	                    </tr>
@@ -134,10 +134,10 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     /* Query to get all transactions from the selected account */
                     $transactionStatement = $db->prepare("SELECT accountNum, recipientAccount, transactionTime, transactionAmount, type 
                                                             FROM transactions 
-                                                            WHERE accountNum IN (SELECT accountNum FROM accountDirectory WHERE nickName=?) 
-                                                            OR recipientAccount IN (SELECT accountNum FROM accountDirectory WHERE nickName=?)
+                                                            WHERE accountNum=? 
+                                                            OR recipientAccount=?
                                                             ORDER BY transactionTime DESC");
-                    $transactionStatement->bind_param("ss", $currentAccountName, $currentAccountName);
+                    $transactionStatement->bind_param("ss", $accountNumber, $accountNumber);
                     $transactionStatement->execute();
                     
                     /* Obtain result */
@@ -170,7 +170,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
                             <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
                             <td data-label=\"Description\" class=\"desc\">$description</td>
-                            <td data-label=\"Amount\" class=\"amount\">".convertToCurrency($transaction['transactionAmount'])."</td>
+                            <td data-label=\"Amount\" class=\"amount text-right\">".convertToCurrency($transaction['transactionAmount'])."</td>
                         </tr>";
                     }
                     
@@ -183,7 +183,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     	    <div class="list sub">
     	        <div class="container round shadow">
     	            <div class="item-banner top-round">
-    	                <h2 class="big text-center">Balance: $<?php echo $accountBalance ?></h2>
+    	                <h2 class="big text-center">Balance: $<?php echo number_format($accountBalance, 2) ?></h2>
     	            </div>
     	            <div class="item-content bottom-round">
     	                <form id="select-account" class="flex-form">
@@ -313,12 +313,12 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	            <div id="dateFilter-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Date</h2>
                     <p class="info">Please specify the time frame</p><br>
-                    <form id="filterDate" class="flex-center">
+                    <form id="filterDate" class="flex-form">
                         <label for="date1" class="info">From</label>
                         <input id="date1" type="date" class="input-field">
                         <label for="date2" class="info">To</label>
                         <input id="date2" type="date" class="input-field">
-                        <button form="filterDate" class="standard-button transform-button flex-center round">
+                        <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
                                 <p class="animate-left">Apply<p>
                		            <div class="toggle-button">
@@ -328,73 +328,47 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                         </button>
                     </form>
                 </div>
-	            <div id="transaction-popup-content" class="pop-up-item hidden">
+	            <div id="transaction-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Transaction Details</h2>
-                    <p class="info"></p>
-                    <div class="container">
-                        <b class="info">Date</b>
-                        <p id="transaction-date"></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Description</b>
-                        <p id="transaction-description"></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Type</b>
-                        <p id="transaction-type"></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Amount</b>
-                        <p id="transaction-amount"></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Balance Afterward</b>
-                        <p id="transaction-balance"></p>
-                    </div>
-                    <div class="form-item">
-                        <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
-                            <div class="split">
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-left"></i>
-                		        </div>
-                                <p class="animate-right">Return<p>
-                            </div>
-                        </button>
-                    </div>
+                    <b class="info">Date</b>
+                    <p id="transaction-date"></p>
+                    <b class="info">Description</b>
+                    <p id="transaction-description"></p>
+                    <b class="info">Type</b>
+                    <p id="transaction-type"></p>
+                    <b class="info">Amount</b>
+                    <p id="transaction-amount"></p>
+                    <b class="info">Balance Afterward</b>
+                    <p id="transaction-balance"></p>
+                    <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
+                        <div class="split">
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-left"></i>
+            		        </div>
+                            <p class="animate-right">Return<p>
+                        </div>
+                    </button>
                 </div>
-                <div id="account-popup-content" class="pop-up-item hidden">
+                <div id="account-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Account Details</h2>
-                    <p class="info"></p>
-                    <div class="container">
-                        <b class="info">Account Name</b>
-                        <p id="account-name"><?php echo $currentAccountName ?></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Account Type</b>
-                        <p id="account-type"><?php echo $accountType ?></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Account Balance</b>
-                        <p id="account-balance"><?php echo $accountBalance ?></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Routing Number</b>
-                        <p id="account-routing-number"><?php echo $routingNumber ?></p>
-                    </div>
-                    <div class="container">
-                        <b class="info">Stuff</b>
-                        <p id="placeholder2"></p>
-                    </div>
-                    <div class="form-item">
-                        <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
-                            <div class="split">
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-left"></i>
-                		        </div>
-                                <p class="animate-right">Return<p>
-                            </div>
-                        </button>
-                    </div>
+                    <b class="info">Account Name</b>
+                    <p id="account-name"><?php echo $currentAccountName ?></p>
+                    <b class="info">Account Type</b>
+                    <p id="account-type"><?php echo $accountType ?></p>
+                    <b class="info">Account Balance</b>
+                    <p id="account-balance"><?php echo $accountBalance ?></p>
+                    <b class="info">Routing Number</b>
+                    <p id="account-routing-number"><?php echo $routingNumber ?></p>
+                    <b class="info">Stuff</b>
+                    <p id="placeholder2"></p>
+                    <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
+                        <div class="split">
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-left"></i>
+            		        </div>
+                            <p class="animate-right">Return<p>
+                        </div>
+                    </button>
                 </div>
                 <div id="edit-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Edit Account</h2>
