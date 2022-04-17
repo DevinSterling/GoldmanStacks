@@ -179,7 +179,7 @@ $db->close();
 		            <p class="info">Balance: $<span id="internal-receiver-balance"><?php echo number_format(0, 2) ?></span></p>
 		            <hr>
     	            <label for="internal-amount" class="info">Amount</label>
-    		        <input id="internal-amount" name="usd" type="number" pattern="[0-9]{10}" placeholder="USD" class="input-field" required>
+    		        <input id="internal-amount" name="usd" type="number" min="0" step="0.01" placeholder="USD" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $internalTransferToken ?>" required>
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
@@ -213,10 +213,10 @@ $db->close();
 		            <p class="info">Balance: $<span id="external-sender-balance"><?php echo number_format($balance, 2) ?></span></p>
 		            <hr>
     	            <label for="external-receiver" class="info">Receiver Bank Account Number</label>
-                    <input id="external-receiver" name="to" class="input-field" type="text" required>
+                    <input id="external-receiver" name="to" type="text" pattern="[0-9]{10}" class="input-field" required>
     		        <hr>
     	            <label for="external-amount" class="info">Amount</label>
-    		        <input id="external-amount" name="usd" class="input-field" type="number" pattern="[0-9]{10}" placeholder="USD" required>
+    		        <input id="external-amount" name="usd" type="number" min="0" step="0.01" placeholder="USD" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $externalTransferToken ?>" required>
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
