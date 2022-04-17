@@ -96,8 +96,7 @@ if ($db === null){
 					
 				foreach ($accountsRows as $account) {
 					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']);
-					$accNumber = substr($account['accountNum'], -4); // Temp Variable (to be deleted)
-					
+
 					/* Determine if account type is credit or not */
 					if ($account['accountType'] == 'credit') {
 					    $totalBalance -= $account['balance'];
@@ -116,7 +115,7 @@ if ($db === null){
 						<div class=\"split animate-left\">
 							<div class=\"list text-right\">
 							<p>".$account_message."</p>
-								<p class=\"focused-info\">\$".$account['balance']."</p>
+								<p class=\"focused-info\">\$" . number_format($account['balance'], 2) . "</p>
 							</div>
 							<div class=\"toggle-button\">
 							<i class=\"fas fa-chevron-right\"></i>
@@ -132,7 +131,7 @@ if ($db === null){
 		    <div class="list sub">
 		        <div class="container round shadow">
     		        <div class="item-banner top-round">
-    		            <h2 class="big text-center">Total Balance: $<?php echo $totalBalance ?></h2>
+    		            <h2 class="big text-center">Total Balance: $<?php echo number_format($totalBalance, 2) ?></h2>
     		        </div>
     		        <div class="item-content bottom-round">
     		            <p class="info text-center">Last Sign In: <?php echo $lastVisit ?></p>
@@ -167,34 +166,52 @@ if ($db === null){
     		        <div class="item-content bottom-round">
     		            <?php    		            
 						/* Statement to obtain transaction information */
-						$transactionStatement = $db->prepare("SELECT T.transactionTime, T.transactionAmount, T.type, A.nickName, A.accountType FROM transactions T INNER JOIN accountDirectory A ON T.accountNum=A.accountNum WHERE T.clientID=? ORDER BY T.transactionTime DESC LIMIT ".AMOUNT_OF_TRANSACTIONS);
+						$transactionStatement = $db->prepare("SELECT T.transactionTime, T.accountNum, T.recipientAccount, T.transactionAmount, T.type, A.nickName, A.accountType, (T.recipientAccount=A.accountNum AND T.clientID<>A.clientID) AS isRecipient
+                                                                FROM transactions T
+                                                                INNER JOIN accountDirectory A ON T.accountNum=A.accountNum OR (T.recipientAccount=A.accountNum AND T.clientID<>A.clientID)
+                                                                WHERE A.clientID=?
+                                                                ORDER BY T.transactionTime DESC
+                                                                LIMIT ".AMOUNT_OF_TRANSACTIONS);
 						$transactionStatement->bind_param("i", $userId);
 						$transactionStatement->execute();
 						
 						/* Obtain results */
 						$transactionResult = $transactionStatement->get_result();
 						$transactionRows = $transactionResult->fetch_all(MYSQLI_ASSOC);
-												
-						foreach ($transactionRows as $transaction) {							
-							echo "<a href=\"account/details?acc=" . $transaction['nickName'] . "\" class=\"highlight-button transform-button split round\">
-									<div class=\"list-padded\">
-										<h3 class=\"bold\">" . $transaction['nickName'] . " (" . ucfirst($transaction['accountType']) . ")</h3>
-										<p>".$transaction['transactionTime']."<p>
-									</div>
-									<div class=\"split animate-left\">
-										<div class=\"list-padded text-right\">
-											<h3>".convertToCurrency($transaction['transactionAmount'])."</h3>
-											<p>".ucfirst($transaction['type'])."</p>
-										</div>
-										<div class=\"toggle-button\">
-											<i class=\"fas fa-chevron-right\"></i>
-										</div>
-									</div>
-								</a>";
-							
-							if ($transaction != end($transactionRows)){
-								echo "<hr>";
-							}
+						
+						if ($transactionResult->num_rows > 0) {
+    						foreach ($transactionRows as $transaction) {
+    						    /* Get client account number for transaction */
+                                if ($transaction['isRecipient']) {
+                                    $accountNumber = $transaction['recipientAccount'];
+                                    $transaction['transactionAmount'] *= -1;
+                                } else {
+                                    $accountNumber = $transaction['accountNum'];
+                                }
+                                
+    							echo "<a href=\"account/details?acc=" . $transaction['nickName'] . "\" class=\"highlight-button transform-button split round\">
+    									<div class=\"list-padded\">
+    										<h3 class=\"bold\">" . $transaction['nickName'] . "</h3>
+    										<p>" . ucfirst($transaction['accountType']) . " (*" . substr($accountNumber, -4) .  ")</p>
+    										<p>" . $transaction['transactionTime'] . "<p>
+    									</div>
+    									<div class=\"split animate-left\">
+    										<div class=\"list-padded text-right\">
+    											<h3>" . convertToCurrency($transaction['transactionAmount']) . "</h3>
+    											<p>" . ucfirst($transaction['type']) . "</p>
+    										</div>
+    										<div class=\"toggle-button\">
+    											<i class=\"fas fa-chevron-right\"></i>
+    										</div>
+    									</div>
+    								</a>";
+    							
+    							if ($transaction != end($transactionRows)){
+    								echo "<hr>";
+    							}
+    						}
+						} else {
+						    echo "<p class=\"info text-center\">No Transaction History</p>";
 						}
 				
 						$transactionResult->free();
