@@ -17,10 +17,12 @@ $referencedName = $_GET['acc'];
 
 /* Variables */
 $accounts = array();
+$isNotReferenced = empty($_GET['acc']) ? true : false;
 
 /* Csrf form tokens */
 $internalTransferToken = hash_hmac('sha256', '/newInternalTransfer.php', $_SESSION['key']);
 $externalTransferToken = hash_hmac('sha256', '/newExternalTransfer.php', $_SESSION['key']);
+$getBalanceToken = hash_hmac('sha256', '/getBalance.php', $_SESSION['key']);
 
 /* Get Database Connection */
 $db = getUpdateConnection();
@@ -32,7 +34,7 @@ if ($db === null) {
 }
 
 /* Get client accounts */
-$queryAccounts = $db->prepare("SELECT nickName, accountType, accountNum FROM accountDirectory WHERE clientID=?");
+$queryAccounts = $db->prepare("SELECT nickName, accountType, accountNum, balance FROM accountDirectory WHERE clientID=?");
 $queryAccounts->bind_param("i", $userID);
 $queryAccounts->execute();
 
@@ -41,7 +43,7 @@ $rowAccounts = $resultAccounts->fetch_all(MYSQLI_ASSOC);
 
 foreach ($rowAccounts as $account) {
     /* Create three dimensional associative array */
-    $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType'], 'number' => $account['accountNum']);
+    $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType'], 'number' => $account['accountNum'], 'balance' => $account['balance']);
 }
 
 $resultAccounts->free();
@@ -146,10 +148,15 @@ $db->close();
     	            <label for="internal-sender" class="info">Sender</label>
 		            <select id="internal-sender" name="from" class="input-field" required>
                         <?php
+                        if ($isNotReferenced) {
+                            $balance = $accounts[0]['balance'];
+                        }
+                        
                         foreach ($accounts as $account) {
                             echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
                            
                             if ($referencedName === $account['nickName']) {
+                                $balance = $account['balance'];
                                 echo " selected";
                             }
                            
@@ -157,15 +164,20 @@ $db->close();
                         }
                         ?>
 		            </select>
+		            <p class="info">Balance: $<span id="internal-sender-balance"><?php echo number_format($balance, 2) ?></span></p>
+		            <hr>
     	            <label for="receiverreceiver" class="info">Receiver</label>
 		            <select id="internal-receiver" name="to" class="input-field" required>
                         <?php
+                        echo "<option disabled selected value>Please select an account</option>";
+                        
                         foreach ($accounts as $account) {
                             echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
                         }
                         ?>
                     </select>
-    		        <hr>
+		            <p class="info">Balance: $<span id="internal-receiver-balance"><?php echo number_format(0, 2) ?></span></p>
+		            <hr>
     	            <label for="internal-amount" class="info">Amount</label>
     		        <input id="internal-amount" name="usd" type="number" min="0" placeholder="USD" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $internalTransferToken ?>" required>
@@ -182,10 +194,15 @@ $db->close();
     	            <label for="external-sender" class="info">Sender</label>
 		            <select id="external-sender" name="from" class="input-field" required>
                         <?php
+                        if ($isNotReferenced) {
+                            $balance = $accounts[0]['balance'];
+                        }
+                        
                         foreach ($accounts as $account) {
                             echo "<option value=\"" . encrypt($account['number'], $key) . "\"";
                            
                             if ($referencedName === $account['nickName']) {
+                                $balance = $account['balance'];
                                 echo " selected";
                             }
                            
@@ -193,6 +210,8 @@ $db->close();
                         }
                         ?>
 		            </select>
+		            <p class="info">Balance: $<span id="external-sender-balance"><?php echo number_format($balance, 2) ?></span></p>
+		            <hr>
     	            <label for="external-receiver" class="info">Receiver Bank Account Number</label>
                     <input id="external-receiver" name="to" class="input-field" type="text" required>
     		        <hr>
@@ -211,29 +230,107 @@ $db->close();
             </div>
             <div class="list mini"></div>
     	</div>
+        <div id="pop-up" class="pop-up">
+            <div onClick="hidePopUp()" class="flex-center-item">
+            </div>
+            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
+                <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
+                    <div class="split">
+                        <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
+                        <div class="animate-right">
+        		            <div class="toggle-button">
+        		                <p class="expanded-info">Return</p>
+        		            </div>
+        	            </div>
+                    </div>
+                </button>
+                <br>
+                <br>
+                <div class="flex-form">
+                    <h2 id="title">Transfer Confirmation</h2>
+                    <p class="info">Sender</p>
+                    <p id="transfer-sender"></p>
+                    <p class="info">Receiver</p>
+                    <p id="transfer-receiver"></p>
+                    <p class="info">Amount</p>
+                    <p id="transfer-amount"></p>
+                    <button id="confirm-transfer" type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Confirm<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
 	</body>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
 	<script type="text/javascript" src="../../js/tabs.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
-	    let internalSender = document.getElementById('internal-sender');
-	    let internalReceiver = document.getElementById('internal-receiver');
-	    let externalSender = document.getElementById('external-sender');
-	    let externalReceiver = document.getElementById('external-receiver');
+	    const popUpBackground = document.getElementById('pop-up');
+	    const popUpElemement = document.getElementById('pup-up-element')
 	
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('internal-transfer').addEventListener('submit', handleForm);
-            document.getElementById('external-transfer').addEventListener('submit', handleForm);
+	    const popupTitleType = document.getElementById('account-type-title');
+	    const popupDescriptionType = document.getElementById('account-type-description');
+	    
+	    const transactionSender = document.getElementById('transfer-sender');
+	    const transactionReceiver = document.getElementById('transfer-receiver');
+	    const transactionAmount = document.getElementById('transfer-amount');
+	    
+	    const internalSender = document.getElementById('internal-sender');
+	    const internalReceiver = document.getElementById('internal-receiver');
+	    const externalSender = document.getElementById('external-sender');
+	    const externalReceiver = document.getElementById('external-receiver');
+	    
+	    const internalSenderBalance = document.getElementById('internal-sender-balance');
+	    const internalReceiverBalance = document.getElementById('internal-receiver-balance');
+	    const externalSenderBalance = document.getElementById('external-sender-balance');
+	    
+	    let form = null;
+	    let formData = null;
+	    
+	    let balance = '0.00';
+	    
+	    document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('internal-sender').addEventListener('change', retreiveInternalSenderBalance);
+            document.getElementById('internal-receiver').addEventListener('change', retreiveInternalReceiverBalance);
+            document.getElementById('external-sender').addEventListener('change', retreiveExternalSenderBalance);
+            document.getElementById('internal-transfer').addEventListener('submit', showPopUp);
+            document.getElementById('external-transfer').addEventListener('submit', showPopUp);
+            document.getElementById('confirm-transfer').addEventListener('click', handleForm);
         });
+
+        function showPopUp(event) {
+            event.preventDefault();
+            
+	        form = event.target;
+	        formData = new FormData(form);
+	        
+	        if (form.id === 'internal-transfer') {
+                transactionSender.textContent = internalSender.selectedOptions[0].text;
+                transactionReceiver.textContent = internalReceiver.selectedOptions[0].text;
+	        } else {
+                transactionSender.textContent = externalSender.selectedOptions[0].text;
+                transactionReceiver.textContent = externalReceiver.value.substring(externalReceiver.value.length - 4);
+	        }
+            
+            transactionAmount.textContent = '$' + formData.get('usd');
+            
+            popUpBackground.classList.add('show-popup-content');
+            popUpElemement.classList.remove('hidden');
+        }
+        
+        function hidePopUp() {
+            document.getElementById('pop-up').classList.remove('show-popup-content');
+            document.getElementById('pup-up-element').classList.add('hidden');
+        }
         
         function handleForm(event) {
-	        event.preventDefault();
-	        
-	        let form = event.target;
-	        let formData = new FormData(form);
-	        
 	        let url = form.action;
-	        let request = new Request(url, {
+	        request = new Request(url, {
 	            body: formData,
 	            method: 'POST',
 	        });
@@ -244,7 +341,11 @@ $db->close();
 	                if (data.response) {
 	                    if (form.id === 'internal-transfer') setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
 	                    else setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
-	                    form.reset();
+
+	                    internalSender.dispatchEvent(new Event('change'));
+	                    externalSender.dispatchEvent(new Event('change'));
+	                    
+	                    if (internalReceiverBalance.textContent !== '0.00') internalReceiver.dispatchEvent(new Event('change'));
 	                } else {
 	                    setFailNotification(data.message);
 	                }
@@ -254,6 +355,53 @@ $db->close();
 	            .catch(console.warn);
 	            
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            hidePopUp();
+            
+            
+	    }
+	    
+	    async function retreiveInternalSenderBalance(event) {
+	        await retrieveBalance(event.target.value);
+	        internalSenderBalance.textContent = balance;
+	    }
+	    
+	    async function retreiveInternalReceiverBalance(event) {
+	        await retrieveBalance(event.target.value);
+	        internalReceiverBalance.textContent = balance;
+	    }
+	    
+	    async function retreiveExternalSenderBalance(event) {
+	        await retrieveBalance(event.target.value);
+	        externalSenderBalance.textContent = balance;
+	    }
+	    
+        async function retrieveBalance(value) {
+	        let url = '../../requests/account/getBalance';
+	        let data = new FormData();
+	        
+	        data.append('account', value);
+	        data.append('token', '<?php echo $getBalanceToken ?>');
+	        
+	        request = new Request(url, {
+	            body: data,
+	            method: 'POST',
+	        });
+	        
+	        await fetch(request)
+	            .then((response) => response.json())
+	            .then((data) => {          
+	                if (data.response) {
+	                    balance = data.message;
+	                } else {
+                        balance = '0.00';
+
+	                    setFailNotification(data.message);
+                        showNotification();
+
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+	            })
+	            .catch(console.warn);
 	    }
     </script>
 </html>
