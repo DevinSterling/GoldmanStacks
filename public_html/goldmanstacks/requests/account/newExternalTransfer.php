@@ -49,28 +49,41 @@ if (hash_equals($calc, $token)
             $queryRequest->close();
             
             if ($count === 2) {
-                $updateSenderBalance = $db->prepare("UPDATE accountDirectory SET balance=balance-? WHERE accountNum=?");
-                $updateSenderBalance->bind_param("di", $amount, $sender);
-                $updateSenderBalance->execute();
-                $updateSenderBalance->close();
+                /* Verify Balance */
+                $queryRequest = $db->prepare("SELECT balance FROM accountDirectory WHERE clientID=? AND accountNum=?");
+                $queryRequest->bind_param("is", $userID, $sender);
+                $queryRequest->execute();
                 
-                $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
-                $updateReceiverBalance->bind_param("di", $amount, $receiver);
-                $updateReceiverBalance->execute();
-                $updateSenderBalance->close();
+                $queryRequest->bind_result($balance);
+                $queryRequest->fetch();
+                $queryRequest->close();
                 
-                $insertTransaction = $db->prepare("INSERT INTO transactions (type, clientID, accountNum, transactionAmount, recipientAccount) VALUES ('transfer', ?, ?, -?, ?)");
-                $insertTransaction->bind_param("iidi", $userID, $sender, $amount, $receiver);
-                $insertTransaction->execute();
-                
-                if ($db->affected_rows > 0) {
-                    $dbSuccess = true;
-                    $dbMessage = "Transfered $" . $amount . " to (*" . substr($receiver, -4) . ")";
+                if ($balance > $amount) {
+                    $updateSenderBalance = $db->prepare("UPDATE accountDirectory SET balance=balance-? WHERE accountNum=?");
+                    $updateSenderBalance->bind_param("di", $amount, $sender);
+                    $updateSenderBalance->execute();
+                    $updateSenderBalance->close();
+                    
+                    $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
+                    $updateReceiverBalance->bind_param("di", $amount, $receiver);
+                    $updateReceiverBalance->execute();
+                    $updateSenderBalance->close();
+                    
+                    $insertTransaction = $db->prepare("INSERT INTO transactions (type, clientID, accountNum, transactionAmount, recipientAccount) VALUES ('transfer', ?, ?, -?, ?)");
+                    $insertTransaction->bind_param("iidi", $userID, $sender, $amount, $receiver);
+                    $insertTransaction->execute();
+                    
+                    if ($db->affected_rows > 0) {
+                        $dbSuccess = true;
+                        $dbMessage = "Transfered $" . $amount . " to (*" . substr($receiver, -4) . ")";
+                    } else {
+                        $dbMessage = $dbFailMessage;
+                    }
+    
+                    $insertTransaction->close();
                 } else {
                     $dbMessage = $dbFailMessage;
                 }
-
-                $insertTransaction->close();
             } else {
                 $dbMessage = $dbFailMessage;
             }
