@@ -13,9 +13,9 @@ function convertToCurrency($amount) {
     $currency = '$';
 
     if ($amount < 0) { // Negative amount
-        $currency = '-' . $currency . $amount * -1;
+        $currency = '-' . $currency . number_format($amount * -1, 2);
     } else { // Positive amount
-        $currency = $currency . $amount;
+        $currency = '+' . $currency . number_format($amount, 2);
     }
 
     return $currency;
