@@ -407,7 +407,7 @@ $db->close();
 	        externalSenderBalance.textContent = balance;
 	    }
 	    
-        async function retrieveBalance(value) {
+	    async function retrieveBalance(value) {
 	        let url = '../../requests/account/getBalance';
 	        let data = new FormData();
 	        
