@@ -342,7 +342,7 @@ $db->close();
 	                setFailNotification("Requested amount is over the current balance");
 	            } else {
                     transactionSender.textContent = externalSender.selectedOptions[0].text;
-                    transactionReceiver.textContent = externalReceiver.value.substring(externalReceiver.value.length - 4);
+                    transactionReceiver.textContent = externalReceiver.value;
                     verified = true;
 	            }
 	        }
