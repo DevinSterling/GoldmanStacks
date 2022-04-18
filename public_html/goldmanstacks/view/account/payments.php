@@ -206,7 +206,7 @@ if (!$isReferenced && !empty($referencedName)) {
                     <input id="input-receiver" type="text" name="to" pattern="[0-9]{10}" class="input-field"required>
     	            <hr>
                     <label for="input-date" class="info">Date</label>
-                    <input id="input-date" type="date" name="date" min="<?php echo date("Y-m-d") ?>" class="input-field" required>
+                    <input id="input-date" type="date" name="date" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" value="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" class="input-field" required>
                     <label for="input-amount" class="info">Amount</label>
                     <input id="input-amount" type="number" name="usd" class="input-field" placeholder="USD" required>
                     <hr>
@@ -221,6 +221,8 @@ if (!$isReferenced && !empty($referencedName)) {
                                 <option>Month</option>
                                 <option>Year</option>
                             </select>
+                            <label for="input-end-date" class="info form-item">End Date</label>
+                            <input id="input-end-date" type="date" name="end-date" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" value="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" class="input-field">
                         </div>
                     </div>
                     <div class="switch-field">
@@ -283,7 +285,7 @@ if (!$isReferenced && !empty($referencedName)) {
                     <p>$<span id="payment-amount"></span></p>
                     <div id="optional-recurring-confirmation" class="flex-form">
                         <p class="info">Recurring Payment</p>
-                        <p>Every <span id="payment-step"></span> <span id="payment-period"></span> (from given date)</p>
+                        <p>Every <span id="payment-step"></span> <span id="payment-period"></span> (from given date) until <span id="payment-end"></span></p>
                     </div>
                     <button id="confirm-payment" type="button" class="standard-button transform-button flex-center round">
                         <div class="split">
@@ -332,6 +334,7 @@ if (!$isReferenced && !empty($referencedName)) {
 	    const paymentOptionalConfirmationElement = document.getElementById('optional-recurring-confirmation');
 	    const paymentStep = document.getElementById('payment-step');
 	    const paymentPeriod = document.getElementById('payment-period');
+	    const paymentEndDate = document.getElementById('payment-end');
 	    
 	    const checkBoxElement = document.getElementById('input-checkbox-recurring');
 	    const dateInputElement = document.getElementById('input-date');
@@ -340,6 +343,8 @@ if (!$isReferenced && !empty($referencedName)) {
 	    
 	    /* User Form Input */
 	    const paymentSender = document.getElementById('input-sender');
+	    const paymentDate = document.getElementById('input-date');
+	    const recurringEndDate = document.getElementById('input-end-date');
 	    const recurringPayment = document.getElementById('optional-recurring-payment');
 	    const recurringStep = document.getElementById('input-step');
 	    const recurringPeriod = document.getElementById('input-period');
@@ -409,6 +414,7 @@ if (!$isReferenced && !empty($referencedName)) {
                         }
                         
                         paymentPeriod.textContent = formData.get('period').toLowerCase();
+                        paymentEndDate.textContent = formData.get('end-date');
                         paymentOptionalConfirmationElement.classList.remove('hidden');
                     } else {
                         paymentOptionalConfirmationElement.classList.add('hidden');
@@ -473,6 +479,12 @@ if (!$isReferenced && !empty($referencedName)) {
 	                option.text = option.text.substr(option.text, option.text.length - 1);
 	            });
 	        }
+	    });
+	    
+	    paymentDate.addEventListener('input', function() {
+	        recurringEndDate.min = paymentDate.value;
+	        
+	        if (new Date(recurringEndDate.value) < new Date(paymentDate.value) || recurringEndDate.value == '') recurringEndDate.value = paymentDate.value;
 	    });
 
         function showPopUp(ContentId) {
