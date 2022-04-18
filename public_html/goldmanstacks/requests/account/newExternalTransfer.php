@@ -67,7 +67,7 @@ if (hash_equals($calc, $token)
                     $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
                     $updateReceiverBalance->bind_param("di", $amount, $receiver);
                     $updateReceiverBalance->execute();
-                    $updateSenderBalance->close();
+                    $updateReceiverBalance->close();
                     
                     $insertTransaction = $db->prepare("INSERT INTO transactions (type, clientID, accountNum, transactionAmount, recipientAccount) VALUES ('transfer', ?, ?, -?, ?)");
                     $insertTransaction->bind_param("iidi", $userID, $sender, $amount, $receiver);
