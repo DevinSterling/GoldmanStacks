@@ -206,7 +206,7 @@ if (!$isReferenced && !empty($referencedName)) {
                     <input id="input-receiver" type="text" name="to" pattern="[0-9]{10}" class="input-field"required>
     	            <hr>
                     <label for="input-date" class="info">Date</label>
-                    <input id="input-date" type="date" name="date" class="input-field" required>
+                    <input id="input-date" type="date" name="date" min="<?php echo date("Y-m-d") ?>" class="input-field" required>
                     <label for="input-amount" class="info">Amount</label>
                     <input id="input-amount" type="number" name="usd" class="input-field" placeholder="USD" required>
                     <hr>
