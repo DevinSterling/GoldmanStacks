@@ -440,6 +440,7 @@ if (!$isReferenced && !empty($referencedName)) {
     	                    
 	                        setSuccessNotification(data.message);
 	                        paymentSender.dispatchEvent(new Event('change'));
+				checkBoxElement.dispatchEvent(new Event('change'));
     	                } else {
     	                    setFailNotification(data.message);
     	                }
