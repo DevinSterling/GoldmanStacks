@@ -171,11 +171,21 @@ hr {
     margin-bottom: 19px;
 }
 
+.collapsable-item {
+    height: 140px;
+
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
 .collapse {
     background-color: transparent;
     color: transparent;
-    margin: 0 auto 0 auto;
     height: 0;
+}
+
+.collapse .notification {
+    margin: 0 auto 0 auto;
 }
 
 /*-------------------+
@@ -204,7 +214,7 @@ hr {
     position: fixed;
     top: 50vh;
     left: 50vw;
-    transform: translate(-50%, -70%);
+    transform: translate(-50%, -50%);
     
     animation: showPopUpAnimation;
     animation-duration: 0.4s;
@@ -463,6 +473,7 @@ hr {
 .switch-field {
     display: flex;
     align-items: center;
+    margin-top: 14px;
 }
 
 .switch-field .info {
@@ -856,13 +867,13 @@ input:checked + .slider:before {
 @keyframes showPopUpAnimation {
     0% {
         opacity: 0;
-        transform: translate(-50%, -65%);
+        transform: translate(-50%, -45%);
     }
     20% {
         opacity: 1;
     }
     99% {
-        transform: translate(-50%, -70%);
+        transform: translate(-50%, -50%);
     }
 }
 
