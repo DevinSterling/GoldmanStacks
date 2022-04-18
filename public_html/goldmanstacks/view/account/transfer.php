@@ -17,7 +17,6 @@ $referencedName = $_GET['acc'];
 
 /* Variables */
 $accounts = array();
-$isNotReferenced = empty($_GET['acc']) ? true : false;
 
 /* Csrf form tokens */
 $internalTransferToken = hash_hmac('sha256', '/newInternalTransfer.php', $_SESSION['key']);
@@ -44,11 +43,19 @@ $rowAccounts = $resultAccounts->fetch_all(MYSQLI_ASSOC);
 foreach ($rowAccounts as $account) {
     /* Create three dimensional associative array */
     $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType'], 'number' => $account['accountNum'], 'balance' => $account['balance']);
+    
+    if ($referencedName === $account['nickName']) $isReferenced = true;
 }
 
 $resultAccounts->free();
 $queryAccounts->close();
 $db->close();
+
+/* Redirect user if non-existent account given */
+if (!$isReferenced && !empty($referencedName)) {
+    header('Location: transfer.php');
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -86,7 +93,7 @@ $db->close();
     		</ul>
     	</nav>
     	<?php notification(); ?>
-        <button id="notification" onClick="hideNotification()" class="notification sub success transform-button round collapse">
+        <button id="notification" type="button" onClick="hideNotification()" class="notification sub success transform-button round collapse">
             <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
             <div class="split">
                    <div class="toggle-button">
@@ -95,7 +102,7 @@ $db->close();
             </div>
         </button>
     	<?php
-        if (!empty($referencedName)) {
+        if ($isReferenced) {
             echo "<div class=\"container flex-center marginless-bottom\">
                 <div class=\"list sub\">
                     <div class=\"split\">
@@ -117,9 +124,9 @@ $db->close();
             
         ?>
         
-        <div class="container flex-center <?php if ($referencedName !== null) echo "marginless" ?>">
+        <div class="container flex-center <?php if ($isReferenced) echo "marginless" ?>">
             <div class="list mini">
-                <button class="tab-button transform-button round selected" data-id="internal-transfer" data-title="Internal Transactions">
+                <button class="tab-button transform-button round selected" data-id="internal-transfer" data-title="Internal Transfer">
                     <div class="split">
                         <div class="text-right">
                             <p>Internal</p>
@@ -129,7 +136,7 @@ $db->close();
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round"  data-id="external-transfer" data-title="External Transactions">
+                <button class="tab-button transform-button round" data-id="external-transfer" data-title="External Transfer">
                     <div class="split">
                         <div class="text-right">
                             <p>External</p>
@@ -141,14 +148,14 @@ $db->close();
 		        </button>            
 		    </div>
             <div class="list sub">
-                <h2 id="title">Internal Transactions</h2>
+                <h2 id="title">Internal Transfer</h2>
                 <p class="info">Transfer funds between accounts</p>
                 <br>
                 <form id="internal-transfer" action="../../requests/account/newInternalTransfer" class="flex-form">
     	            <label for="internal-sender" class="info">Sender</label>
 		            <select id="internal-sender" name="from" class="input-field" required>
                         <?php
-                        if ($isNotReferenced) {
+                        if (!$isReferenced) {
                             $balance = $accounts[0]['balance'];
                         }
                         
@@ -194,7 +201,7 @@ $db->close();
     	            <label for="external-sender" class="info">Sender</label>
 		            <select id="external-sender" name="from" class="input-field" required>
                         <?php
-                        if ($isNotReferenced) {
+                        if (!$isReferenced) {
                             $balance = $accounts[0]['balance'];
                         }
                         
@@ -253,7 +260,7 @@ $db->close();
                     <p class="info">Receiver</p>
                     <p id="transfer-receiver"></p>
                     <p class="info">Amount</p>
-                    <p id="transfer-amount"></p>
+                    <p>$<span id="transfer-amount"></span></p>
                     <button id="confirm-transfer" type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Confirm<p>
@@ -277,9 +284,9 @@ $db->close();
 	    const popupDescriptionType = document.getElementById('account-type-description');
 	    
 	    /* PopUp Confirmation Contents */
-	    const transactionSender = document.getElementById('transfer-sender');
-	    const transactionReceiver = document.getElementById('transfer-receiver');
-	    const transactionAmount = document.getElementById('transfer-amount');
+	    const transferSender = document.getElementById('transfer-sender');
+	    const transferReceiver = document.getElementById('transfer-receiver');
+	    const transferAmount = document.getElementById('transfer-amount');
 	    
 	    /* Form User Input */
 	    const internalSender = document.getElementById('internal-sender');
@@ -315,7 +322,7 @@ $db->close();
 	        if (verifyUserInput()) {
 	            hideNotification(); // Hide notification if visible
 	            
-                transactionAmount.textContent = '$' + formData.get('usd');
+                transferAmount.textContent = formData.get('usd');
                 
                 popUpBackground.classList.add('show-popup-content');
                 popUpElemement.classList.remove('hidden');
@@ -333,16 +340,16 @@ $db->close();
 	            } else if (formData.get('usd') > Number(internalSenderBalance.textContent.replace(',', ''))) {
 	                setFailNotification("Requested amount is over the current balance");
 	            } else {
-                    transactionSender.textContent = internalSender.selectedOptions[0].text;
-                    transactionReceiver.textContent = internalReceiver.selectedOptions[0].text;
+                    transferSender.textContent = internalSender.selectedOptions[0].text;
+                    transferReceiver.textContent = internalReceiver.selectedOptions[0].text;
                     verified = true;
 	            }
 	        } else {
                 if (Number(formData.get('usd')) > Number(externalSenderBalance.textContent.replace(',', ''))) {
 	                setFailNotification("Requested amount is over the current balance");
 	            } else {
-                    transactionSender.textContent = externalSender.selectedOptions[0].text;
-                    transactionReceiver.textContent = externalReceiver.value;
+                    transferSender.textContent = externalSender.selectedOptions[0].text;
+                    transferReceiver.textContent = externalReceiver.value;
                     verified = true;
 	            }
 	        }
