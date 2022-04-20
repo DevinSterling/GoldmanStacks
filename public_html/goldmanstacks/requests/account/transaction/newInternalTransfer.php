@@ -1,7 +1,7 @@
 <?php
-require_once('../../../../private/config.php');
-require_once('../../../../private/userbase.php');
-require_once('../../../../private/functions.php');
+require_once('../../../../../private/config.php');
+require_once('../../../../../private/userbase.php');
+require_once('../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
