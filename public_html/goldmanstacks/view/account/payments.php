@@ -16,10 +16,10 @@ $key = $_SESSION['key'];
 $referencedName = $_GET['acc'];
 
 /* Variables */
-$accounts = array();
-$amountOfPayments = 5;
+$hasNoPayments = false;
 
 /* Csrf form tokens */
+$paymentDetailsToken = hash_hmac('sha256', '/getPaymentDetails.php', $key);
 $newPaymentToken = hash_hmac('sha256', '/newPayment.php', $key);
 $getBalanceToken = hash_hmac('sha256', '/getBalance.php', $key);
 
@@ -49,10 +49,11 @@ foreach ($rowAccounts as $account) {
 
 $resultAccounts->free();
 $queryAccounts->close();
-$db->close();
 
 /* Redirect user if non-existent account given */
 if (!$isReferenced && !empty($referencedName)) {
+    $db->close();
+    
     header('Location: payments.php');
     die();
 }
@@ -124,7 +125,7 @@ if (!$isReferenced && !empty($referencedName)) {
         ?>
         <div class="container flex-center <?php if ($isReferenced) echo "marginless" ?>">
             <div class="list mini">
-                <button class="tab-button transform-button round <?php if ($referencedName === null) echo "selected" ?>" data-id="current-payments" data-title="Current Payments">
+                <button id="payments-tab-button" class="tab-button transform-button round <?php if ($referencedName === null) echo "selected" ?>" data-id="current-payments" data-title="Current Payments">
                     <div class="split">
                         <div class="text-right">
                             <p>View Payments</p>
@@ -134,7 +135,7 @@ if (!$isReferenced && !empty($referencedName)) {
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round <?php if ($referencedName !== null) echo "selected" ?>" data-id="new-payment" data-title="New Payment">
+                <button id="new-payment-button" class="tab-button transform-button round <?php if ($referencedName !== null) echo "selected" ?>" data-id="new-payment" data-title="New Payment">
                     <div class="split">
                         <div class="text-right">
                             <p>New Payment</p>
@@ -150,36 +151,74 @@ if (!$isReferenced && !empty($referencedName)) {
                     <h2 id="title">Payments</h2>
                 </div>
                 <div id="current-payments" class="<?php if ($referencedName !== null) echo "hidden" ?>">
-                    <p class="info">Current payments</p><br>
-                    <div class="">
-                        <hr>
-        	            <?php
-        	            
-        	            $recentAccount = "Checking"; // temp
-        	            
-                        for ($n = 1; $n <= $amountOfPayments; $n++) {
-                            echo "<button onClick=\"showPopUp('view-payment-popup-content')\" class=\"highlight-button transform-button split round\">
-                                    <div class=\"list-padded\">
-                                        <h3 class=\"bold\">Payment $n</h3>
-                                        <p>$lastVisit<p>
+                    <div class="split">
+                        <p class="info">Current payments</p>
+                        <button onClick="changeSelected(document.getElementById('new-payment-button'))" class="expand-button transform-button extend-left round">
+                            <div class="split">
+                                <div class="animate-left">
+                		            <div class="toggle-button">
+                		                <p class="expanded-info">Add Payment</p>
+                		            </div>
+                	            </div>
+                                <p class="condensed-info"><b>+</b></p>
+                            </div>
+                        </button>
+                    </div><br>
+                    <hr class="margin-bottom">
+    	            <?php
+    	            $queryPayments = $db->prepare("SELECT P.paymentID, P.recipientAccount, P.recipientNickName, P.amount, P.endDate, A.nickName, A.accountType FROM payments P INNER JOIN accountDirectory A ON P.accountNum=A.accountNum WHERE A.clientID=?");
+    	            $queryPayments->bind_param("i", $userID);
+    	            $queryPayments->execute();
+    	            
+    	            $queryResults = $queryPayments->get_result();
+    	            $paymentsRows = $queryResults->fetch_all(MYSQLI_ASSOC);
+    	            
+    	            if ($queryResults->num_rows > 0) {
+                        foreach ($paymentsRows as $payment) {
+                            if ($payment['recipientNickName'] === null) {
+                                $name = '(*' . substr($payment['recipientAccount'], -4) . ')';
+                            } else {
+                                $name = $payment['recipientNickName'];
+                            }
+                            
+                            /* Determin payment type */
+                            if ($payment['endDate'] === null) {
+                                $paymentType = 'One-time Payment';
+                            } else {
+                                $paymentType = 'Recurring Payment';
+                            }
+                            
+                            echo "<button type=\"button\" onClick=\"showPaymentDetails('" . encrypt($payment['paymentID'], $key) . "')\" class=\"highlight-button transform-button split round\">
+                                    <div class=\"list-padded text-left\">
+                                        <h3 class=\"bold\">Payment to $name</h3>
+                                        <p>From " . $payment['nickName'] . " (" . ucfirst($payment['accountType']) . ")" . "<p>
                                     </div>
                                     <div class=\"split animate-left\">
                                         <div class=\"list-padded text-right\">
-                                            <h3>$.00</h3>
-                                            <p>Payment</p>
+                                            <h3>$" . number_format($payment['amount'], 2) . "</h3>
+                                            <p>$paymentType</p>
                                         </div>
                        		            <div class=\"toggle-button\">
                         		            <i class=\"fas fa-chevron-right\"></i>
                         		        </div>
                                     </div>
-                                  </button>
-                                  <hr>";
+                                  </button>";
+                              
+    						if ($payment != end($paymentsRows)){
+    							echo "<hr>";
+    						}
                         }
-        
-                        ?>
-                    </div>
+    	            } else {
+    	                $hasNoPayments = true;
+    	                echo '<p id="no-payments" class="info text-center">No Ongoing Payments</p>';
+    	            }
+                    
+                    $queryResults->free();
+                    $queryPayments->close();
+                    $db->close();
+                    ?>
                 </div>
-                <form id="new-payment" action="../../requests/account/newPayment" class="flex-form <?php if ($referencedName === null) echo "hidden" ?>">
+                <form id="new-payment" action="../../requests/account/payment/newPayment" class="flex-form <?php if ($referencedName === null) echo "hidden" ?>">
                     <p class="info">Start a new payment</p><br>
                     <label for="input-sender" class="info">From</label>
 		            <select id="input-sender" name="from" class="input-field" required>
@@ -203,12 +242,14 @@ if (!$isReferenced && !empty($referencedName)) {
                     <p class="info">Balance: $<span id="payment-sender-balance"><?php echo number_format($balance, 2) ?></span></p>
                     <hr>
     	            <label for="input-receiver" class="info">Receiver Bank Account Number</label>
-                    <input id="input-receiver" type="text" name="to" pattern="[0-9]{10}" class="input-field"required>
+                    <input id="input-receiver" type="text" name="to" pattern="^[0-9]{10}$" maxlength="10" class="input-field" required>
+    	            <label for="input-nickName" class="info">Receiver Name</label>
+                    <input id="input-nickName" type="text" name="name" pattern="^[A-z&' ]+$" maxlength="30" placeholder="Optional" class="input-field">
     	            <hr>
                     <label for="input-date" class="info">Date</label>
                     <input id="input-date" type="date" name="date" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" value="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" class="input-field" required>
                     <label for="input-amount" class="info">Amount</label>
-                    <input id="input-amount" type="number" name="usd" class="input-field" placeholder="USD" required>
+                    <input id="input-amount" type="number" step="0.01" name="amount" placeholder="USD" class="input-field" required>
                     <hr>
                     <div id="optional-recurring-payment" class="collapsable-item collapse">
                         <div class="flex-form">
@@ -216,13 +257,13 @@ if (!$isReferenced && !empty($referencedName)) {
                             <input id="input-step" type="number" name="step" min="1" max="50" class="input-field">
                             <label for="input-period" class="info form-item">Period</label>
                             <select id="input-period" type="number" name="period" class="input-field">
-                                <option>Day</option>
-                                <option>Week</option>
-                                <option>Month</option>
-                                <option>Year</option>
+                                <option value="day">Day</option>
+                                <option value="week">Week</option>
+                                <option value="month">Month</option>
+                                <option value="year">Year</option>
                             </select>
                             <label for="input-end-date" class="info form-item">End Date</label>
-                            <input id="input-end-date" type="date" name="end-date" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" value="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" class="input-field">
+                            <input id="input-end-date" type="date" name="end" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" value="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" class="input-field">
                         </div>
                     </div>
                     <div class="switch-field">
@@ -282,8 +323,8 @@ if (!$isReferenced && !empty($referencedName)) {
                     <p class="info">Date</p>
                     <p id="payment-date"></p>
                     <p class="info">Amount</p>
-                    <p>$<span id="payment-amount"></span></p>
-                    <div id="optional-recurring-confirmation" class="flex-form">
+                    <p id="payment-amount"></p>
+                    <div id="payment-recurring-confirmation" class="flex-form">
                         <p class="info">Recurring Payment</p>
                         <p>Every <span id="payment-step"></span> <span id="payment-period"></span> (from given date) until <span id="payment-end"></span></p>
                     </div>
@@ -298,22 +339,24 @@ if (!$isReferenced && !empty($referencedName)) {
                 </div>
                 <div id="view-payment-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Payment</h2>
-                    <b class="info">Account</b>
-                    <p id="account-name"><?php echo $currentAccountName ?></p>
-                    <b class="info">Reciever</b>
-                    <p id="account-balance"><?php echo $balance ?></p>
+                    <b class="info">Sender</b>
+                    <p id="selected-sender"><?php echo $currentAccountName ?></p>
+                    <b class="info">Receiver</b>
+                    <p id="selected-receiver"><?php echo $balance ?></p>
                     <b class="info">Date</b>
-                    <p id="account-routing-number"><?php echo $routingNumber ?></p>
+                    <p id="selected-date"><?php echo $routingNumber ?></p>
                     <b class="info">Amount</b>
-                    <p id="placeholder1">$999999</p>
-                    <b class="info">Reccuring</b>
-                    <p id="placeholder2">False (This is a one-time payment)</p>
+                    <p id="selected-payment-amount"></p>
+                    <div id="selected-recurring-content" class="flex-form hidden">
+                        <b class="info">Recurring Payment</b>
+                        <p id="selected-recurring-info">False (This is a one-time payment)</p>
+                    </div>
                     <button type="button" onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                         <div class="split">
-                            <p class="animate-left">Edit<p>
            		            <div class="toggle-button">
-            		            <i class="fas fa-chevron-right"></i>
+            		            <i class="fas fa-chevron-left"></i>
             		        </div>
+                            <p class="animate-right">Return<p>
                         </div>
                     </button>
                 </div>
@@ -322,181 +365,280 @@ if (!$isReferenced && !empty($referencedName)) {
 	</body>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
 	<script type="text/javascript" src="../../js/tabs.js"></script>
+	<script type="text/javascript" src="../../js/post.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
-	    /* PopUp Confirmation Contents */
-	    const popUpPaymentSender = document.getElementById('payment-sender');
-	    const popUpPaymentReceiver = document.getElementById('payment-receiver');
-	    const popUpPaymentDate = document.getElementById('payment-date');
-	    const popUpPaymentAmount = document.getElementById('payment-amount');
-	    
-	    /* PopUp Optional Confirmation Contents */
-	    const paymentOptionalConfirmationElement = document.getElementById('optional-recurring-confirmation');
-	    const paymentStep = document.getElementById('payment-step');
-	    const paymentPeriod = document.getElementById('payment-period');
-	    const paymentEndDate = document.getElementById('payment-end');
-	    
-	    const checkBoxElement = document.getElementById('input-checkbox-recurring');
-	    const dateInputElement = document.getElementById('input-date');
-	    
+	    /* PopUp Selected Payment Information */
 	    const removePaymentButton = document.getElementById('remove-payment');
+	    const selectedSender = document.getElementById('selected-sender');
+	    const selectedReceiver = document.getElementById('selected-receiver');
+	    const selectedDate = document.getElementById('selected-date');
+	    const selectedAmount = document.getElementById('selected-payment-amount');
+	    const selectedRecurringDiv = document.getElementById('selected-recurring-content');
+	    const selectedRecurringInfo = document.getElementById('selected-recurring-info');
 	    
-	    /* User Form Input */
-	    const paymentSender = document.getElementById('input-sender');
-	    const paymentDate = document.getElementById('input-date');
-	    const recurringEndDate = document.getElementById('input-end-date');
+	    /* PopUp Confirmation Contents */
+	    const confirmSender = document.getElementById('payment-sender');
+	    const confirmReceiver = document.getElementById('payment-receiver');
+	    const confirmDate = document.getElementById('payment-date');
+	    const confirmAmount = document.getElementById('payment-amount');
+	    const confirmRecurringDiv = document.getElementById('payment-recurring-confirmation');
+	    const confirmStep = document.getElementById('payment-step');
+	    const confirmPeriod = document.getElementById('payment-period');
+	    const confirmEndDate = document.getElementById('payment-end');
+	    
+	    /* New Payment Form Contents */
+	    const inputSender = document.getElementById('input-sender');
+	    const inputDate = document.getElementById('input-date');
+	    
+	    /* New Payment Form Contents: Option Recurring Contents */
 	    const recurringPayment = document.getElementById('optional-recurring-payment');
-	    const recurringStep = document.getElementById('input-step');
-	    const recurringPeriod = document.getElementById('input-period');
-	    
+	    const inputCheckBox = document.getElementById('input-checkbox-recurring');
+	    const inputStep = document.getElementById('input-step');
+	    const inputPeriod = document.getElementById('input-period');
+	    const inputEndDate = document.getElementById('input-end-date');
+
 	    /* User Balance */
 	    const senderBalance = document.getElementById('payment-sender-balance');
 	    
 	    /* Memory for plural/singular recurring period selection text */
 	    let oldValue = 1;
 	    
+	    /* Associated form information */
 	    let form = null;
 	    let formData = null;
-	
+	    
+	    /* Currency formatter */
+        let formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        });
+	    
 	    document.addEventListener('DOMContentLoaded', () => {
-            paymentSender.addEventListener('change', async event => {
-    	        let url = '../../requests/account/getBalance';
+	        /* Listener to get current balance of selected account */
+            inputSender.addEventListener('change', async (event) => {
+                let failure = true; // Used to notify user if something went wrong
+                
+                /* Create data to POST */
     	        let data = new FormData();
-    	        
     	        data.append('account', event.target.value);
     	        data.append('token', '<?php echo $getBalanceToken ?>');
     	        
-    	        request = new Request(url, {
-    	            body: data,
-    	            method: 'POST',
-    	        });
+                /* Retrieve associated json */
+    	        let json = await getJson('../../requests/account/getBalance', data);
+    	       
+    	        /* Check if the given json is not empty*/
+    	        if (!isEmptyJson(json)) {
+    	            /* Check if computation done by server was successful */
+	                if (json.response) {
+    	                failure = false;
+                        senderBalance.textContent = json.balance;
+    	            } else {
+    	                senderBalance.textContent = '0.00';
+    	                setFailNotification(json.message);
+    	            }
+    	        } else {
+    	            setFailNotification('Failed to retrieve details');
+    	        }
     	        
-    	        await fetch(request)
-    	            .then((response) => response.json())
-    	            .then((data) => {          
-    	                if (data.response) {
-    	                    senderBalance.textContent = data.message;
-    	                } else {
-                            senderBalance.textContent = '0.00';
-    
-    	                    setFailNotification(data.message);
-                            showNotification();
-    
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-    	            })
-    	            .catch(console.warn);
+    	        if (failure) {
+        	        /* Notify user */
+        	        showNotification();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+    	        }
             });
             
+            /* Overrides the standard form submission process */
             document.getElementById('new-payment').addEventListener('submit', event => {
-                event.preventDefault();
+                event.preventDefault(); // Prevent form from refreshing the page
                 
+                /* Get associated form information */
                 form = event.target;
                 formData = new FormData(form);
                 
-                let verified = false;
+                let verified = false; // Variable to check if user input is valid
                 
-                if (formData.get('usd') > Number(senderBalance.textContent.replace(',', ''))) {
+                /* Input validation */
+                if (formData.get('amount') > Number(senderBalance.textContent.replace(',', ''))) {
                     setFailNotification("Requested amount is over the current balance");
                     showNotification();
                 } else {
-                    popUpPaymentSender.textContent = paymentSender.selectedOptions[0].text;
-                    popUpPaymentReceiver.textContent = formData.get('to');
-                    popUpPaymentDate.textContent = formData.get('date');
-                    popUpPaymentAmount.textContent = formData.get('usd');
-                    if (checkBoxElement.checked) {
-                        let step = formData.get('step');
-                        
-                        if (step > 1) {
-                            paymentStep.textContent = step;
-                        } else {
-                            paymentStep.textContent = '';
-                        }
-                        
-                        paymentPeriod.textContent = formData.get('period').toLowerCase();
-                        paymentEndDate.textContent = formData.get('end-date');
-                        paymentOptionalConfirmationElement.classList.remove('hidden');
-                    } else {
-                        paymentOptionalConfirmationElement.classList.add('hidden');
+                    /* Update popup contents to what the user has inputted */
+                    confirmSender.textContent = inputSender.selectedOptions[0].text;
+                    confirmReceiver.textContent = formData.get('to');
+                    confirmDate.textContent = formData.get('date');
+                    confirmAmount.textContent = formatter.format(formData.get('amount'));
+                    
+                    /* Check if a receiver name is given */
+                    if (formData.get('name') !== '') {
+                        confirmReceiver.textContent = formData.get('name') + ' (' + confirmReceiver.textContent + ')';
                     }
                     
-                    hideNotification(); // Hide Notification if visible
-                    showPopUp('confirm-payment-popup-content'); // Show popup
+                    /* Check if the recurring option is selected by the user */
+                    if (inputCheckBox.checked) {
+                        let step = formData.get('step');
+                        
+                        /* Plural/singular grammar check */
+                        if (step > 1) {
+                            confirmStep.textContent = step;
+                        } else {
+                            confirmStep.textContent = '';
+                        }
+                        
+                        /* Update optional popup contents (recurring option) to what the user has inputted */
+                        confirmPeriod.textContent = inputPeriod.selectedOptions[0].text.toLowerCase();
+                        confirmEndDate.textContent = formData.get('end');
+                        confirmRecurringDiv.classList.remove('hidden');
+                    } else {
+                        /* Hide recurring content in popup if user has not selected the recurring option */
+                        confirmRecurringDiv.classList.add('hidden');
+                    }
+                    
+                    hideNotification(); // Hide Notifications if visible
+                    showPopUp('confirm-payment-popup-content'); // Show confirmation popup
                 }
             });
             
-            document.getElementById('confirm-payment').addEventListener('click', () => {
-    	        let url = form.action;
-    	        request = new Request(url, {
-    	            body: formData,
-    	            method: 'POST',
-    	        });
+            /* Listener to submit "new payment" form to server to create a new payment */
+            document.getElementById('confirm-payment').addEventListener('click', async () => {
+                /* Retrieve associated json */
+	            let json = await getJson(form.action, formData);
     	        
-    	        fetch(request)
-    	            .then((response) => response.json())
-    	            .then((data) => {          
-    	                if (data.response) {
-    	                    form.reset();
-    	                    
-	                        setSuccessNotification(data.message);
-	                        paymentSender.dispatchEvent(new Event('change'));
-				checkBoxElement.dispatchEvent(new Event('change'));
-    	                } else {
-    	                    setFailNotification(data.message);
-    	                }
-    			
-    	                showNotification();
-    	            })
-    	            .catch(console.warn);
-    	            
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+    	        /* Check if the given json is not empty*/
+    	        if (!isEmptyJson(json)) {
+    	            /* Check if computation done by server was successful */
+    	            if (json.response) {
+    	                form.reset(); // Reset contents of the form
+    	                inputSender.dispatchEvent(new Event('change')); // Trigger event to retrieve selected account balance on form reset
+    	                inputCheckBox.dispatchEvent(new Event('change')); // Trigger event to collapse recurring payment input contents on form reset
+    	                setSuccessNotification(json.message);
+    	                
+    	                changeSelected(document.getElementById('payments-tab-button')); // Change tab to view payments
+    	                createNewPaymentElement(json.id); // Create new payment button
+    	            } else {
+    	                setFailNotification(json.message);
+    	            }
+    	        } else {
+    	            setFailNotification('Failed to retrieve details');
+    	        }
+    	        
+    	        /* Notify user */
                 hidePopUp();
+    	        showNotification();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 	    });
 	    
-	    checkBoxElement.addEventListener('change', function() {
+	    /* Listener to hide or show optional form contents for recurring payments in the "new payment" form */
+	    inputCheckBox.addEventListener('change', function() {
 	        if (this.checked) {
 	            recurringPayment.classList.remove('collapse');
-                recurringStep.required = true;
-                recurringPeriod.required = true;
+	            /* Make inputs required */
+                inputStep.required = true;
+                inputPeriod.required = true;
+                inputEndDate.required = true;
+                
+                /* Make inputs not disabled */
+                inputStep.disabled = false;
+                inputPeriod.disabled = false;
+                inputEndDate.disabled = false;
 	        } else {
 	            recurringPayment.classList.add('collapse');
-                recurringStep.required = false;
-                recurringPeriod.required = false;
+	            /* Make inputs not required */
+                inputStep.required = false;
+                inputPeriod.required = false;
+                inputEndDate.required = false;
+
+                /* Make inputs disabled */
+                inputStep.disabled = true;
+                inputPeriod.disabled = true;
+                inputEndDate.disabled = true;
 	        }
 	    });
 	    
-	    recurringStep.addEventListener('input', function() {
+	    /* Listener whether to make the "period" selector option elements singular or plural depending on the number given by the user from "step" input */
+	    inputStep.addEventListener('input', function() {
 	        if (this.value > 1 && oldValue <= 1) {
 	            oldValue = this.value;
 	            
-	            Array.prototype.forEach.call(recurringPeriod.options, option => {
+	            Array.prototype.forEach.call(inputPeriod.options, option => {
 	                option.text += 's';
 	            });
 	        } else if (this.value <= 1 && oldValue > 1) {
 	            oldValue = this.value;
 	            
-	            Array.prototype.forEach.call(recurringPeriod.options, option => {
+	            Array.prototype.forEach.call(inputPeriod.options, option => {
 	                option.text = option.text.substr(option.text, option.text.length - 1);
 	            });
 	        }
 	    });
 	    
-	    paymentDate.addEventListener('input', function() {
-	        recurringEndDate.min = paymentDate.value;
+	    /* Listener to make the minimum end date for recurring payments the start date of the payment */
+	    inputDate.addEventListener('input', function() {
+	        inputEndDate.min = inputDate.value;
 	        
-	        if (new Date(recurringEndDate.value) < new Date(paymentDate.value) || recurringEndDate.value == '') recurringEndDate.value = paymentDate.value;
+	        if (new Date(inputEndDate.value) < new Date(inputDate.value) || inputEndDate.value == '') {
+	            inputEndDate.value = inputDate.value;
+	        }
 	    });
-
-        function showPopUp(ContentId) {
-            if (ContentId === 'view-payment-popup-content') {
+	    
+	    /* Shows user a popup with details of the payment they have selected */
+	    async function showPaymentDetails(id) {
+	        let failure = true;
+	        
+	        /* Create form data */
+	        let data = new FormData();
+	        data.append('id', id);
+	        data.append('token', '<?php echo $paymentDetailsToken ?>');
+	        
+	        /* Retrieve details */
+	        let json = await getJson('../../requests/account/payment/getPaymentDetails', data);
+	        
+	        /* Check json contents */
+	        if (!isEmptyJson(json)) {
+	            if (json.response) {
+	                failure = false;
+	                
+	                /* Update current payment contents */
+	                selectedSender.textContent = json.from;
+	                selectedReceiver.textContent = json.to;
+	                selectedDate.textContent = json.date;
+	                selectedAmount.textContent = json.amount;
+	                
+	                if (json.isRecurring) {
+	                    selectedRecurringInfo.textContent = json.recurInfo;
+	                    selectedRecurringDiv.classList.remove('hidden');
+	                } else {
+	                    selectedRecurringDiv.classList.add('hidden');
+	                }
+	            } else {
+	                setFailNotification(json.message);
+	            }
+	        } else {
+	            setFailNotification('Failed to retrieve details');
+	        }
+	        
+	        /* Show user a notification on date retrieval failure */
+	        if (failure) {
+	            showNotification();
+	        }
+	        
+	        /* Show popup */
+	        showPopUp('view-payment-popup-content');
+	    }
+        
+        /* Shows popup */
+        function showPopUp(contentId) {
+            /* Determine whether the popup contains a remove button */
+            if (contentId === 'view-payment-popup-content') { 
                 removePaymentButton.classList.remove('hidden');
             } else {
                 removePaymentButton.classList.add('hidden');
             }
             
+            /* Hide all pop-up contents except the one requested (ContentId) */
             document.querySelectorAll(".pop-up-item").forEach((element) => {
-                if (element.id === ContentId) {
+                if (element.id === contentId) {
                     element.classList.remove('hidden');
                 }
                 else {
@@ -504,13 +646,42 @@ if (!$isReferenced && !empty($referencedName)) {
                 }
             });
             
+            /* Show popup background and main popup window */
             document.getElementById('pop-up').classList.add('show-popup-content');
             document.getElementById('pup-up-element').classList.remove('hidden');
         }
         
+        /* Removes popup background and hides main popup window */
         function hidePopUp() {
             document.getElementById('pop-up').classList.remove('show-popup-content');
             document.getElementById('pup-up-element').classList.add('hidden');
+        }
+        
+        function createNewPaymentElement(id) {
+            /* Check if no payments message is shown */
+            if (document.getElementById('no-payments') !== null) {
+                document.getElementById('no-payments').remove();
+            } else {
+                document.getElementById('current-payments').innerHTML += '<hr>';
+            }
+            
+            /* Create new button for payment */
+            document.getElementById('current-payments').innerHTML += `
+                <button type="button" onClick="showPaymentDetails('${id}')" class="highlight-button transform-button split round">
+                    <div class="list-padded text-left">
+                        <h3 class="bold">Payment to ${formData.get('name') === '' ? '(*' + formData.get('to').substr(formData.get('to').length - 4) + ')' : formData.get('name')}</h3>
+                        <p>From ${confirmSender.textContent}<p>
+                    </div>
+                    <div class="split animate-left">
+                        <div class="list-padded text-right">
+                            <h3>${confirmAmount.textContent}</h3>
+                            <p>${formData.get('step') === '' ? 'One-time Payment' : 'Recurring Payment'}</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+                </button>`;
         }
 	</script>
 </html>
