@@ -151,7 +151,7 @@ if (!$isReferenced && !empty($referencedName)) {
                 <h2 id="title">Internal Transfer</h2>
                 <p class="info">Transfer funds between accounts</p>
                 <br>
-                <form id="internal-transfer" action="../../requests/account/newInternalTransfer" class="flex-form">
+                <form id="internal-transfer" action="../../requests/account/transfer/newInternalTransfer" class="flex-form">
     	            <label for="internal-sender" class="info">Sender</label>
 		            <select id="internal-sender" name="from" class="input-field" required>
                         <?php
@@ -197,7 +197,7 @@ if (!$isReferenced && !empty($referencedName)) {
                         </div>
                     </button>
                 </form>
-                <form id="external-transfer" action="../../requests/account/newExternalTransfer" class="flex-form hidden">
+                <form id="external-transfer" action="../../requests/account/transfer/newExternalTransfer" class="flex-form hidden">
     	            <label for="external-sender" class="info">Sender</label>
 		            <select id="external-sender" name="from" class="input-field" required>
                         <?php
