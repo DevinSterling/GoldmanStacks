@@ -142,4 +142,5 @@ $object->response = $dbSuccess;
 $object->message = $dbMessage;
 $object->id = $dbPaymentId;
 $json = json_encode($object);
+
 echo $json;
