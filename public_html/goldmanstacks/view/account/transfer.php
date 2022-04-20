@@ -275,6 +275,7 @@ if (!$isReferenced && !empty($referencedName)) {
 	</body>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
 	<script type="text/javascript" src="../../js/tabs.js"></script>
+	<script type="text/javascript" src="../../js/post.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
 	    /* PopUp Contents */
@@ -412,32 +413,35 @@ if (!$isReferenced && !empty($referencedName)) {
 	    }
 	    
 	    async function retrieveBalance(value) {
-	        let url = '../../requests/account/getBalance';
+            let failure = true; // Used to notify user if something went wrong
+            
+            /* Create data to POST */
 	        let data = new FormData();
-	        
 	        data.append('account', value);
 	        data.append('token', '<?php echo $getBalanceToken ?>');
 	        
-	        request = new Request(url, {
-	            body: data,
-	            method: 'POST',
-	        });
+            /* Retrieve associated json */
+	        let json = await getJson('../../requests/account/getBalance', data);
+	       
+	        /* Check if the given json is not empty*/
+	        if (!isEmptyJson(json)) {
+	            /* Check if computation done by server was successful */
+                if (json.response) {
+	                failure = false;
+                    balance = json.balance;
+	            } else {
+	                balance = '0.00';
+	                setFailNotification(json.message);
+	            }
+	        } else {
+	            setFailNotification('Failed to retrieve details');
+	        }
 	        
-	        await fetch(request)
-	            .then((response) => response.json())
-	            .then((data) => {          
-	                if (data.response) {
-	                    balance = data.message;
-	                } else {
-                        balance = '0.00';
-
-	                    setFailNotification(data.message);
-                        showNotification();
-
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-	            })
-	            .catch(console.warn);
+	        if (failure) {
+    	        /* Notify user */
+    	        showNotification();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+	        }
 	    }
     </script>
 </html>
