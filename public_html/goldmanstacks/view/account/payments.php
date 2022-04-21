@@ -20,6 +20,7 @@ $hasNoPayments = false;
 
 /* Csrf form tokens */
 $paymentDetailsToken = hash_hmac('sha256', '/getPaymentDetails.php', $key);
+$deletePaymentToken = hash_hmac('sha256', '/deletePayment.php', $key);
 $newPaymentToken = hash_hmac('sha256', '/newPayment.php', $key);
 $getBalanceToken = hash_hmac('sha256', '/getBalance.php', $key);
 
@@ -175,6 +176,8 @@ if (!$isReferenced && !empty($referencedName)) {
     	            
     	            if ($queryResults->num_rows > 0) {
                         foreach ($paymentsRows as $payment) {
+                            $paymentId = encrypt($payment['paymentID'], $key); 
+                            
                             if ($payment['recipientNickName'] === null) {
                                 $name = '(*' . substr($payment['recipientAccount'], -4) . ')';
                             } else {
@@ -188,25 +191,28 @@ if (!$isReferenced && !empty($referencedName)) {
                                 $paymentType = 'Recurring Payment';
                             }
                             
-                            echo "<button type=\"button\" onClick=\"showPaymentDetails('" . encrypt($payment['paymentID'], $key) . "')\" class=\"highlight-button transform-button split round\">
-                                    <div class=\"list-padded text-left\">
-                                        <h3 class=\"bold\">Payment to $name</h3>
-                                        <p>From " . $payment['nickName'] . " (" . ucfirst($payment['accountType']) . ")" . "<p>
-                                    </div>
-                                    <div class=\"split animate-left\">
-                                        <div class=\"list-padded text-right\">
-                                            <h3>$" . number_format($payment['amount'], 2) . "</h3>
-                                            <p>$paymentType</p>
+                            echo "<div id=\"$paymentId\">
+                                    <button type=\"button\" class=\"view-payment-button highlight-button transform-button split round\">
+                                        <div class=\"list-padded text-left\">
+                                            <h3 class=\"bold\">Payment to $name</h3>
+                                            <p>From " . $payment['nickName'] . " (" . ucfirst($payment['accountType']) . ")" . "<p>
                                         </div>
-                       		            <div class=\"toggle-button\">
-                        		            <i class=\"fas fa-chevron-right\"></i>
-                        		        </div>
-                                    </div>
-                                  </button>";
+                                        <div class=\"split animate-left\">
+                                            <div class=\"list-padded text-right\">
+                                                <h3>$" . number_format($payment['amount'], 2) . "</h3>
+                                                <p>$paymentType</p>
+                                            </div>
+                           		            <div class=\"toggle-button\">
+                            		            <i class=\"fas fa-chevron-right\"></i>
+                            		        </div>
+                                        </div>
+                                    </button>";
                               
     						if ($payment != end($paymentsRows)){
     							echo "<hr>";
     						}
+    						
+    						echo "</div>";
                         }
     	            } else {
     	                $hasNoPayments = true;
@@ -292,7 +298,7 @@ if (!$isReferenced && !empty($referencedName)) {
             </div>
             <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
                 <div class="split">
-                    <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
+                    <button id="return-button" onClick="hidePopUp()" class="expand-button transform-button extend-right round">
     	                <div class="split">
     	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
     	                    <div class="animate-right">
@@ -302,7 +308,7 @@ if (!$isReferenced && !empty($referencedName)) {
         		            </div>
     	                </div>
     	            </button>
-                    <button id="remove-payment" onClick="hidePopUp()" class="expand-button transform-button extend-left round">
+                    <button id="remove-payment" class="expand-button transform-button extend-left round">
     	                <div class="split">
     	                    <div class="animate-left">
             		            <div class="toggle-button">
@@ -314,6 +320,44 @@ if (!$isReferenced && !empty($referencedName)) {
     	            </button>
 	            </div>
 	            <br>
+                <div id="view-payment-popup-content" class="pop-up-item flex-form hidden">
+                    <h2 id="title">Payment</h2>
+                    <div id='payment-details'>
+                        <b class="info">Sender</b>
+                        <p id="selected-sender"><?php echo $currentAccountName ?></p>
+                        <b class="info">Receiver</b>
+                        <p id="selected-receiver"><?php echo $balance ?></p>
+                        <b class="info">Date</b>
+                        <p id="selected-date"><?php echo $routingNumber ?></p>
+                        <b class="info">Amount</b>
+                        <p id="selected-payment-amount"></p>
+                        <div id="selected-recurring-content" class="flex-form hidden">
+                            <b class="info">Recurring Payment</b>
+                            <p id="selected-recurring-info">False (This is a one-time payment)</p>
+                        </div>
+                    </div>
+                    <button type="button" onClick="hidePopUp()" class="standard-button transform-button flex-center round">
+                        <div class="split">
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-left"></i>
+            		        </div>
+                            <p class="animate-right">Return<p>
+                        </div>
+                    </button>
+                </div>
+	            <div id="confirm-remove-payment-popup-content" class="pop-up-item flex-form hidden">
+                    <h2 id="title">Confirm Payment Removal</h2>
+                    <div id="remove-payment-details" class="margin-bottom"></div>
+                    <p class="info">The current payment will be removed</p>
+                    <button id="confirm-remove-payment" type="button" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Confirm<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </div>
 	            <div id="confirm-payment-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Confirm Payment</h2>
                     <p class="info">Sender</p>
@@ -337,29 +381,6 @@ if (!$isReferenced && !empty($referencedName)) {
                         </div>
                     </button>
                 </div>
-                <div id="view-payment-popup-content" class="pop-up-item flex-form hidden">
-                    <h2 id="title">Payment</h2>
-                    <b class="info">Sender</b>
-                    <p id="selected-sender"><?php echo $currentAccountName ?></p>
-                    <b class="info">Receiver</b>
-                    <p id="selected-receiver"><?php echo $balance ?></p>
-                    <b class="info">Date</b>
-                    <p id="selected-date"><?php echo $routingNumber ?></p>
-                    <b class="info">Amount</b>
-                    <p id="selected-payment-amount"></p>
-                    <div id="selected-recurring-content" class="flex-form hidden">
-                        <b class="info">Recurring Payment</b>
-                        <p id="selected-recurring-info">False (This is a one-time payment)</p>
-                    </div>
-                    <button type="button" onClick="hidePopUp()" class="standard-button transform-button flex-center round">
-                        <div class="split">
-           		            <div class="toggle-button">
-            		            <i class="fas fa-chevron-left"></i>
-            		        </div>
-                            <p class="animate-right">Return<p>
-                        </div>
-                    </button>
-                </div>
             </div>
         </div>
 	</body>
@@ -368,6 +389,12 @@ if (!$isReferenced && !empty($referencedName)) {
 	<script type="text/javascript" src="../../js/post.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
+	    /* Payment Buttons */
+	    const paymentButtons = document.querySelectorAll(".view-payment-button");
+	
+	    /* PopUp Buttons */
+	    const popupReturnButton = document.getElementById('return-button');
+	
 	    /* PopUp Selected Payment Information */
 	    const removePaymentButton = document.getElementById('remove-payment');
 	    const selectedSender = document.getElementById('selected-sender');
@@ -408,6 +435,8 @@ if (!$isReferenced && !empty($referencedName)) {
 	    let form = null;
 	    let formData = null;
 	    
+	    let selectedPayment = null;
+	    
 	    /* Currency formatter */
         let formatter = new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -415,6 +444,12 @@ if (!$isReferenced && !empty($referencedName)) {
         });
 	    
 	    document.addEventListener('DOMContentLoaded', () => {
+    	    paymentButtons.forEach((button) => {
+    	        button.addEventListener('click', () => {
+    	            showPaymentDetails(button.parentElement.id);
+    	        });
+    	    })
+	        
 	        /* Listener to get current balance of selected account */
             inputSender.addEventListener('change', async (event) => {
                 let failure = true; // Used to notify user if something went wrong
@@ -497,6 +532,41 @@ if (!$isReferenced && !empty($referencedName)) {
                     hideNotification(); // Hide Notifications if visible
                     showPopUp('confirm-payment-popup-content'); // Show confirmation popup
                 }
+            });
+            
+            document.getElementById('remove-payment').addEventListener('click', () => {
+	            popupReturnButton.onclick = function() { showPaymentDetails(selectedPayment); }
+	            document.getElementById('remove-payment-details').innerHTML = document.getElementById('payment-details').innerHTML;
+	            
+                showPopUp('confirm-remove-payment-popup-content');
+            });
+            
+            document.getElementById('confirm-remove-payment').addEventListener('click', async () => {
+                let data = new FormData();
+                data.append('token', '<?php echo $deletePaymentToken ?>')
+                data.append('payment', selectedPayment);
+                
+                /* Retrieve associated json */
+	            let json = await getJson('../../requests/account/payment/deletePayment', data);
+            
+    	        /* Check if the given json is not empty*/
+    	        if (!isEmptyJson(json)) {
+    	            /* Check if computation done by server was successful */
+    	            if (json.response) {
+    	                setSuccessNotification(json.message);
+    	                
+    	                document.getElementById(selectedPayment).remove();
+    	            } else {
+    	                setFailNotification(json.message);
+    	            }
+    	        } else {
+    	            setFailNotification('Failed to retrieve details');
+    	        }
+    	        
+    	        /* Notify user */
+                hidePopUp();
+    	        showNotification();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
             /* Listener to submit "new payment" form to server to create a new payment */
@@ -598,6 +668,7 @@ if (!$isReferenced && !empty($referencedName)) {
 	        if (!isEmptyJson(json)) {
 	            if (json.response) {
 	                failure = false;
+	                selectedPayment = id;
 	                
 	                /* Update current payment contents */
 	                selectedSender.textContent = json.from;
@@ -621,10 +692,10 @@ if (!$isReferenced && !empty($referencedName)) {
 	        /* Show user a notification on date retrieval failure */
 	        if (failure) {
 	            showNotification();
+	        } else {
+    	        /* Show popup */
+    	        showPopUp('view-payment-popup-content');
 	        }
-	        
-	        /* Show popup */
-	        showPopUp('view-payment-popup-content');
 	    }
         
         /* Shows popup */
@@ -634,6 +705,10 @@ if (!$isReferenced && !empty($referencedName)) {
                 removePaymentButton.classList.remove('hidden');
             } else {
                 removePaymentButton.classList.add('hidden');
+            }
+            
+            if (contentId !== 'confirm-remove-payment-popup-content') {
+                popupReturnButton.onclick = function() { hidePopUp(); }
             }
             
             /* Hide all pop-up contents except the one requested (ContentId) */
