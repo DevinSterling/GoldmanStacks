@@ -55,7 +55,7 @@ if (hash_equals($calc, $token)
                 // if ($isRecurring) {
                     /* Returns a string containing the step, period, and end date */
                     
-                    // /* Calculate period and relative step */
+                    // /* Calculate period and orginally user inputted step */
                     // if ($step % 7 === 0) {
                     //   $period = 'week';
                     //   $step /= 7;
