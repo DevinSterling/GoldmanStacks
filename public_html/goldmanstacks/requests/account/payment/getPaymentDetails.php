@@ -16,8 +16,9 @@ $paymentId = decrypt($_POST['id'], $key);
 $token = $_POST['token'];
 
 /* Defaults */
-$dbSuccess = true;
-$dbMessage = '';
+$response = (object)array();
+$response->response = false;
+$response->message = '';
 
 $dbFailMessage = 'Failed to retrieve payment details';
 
@@ -28,34 +29,68 @@ $calc = hash_hmac('sha256', '/getPaymentDetails.php', $key);
 if (hash_equals($calc, $token)
     && !empty($paymentId)) {
         
-    if (true) {
-        if (true) {
-            $from = substr('1234567012', -4);
-            $to = substr('1234567012', -4);
-            $amount = number_format(300.00, 2);
-            $date = date('Y-m-d');
+    /* Input validation code goes here */
+    
+    if ($isMatch) {
+        /* Get database connection */
+        $db = getUpdateConnection();
+        
+        /* Check database connection */
+        if ($db !== null) {
             
-            $isRecurring = true;
+            /* Code goes here */
             
-            if ($isRecurring) {
-                $recurInfo = 'Everyday until today';
+            if ($something) {
+                /* Commented code below is what is sent back after data retrieval from database */
+                // $response->from = substr(DB_VALUE, -4);
+                // $response->to = substr(DB_VALUE, -4);
+                // $response->amount = number_format(DB_VALUE, 2);
+                // $response->date = DB_VALUE;
+                
+                /* To check if a payment is recurring, check the step value for the current payment and see if it is null or not (if step has a value, then the payment is recurring) */
+                // $isRecurring = DB_VALUE; 
+                
+                // $response->isRecurring = $isRecurring;
+                
+                // if ($isRecurring) {
+                    /* Returns a string containing the step, period, and end date */
+                    
+                    // /* Calculate period and relative step */
+                    // if ($step % 7 === 0) {
+                    //   $period = 'week';
+                    //   $step /= 7;
+                    // }
+                    // else if ($step % 30 === 0) {
+                    //   $period = 'month';
+                    //   $step /= 30;
+                    // }
+                    // else if ($step % 365 === 0) {
+                    //   $period = 'year';
+                    //   $step /= 365;
+                    // }
+                    // else {
+                    //   $period = 'day';
+                    // }
+                    
+                    // /* Plural/Singular */
+                    // if ($step > 1) $period .= 's';
+                    
+                    // $response->recurInfo = "Every $step $period until <end date goes here (value taken from database)>";
+                // }
             }
+            
+            $db->close();
+        } else {
+            $response->message = $dbFailMessage;
         }
+    } else {
+        $response->message = $dbFailMessage;
     }
 } else {
-    
+    $response->message = $dbFailMessage;
 }
 
 /* Return outcome */
-$object = (object)array();
-$object->response = $dbSuccess;
-$object->message = 'test!';
-$object->from = $from;
-$object->to = $to;
-$object->amount = $amount;
-$object->date = $date;
-$object->isRecurring = $isRecurring;
-$object->recurInfo = $recurInfo;
-$json = json_encode($object);
+$json = json_encode($response);
 
 echo $json;
