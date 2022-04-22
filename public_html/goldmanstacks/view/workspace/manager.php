@@ -29,7 +29,10 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 				<li class="menulogo"><a href="manager">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="manager">Manage</a></li>
-				<li class="menuitem"><a href="search">Search</a></li>
+				<div class="search-bar">
+    				<input type="text" placeholder="Search" class="nav-search-bar">
+    				<button type="submit" class="nav-search-button"><i class="fas fa-search"></i></button>
+				</div>
 			</ul>
 			<ul class="menugroup">
 				<li class="menuitem"><a href="staff/options">Options</a></li>
@@ -38,9 +41,9 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
 		<?php notification(); ?>
-		<div class="container flex-center">
-		    <div class="list main">
-		        <h2 id="title">Management</h2>
+    	<div class="container flex-center">
+    	    <div class="list main">
+    	        <h2 id="title">Management</h2>
 		        <label class="info">Available Options</label>
     		    <a href="search" class="big-color-button transform-button split round shadow">
 		            <div class="list">
@@ -49,7 +52,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            </div>
 		            <div class="split animate-left">
 		                <div class="list text-right">
-						    <p>Clients</p>
+						    <p>Users</p>
 							<p class="focused-info">14</p>
 		                </div>
     		            <div class="toggle-button">
@@ -118,38 +121,74 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		        </div>
     		    </a>
 		    </div>
-		    <div class="list sub">
+		    <div class="list fixed-sub">
 		        <div class="container">
-    		        <div class="item-banner top-round shadow">
-        		        <p class="banner-text">Employee Details</p>
+		            <div class="split">
+        		        <p class="big">Details</p>
+    		            <a href="manager" class="expand-button transform-button extend-left round shadow">
+    		                <div class="split">
+    		                    <div class="animate-left">
+                		            <div class="toggle-button">
+                		                <p class="expanded-info">Refresh</p>
+                		            </div>
+            		            </div>
+    		                    <p class="condensed-info"><i class="fas">&#xf021;</i></p>
+    		                </div>
+    		            </a>
         		    </div>
-        		    <div class="item-content bottom-round shadow">
-        		        <p>Emplyee (name)</p>
-        		        <hr>
-        		        <p>Last Log: <?php echo $lastLog ?></p>	
-        		        <hr>
-        		        <a href="staff/options" class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p>Options</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </a>
-                        <hr>
-        		        <a href="../login" class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p>Sign Out</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </a>
-        		    </div>
+        		    <hr>
+        		    <p class="banner-text">Name</p>
+        		    <p class="info">Test Name Last</p>
+        		    <p class="banner-text">Last Sign In</p>
+        		    <p class="info"><?php echo $lastLog ?></p>
+        		    <p class="banner-text">Last Logged</p>
+        		    <p class="info"><?php echo $lastLog ?></p>
+        		    <hr>
+        		    <p class="banner-text">Server Uptime</p>
+        		    <p class="info"><?php echo ucfirst(shell_exec('uptime -p')) ?></p>
+        		    <p class="banner-text">CPU Usage</p>
+        		    <p class="info">
+    		        <?php
+                        $execLoads = sys_getloadavg();
+                        $execCores = trim(shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
+                        echo $cpu = round($execLoads[1]/($execCores + 1)*100, 0) . '%';
+    		        ?>
+    		        </p>
+        		    <p class="banner-text">Memory Usage</p>
+        		    <p class="info">
+    		        <?php
+                        $execFree = explode("\n", trim(shell_exec('free')));
+                        $getMem = preg_split("/[\s]+/", $execFree[1]);
+                        echo $mem = round($getMem[2]/$getMem[1]*100, 0) . '%';
+    		        ?>
+    		        </p>
+    		        <hr>
+        		    <p class="banner-text">Currently Logged Admins</p>
+        		    <p class="info">0</p>
+        		    <p class="banner-text">Currently Logged Clients</p>
+        		    <p class="info">0</p>
+        		    <hr>
+    		        <a href="staff/options" class="highlight-button transform-button split round">
+                        <div class="list">
+                            <p>Options</p>
+                        </div>
+                        <div class="animate-left">
+            	            <div class="toggle-button">
+            	                <i class="fas fa-chevron-right"></i>
+            	            </div>
+                        </div>
+    		        </a>
+                    <hr>
+    		        <a href="../login" class="highlight-button transform-button split round">
+                        <div class="list">
+                            <p>Sign Out</p>
+                        </div>
+                        <div class="animate-left">
+            	            <div class="toggle-button">
+            	                <i class="fas fa-chevron-right"></i>
+            	            </div>
+                        </div>
+    		        </a>
     		    </div>
 		    </div>
 		</div>
