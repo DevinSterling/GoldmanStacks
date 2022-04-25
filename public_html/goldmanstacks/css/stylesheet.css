@@ -435,7 +435,7 @@ hr {
 
 }
 
-@media(max-width: 1000px) {
+@media(max-width: 530px) {
     .responsive-table thead {
         display: none;
         margin: 0;
