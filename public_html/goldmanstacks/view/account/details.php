@@ -103,6 +103,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     		        </div>
                 </div>
             </button>
+            <div id="transaction">
     	        <div class="container">
         	        <h2 id="title"><span id="title-account-name"><?php echo $currentAccountName ?></span> History <span id="title-account-type">(<?php echo $accountType ?>)</span></h2>
         	        <div class="split">
@@ -179,6 +180,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 		            ?>
 		            </tbody>
 	            </table>
+	        </div>
     	    </div>
     	    <div class="list sub">
     	        <div class="container round shadow">
@@ -263,6 +265,17 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 	            </div>
                             </div>
                         </a>
+                        <hr>
+                        <button onclick="printSelected('transaction')" class="highlight-button transform-button split round">
+                            <div class="list">
+                                <p><i class="fas fa-print icon"></i> Print</p>
+                            </div>
+                            <div class="animate-left">
+                	            <div class="toggle-button">
+                	                <i class="fas fa-chevron-right"></i>
+                	            </div>
+                            </div>
+                        </button>
     	            </div>
     	        </div>
     	        <div class="container round shadow">
@@ -281,7 +294,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </button>
                         <hr>
-                        <a href="#Remove" class="highlight-button transform-button split round">
+                        <button onClick="showPopUp('close-popup-content')" class="highlight-button transform-button split round">
                             <div class="list">
                                 <p><i class="fas fa-times icon"></i> Close Account</p>
                             </div>
@@ -290,7 +303,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 	                <i class="fas fa-chevron-right"></i>
                 	            </div>
                             </div>
-                        </a>
+                        </button>
     	            </div>
     	        </div>
     	    </div>
@@ -388,12 +401,41 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                         </button>
                     </form>
                 </div>
+                <div id="close-popup-content" class="pop-up-item hidden">
+                    <h2 id="title">Close Account</h2>
+                    <p class="info">
+                        <?php 
+                        if ($accountBalance > 0) {
+                            echo "Account balance must be <b>\$0.00</b> before a close request can be submitted";
+                        } else {
+                            echo "A request will be submitted to close this account upon confirmation.";
+                        }
+                        ?>
+                    </p><br>
+                    <?php
+                    if ($accountBalance === 0) {
+                        echo '<form id="close-account" action="../../requests/account/requestCloseAccount" class="flex-form">
+                            <input id="current-account-name" type="hidden" name="old" value="<?php echo ' . $currentAccountName . ' ?>" required>
+                            <input type="hidden" name="token" value="<?php echo ' . $closeAccountToken . ' ?>" required>
+                            <button type="submit" class="standard-button transform-button flex-center round">
+                                <div class="split">
+                                    <p class="animate-left">Apply<p>
+                   		            <div class="toggle-button">
+                    		            <i class="fas fa-chevron-right"></i>
+                    		        </div>
+                                </div>
+                            </button>
+                        </form>';
+                    }
+                    ?>
+                </div>
             </div>
         </div>
 	</body>
     <script type="text/javascript" src="../../js/jquery/jquery.js"></script>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
+	<script type="text/javascript" src="../../js/print.js"></script>
 	<script type="text/javascript">
         function showPopUp(ContentId, entity = null) {
             document.querySelectorAll('.pop-up-item').forEach((element) => {
@@ -461,6 +503,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	<script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('change-nickname').addEventListener('submit', handleForm);
+            <?php if ($accountBalance === 0) echo "document.getElementById('close-account').addEventListener('submit', handleForm);" ?>
         });
         
         function handleForm(event) {
