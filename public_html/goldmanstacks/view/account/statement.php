@@ -1,12 +1,25 @@
 <?php
 require_once('../../../../private/sysNotification.php');
+require_once('../../../../private/config.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkClientStatus(); // Check if the client is signed in
-?>
 
+/* SESSION Variables */
+$userId = $_SESSION['uid'];
+
+/* Database Connection */
+$db = getUpdateConnection();
+
+/* Check Connection */
+if ($db === null) {
+    header("Location: ");
+    die();
+}
+?>
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
@@ -44,7 +57,7 @@ checkClientStatus(); // Check if the client is signed in
 		</nav>
 		<?php notification(); ?>
 		<div class="container flex-center">
-		    <div class="list sub">
+		    <div class="list main">
 		        <div class="split">
 		            <h2 id="title">Statement</h2>
                     <button onClick="printSelected('Statement')" class="expand-button transform-button extend-left round">
@@ -59,6 +72,67 @@ checkClientStatus(); // Check if the client is signed in
                     </button>
 		        </div>
 		        <div id="Statement">
+                <table id="transactions" class="responsive-table">
+                    <thead>
+	                    <tr>
+	                        <th class="date">Date</th>
+	                        <th class="desc">Description</th>
+	                        <th class="amount text-right">Amount</th>
+	                        <th class="hidden">Balance After</th>
+	                        <th class="hidden">Type</th>
+	                    </tr>
+                    </thead>
+                    <tbody tabindex="0" id="transactions-body">
+		            <?php
+                    /* Query to get all transactions from the selected account */
+                    $transactionStatement = $db->prepare("SELECT T.transactionTime, T.accountNum, T.recipientAccount, T.transactionAmount, T.type, A.nickName, A.accountType, (T.recipientAccount=A.accountNum AND T.clientID<>A.clientID) AS isRecipient
+                                                                FROM transactions T
+                                                                INNER JOIN accountDirectory A ON T.accountNum=A.accountNum OR (T.recipientAccount=A.accountNum AND T.clientID<>A.clientID)
+                                                                WHERE A.clientID=?
+                                                                ORDER BY T.transactionTime DESC");
+                    $transactionStatement->bind_param("s", $userId);
+                    $transactionStatement->execute();
+                    
+                    /* Obtain result */
+                    $result = $transactionStatement->get_result();
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                    foreach ($rows as $transaction) {
+                        switch ($transaction['type']) {
+                            case 'transfer':
+                                if ($transaction['accountNum'] != $accountNumber) {
+                                    $description = "Transfer from (*" . substr($transaction['accountNum'], -4) . ")";
+                                    $transaction['transactionAmount'] *= -1;
+                                } else {
+                                    $description = "Transfer to (*" . substr($transaction['recipientAccount'], -4) . ")";
+                                }
+                                break;
+                            case 'deposit':
+                                $description = "Deposit into account";
+                                break;
+                            case 'withdraw':
+                                $description = "Withdraw from account";
+                                break;
+                            case 'payment':
+                                $description = "Payment to";
+                        }
+                        
+                        
+                        echo "<tr class=\"transaction-element\">
+                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
+                            <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
+                            <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
+                            <td data-label=\"Description\" class=\"desc\">$description</td>
+                            <td data-label=\"Amount\" class=\"amount text-right\">".convertToCurrency($transaction['transactionAmount'])."</td>
+                        </tr>";
+                    }
+                    
+                    $result->free();
+                    $transactionStatement->close();
+                    $db->close();
+		            ?>
+		            </tbody>
+	            </table>
 		        </div>
 		    </div>
 		</div>
