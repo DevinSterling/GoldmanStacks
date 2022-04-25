@@ -99,35 +99,39 @@ $queryFirstName->close();
 				/* Obtain reults */
 				$accountsResult = $accountsStatement->get_result();
 				$accountsRows = $accountsResult->fetch_all(MYSQLI_ASSOC);
-					
-				foreach ($accountsRows as $account) {
-					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']);
-
-					/* Determine if account type is credit or not */
-					if ($account['accountType'] == 'credit') {
-					    $totalBalance -= $account['balance'];
-					    $account_message = "Credit Used";
-					} else {
-					    $totalBalance += $account['balance'];
-					    $account_message = "Available";
-					}
-					
-						/* Create button for each account */
-					echo "<a href=\"account/details?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
-						<div class=\"list\">
-							<p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
-							<p>".ucfirst($account['accountType'])." Account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
-						</div>
-						<div class=\"split animate-left\">
-							<div class=\"list text-right\">
-							<p>".$account_message."</p>
-								<p class=\"focused-info\">\$" . number_format($account['balance'], 2) . "</p>
-							</div>
-							<div class=\"toggle-button\">
-							<i class=\"fas fa-chevron-right\"></i>
-							</div>
-						</div>
-					</a>";
+				
+				if ($accountsResult->num_rows > 0) {	
+    				foreach ($accountsRows as $account) {
+    					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']);
+    
+    					/* Determine if account type is credit or not */
+    					if ($account['accountType'] == 'credit') {
+    					    $totalBalance -= $account['balance'];
+    					    $account_message = "Credit Used";
+    					} else {
+    					    $totalBalance += $account['balance'];
+    					    $account_message = "Available";
+    					}
+    					
+    						/* Create button for each account */
+    					echo "<a href=\"account/details?acc=".htmlspecialchars($account['nickName'])."\" class=\"big-color-button transform-button split round shadow\">
+    						<div class=\"list\">
+    							<p class=\"focused-info\">".htmlspecialchars($account['nickName'])."</p>
+    							<p>".ucfirst($account['accountType'])." Account (*".htmlspecialchars(substr($account['accountNum'], -4)).")</p>
+    						</div>
+    						<div class=\"split animate-left\">
+    							<div class=\"list text-right\">
+    							<p>".$account_message."</p>
+    								<p class=\"focused-info\">\$" . number_format($account['balance'], 2) . "</p>
+    							</div>
+    							<div class=\"toggle-button\">
+    							<i class=\"fas fa-chevron-right\"></i>
+    							</div>
+    						</div>
+    					</a>";
+    				}
+				} else {
+				    echo "<hr class=\"margin-bottom\"><p class=\"info text-center\">No Accounts Available</p>";
 				}
 				
 				$accountsResult->free();
