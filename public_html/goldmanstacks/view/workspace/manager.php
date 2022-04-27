@@ -1,6 +1,12 @@
 <?php
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/config.php');
+require_once('../../../../private/userbase.php');
+
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+//checkClientStatus(); // Check if the client is signed in
 
 $lastLog = date("F j, Y, g:i a"); // Last time of log
 ?>
@@ -45,7 +51,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     	    <div class="list main">
     	        <h2 id="title">Management</h2>
 		        <label class="info">Available Options</label>
-    		    <a href="search" class="big-color-button transform-button split round shadow">
+    		    <a href="search/user" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Userbase</p>
 		                <p>Client Management</p>
@@ -60,7 +66,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		            </div>
     		        </div>
     		    </a>
-    		    <a href="#" class="big-color-button transform-button split round shadow">
+    		    <a href="search/account/open" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Client Bank Account Requests</p>
 		                <p>Bank Account Management</p>
@@ -75,7 +81,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		            </div>
     		        </div>
     		    </a>
-    		    <a href="#" class="big-color-button transform-button split round shadow">
+    		    <a href="search/account/close" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Client Close Bank Account Requests</p>
 		                <p>Bank Account Management</p>
@@ -90,7 +96,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		            </div>
     		        </div>
     		    </a>
-    		    <a href="#" class="big-color-button transform-button split round shadow">
+    		    <a href="search/registration" class="big-color-button transform-button split round shadow">
 		            <div class="list">
 		                <p class="focused-info">Client Registration Requests</p>
 		                <p>Registration Management</p>
@@ -105,7 +111,7 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
     		            </div>
     		        </div>
     		    </a>
-    		    <a href="#" class="big-color-button transform-button split round shadow">
+    		    <a href="#" class="big-color-button transform-button split round shadow hidden">
 		            <div class="list">
 		                <p class="focused-info">Server Logs</p>
 		                <p>Server Management</p>
@@ -149,17 +155,17 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
         		    <p class="banner-text">CPU Usage</p>
         		    <p class="info">
     		        <?php
-                        $execLoads = sys_getloadavg();
-                        $execCores = trim(shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
-                        echo $cpu = round($execLoads[1]/($execCores + 1)*100, 0) . '%';
+                        $exec_loads = sys_getloadavg();
+                        $exec_cores = trim(shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
+                        echo $cpu = round($exec_loads[1]/($exec_cores + 1)*100, 0) . '%';
     		        ?>
     		        </p>
         		    <p class="banner-text">Memory Usage</p>
         		    <p class="info">
     		        <?php
-                        $execFree = explode("\n", trim(shell_exec('free')));
-                        $getMem = preg_split("/[\s]+/", $execFree[1]);
-                        echo $mem = round($getMem[2]/$getMem[1]*100, 0) . '%';
+                        $exec_free = explode("\n", trim(shell_exec('free')));
+                        $get_mem = preg_split("/[\s]+/", $exec_free[1]);
+                        echo $mem = round($get_mem[2]/$get_mem[1]*100, 0) . '%';
     		        ?>
     		        </p>
     		        <hr>
