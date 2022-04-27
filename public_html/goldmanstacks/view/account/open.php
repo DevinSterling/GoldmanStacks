@@ -114,7 +114,7 @@ if ($db === null) {
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
+            <div id="pup-up-element" class="pop-up-content fixed-sub round margin-bottom hidden">
                 <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
                     <div class="split">
                         <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -125,8 +125,6 @@ if ($db === null) {
         	            </div>
                     </div>
                 </button>
-                <br>
-                <br>
                 <h2 id="title">Open New <span id="account-type-title"></span> Account</h2>
                 <p class="info">A request will be submitted to open a new <b><span id="account-type-description"></span></b> account.</p>
                 <form id="request-account" class="flex-form">

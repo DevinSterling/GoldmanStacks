@@ -162,7 +162,7 @@ $amountOfUsers = 40
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content sub round hidden">
+            <div id="pup-up-element" class="pop-up-content sub round margin-bottom hidden">
                 <button id="return-button" class="expand-button transform-button extend-right round">
 	                <div class="split">
 	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -173,7 +173,6 @@ $amountOfUsers = 40
     		            </div>
 	                </div>
 	            </button>
-	            <br><br>
 	            <div id="request-details-popup-content" class="pop-up-item split hidden">
 	                <div class="list main flex-form">
                         <h2 id="title">Request Details</h2>

@@ -297,7 +297,7 @@ if (!$isReferenced && !empty($referencedName)) {
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
             <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
-                <div class="split">
+                <div class="split margin-bottom">
                     <button id="return-button" onClick="hidePopUp()" class="expand-button transform-button extend-right round">
     	                <div class="split">
     	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -319,7 +319,6 @@ if (!$isReferenced && !empty($referencedName)) {
     	                </div>
     	            </button>
 	            </div>
-	            <br>
                 <div id="view-payment-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Payment</h2>
                     <div id='payment-details'>

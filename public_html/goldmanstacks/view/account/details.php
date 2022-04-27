@@ -311,7 +311,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
+            <div id="pup-up-element" class="pop-up-content fixed-sub round margin-bottom hidden">
                 <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
 	                <div class="split">
 	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -322,7 +322,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     		            </div>
 	                </div>
 	            </button>
-	            <br><br>
 	            <div id="dateFilter-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Date</h2>
                     <p class="info">Please specify the time frame</p><br>

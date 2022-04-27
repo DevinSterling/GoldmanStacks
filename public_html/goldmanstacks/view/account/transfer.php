@@ -240,7 +240,7 @@ if (!$isReferenced && !empty($referencedName)) {
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
+            <div id="pup-up-element" class="pop-up-content fixed-sub round margin-bottom hidden">
                 <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
                     <div class="split">
                         <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -251,8 +251,6 @@ if (!$isReferenced && !empty($referencedName)) {
         	            </div>
                     </div>
                 </button>
-                <br>
-                <br>
                 <div class="flex-form">
                     <h2 id="title">Transfer Confirmation</h2>
                     <p class="info">Sender</p>
