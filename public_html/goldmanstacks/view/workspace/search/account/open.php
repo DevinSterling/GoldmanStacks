@@ -26,7 +26,7 @@ $amountOfUsers = 40
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title>Search Registration Requests</title>
+	<title>Manage Open Account Requests</title>
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../../../../css/stylesheet.css">
 	<!-- Favicon -->
