@@ -135,17 +135,16 @@ if ($db === null) {
                 <div id="overview">
                     <?php
                         /* Query */
-                        $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber FROM users WHERE userID=?");
+                        $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode 
+                                                    FROM users U 
+                                                    INNER JOIN address A ON U.userID=A.userID 
+                                                    WHERE U.userID=?");
                         $queryUser->bind_param("i", $userID);
                         $queryUser->execute();
                         
                         /* Result */
                         $resultUser = $queryUser->get_result();
                         $user = $resultUser->fetch_assoc();
-                        
-                        /* Release */
-                        $resultUser->free();
-                        $queryUser->close();
                     ?>
                     <h5 class="big-info">User Information</h5>
                     <p class="info"><b>First Name</b>: <?php echo htmlspecialchars($user['firstName']) ?></p>
@@ -155,40 +154,29 @@ if ($db === null) {
                     <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($user['email']) ?></p>
                     <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars($user['phoneNumber']) ?></p>
                     <hr>
-                    <?php
-                        /* Query */
-                        $queryAddress = $db->prepare("SELECT * FROM address WHERE userID=?");
-                        $queryAddress->bind_param("i", $userID);
-                        $queryAddress->execute();
-
-                        /* Result */
-                        $resultAddress = $queryAddress->get_result();
-                        $address = $resultAddress->fetch_assoc();
-                        
-                        /* Release */
-                        $resultAddress->free();
-                        $queryAddress->close();
-                    ?>
                     <h5 class="big-info">Address Information</h5>
-                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($address['line1']) ?></p>
+                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($user['line1']) ?></p>
                     <?php
-			        if (!empty($address['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($address['line2'])."</p>";
+			        if (!empty($user['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($user['line2'])."</p>";
                     ?>
-                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($address['city']) ?></p>
-                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($address['state']) ?></p>
-                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($address['postalCode']) ?></p>
+                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($user['city']) ?></p>
+                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($user['state']) ?></p>
+                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($user['postalCode']) ?></p>
                     <?php
+                        /* Release */
+                        $resultUser->free();
+                        $queryUser->close();
                         $db->close(); 
                     ?>
                 </div>
                 <form id="change-password" action="../../requests/user/updatePassword" class="flex-form hidden">
                     <label for="current-password" class="info">Current Password</label>
-    		    <input id="current-password" type="password" name="old" class="input-field" required>
+    		        <input id="current-password" type="password" name="old" class="input-field" required>
     	            <hr>
     	            <label for="new-password" class="info">New Password</label>
-    		    <input id="new-password" type="password" name="new" class="input-field" required>
+    		        <input id="new-password" type="password" name="new" class="input-field" required>
     	            <label for="confirm-password" class="info">Confirm Password</label>
-    		    <input id="confirm-password" type="password" name="confirm" class="input-field" required>
+    		        <input id="confirm-password" type="password" name="confirm" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $passwordToken ?>">
                     <button form="change-password" class="standard-button transform-button flex-center round">
                         <div class="split">
