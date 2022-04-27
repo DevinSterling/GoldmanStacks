@@ -2,7 +2,6 @@
 require_once('../../../../../private/sysNotification.php');
 require_once('../../../../../private/userbase.php');
 require_once('../../../../../private/config.php');
-require_once('../../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
@@ -21,7 +20,7 @@ if ($db === null) {
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title>Manage User</title>
+	<title>User</title>
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="../../../css/stylesheet.css">
 	<!-- Favicon -->
@@ -53,9 +52,81 @@ if ($db === null) {
 		<div class="sys-notification">Logged as Employee</div>
 		<?php notification(); ?>
     	<div class="container flex-center">
+            <div class="list mini">
+                <a href="user?id=<?php echo $user ?>" class="tab-button transform-button round selected" data-id="overview" data-title="User">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Overview</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </a>
+                <a href="account/transactions?id=<? echo $user ?>" class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Transactions</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>
+                <a href="account/payments?id=<? echo $user ?>" class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Payments</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </a>
+                <!--<button class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Password</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>
+                <button class="tab-button transform-button round"  data-id="change-address" data-title="Change Address">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Address</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>
+                <button class="tab-button transform-button round"  data-id="change-phone" data-title="Change Phone Number">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Phone</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>
+                <button class="tab-button transform-button round"  data-id="change-email" data-title="Change Email Address">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Email</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>-->
+		    </div>
             <div class="list sub">
-    	        <div class="container">
-        	        <h2 id="title"><?php echo $currentAccountName?> User <?php echo $user ?></h2>
+    	        <div id="overview">
+        	        <h2 id="title"><?php echo $currentAccountName?> User <?php echo $user ?> Overview</h2>
                     <?php
                         /* Query */
                         $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode FROM users U INNER JOIN address A ON U.userID=A.userID WHERE U.userID=?");
@@ -89,95 +160,78 @@ if ($db === null) {
                         $db->close(); 
                     ?>
         	    </div>
+                <form id="change-password" action="../../requests/user/updatePassword" class="flex-form hidden">
+                    <label for="current-password" class="info">Current Password</label>
+    		        <input id="current-password" type="password" name="old" class="input-field" required>
+    	            <hr>
+    	            <label for="new-password" class="info">New Password</label>
+    		        <input id="new-password" type="password" name="new" class="input-field" required>
+    	            <label for="confirm-password" class="info">Confirm Password</label>
+    		        <input id="confirm-password" type="password" name="confirm" class="input-field" required>
+                    <input type="hidden" name="token" value="<?php echo $passwordToken ?>">
+                    <button form="change-password" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </form>
+                <form id="change-address" action="../../requests/user/updateAddress" class="flex-form hidden">
+                    <label for="address-line-1" class="info">Address Line 1</label>
+                    <input id="address-line-1" type="text" name="line1" class="input-field" required>
+                    <label for="address-line-2" class="info">Address Line 2</label>
+                    <input id="address-line-2" type="text" name="line2" class="input-field">
+                    <label for="address-city" class="info">City</label>
+                    <input id="address-city" type="text" name="city" class="input-field" required>
+                    <label for="address-state" class="info">State</label>
+                    <input id="address-state" type="text" name="state" class="input-field" required>
+                    <label for="address-postal-code" class="info">Postal Code</label>
+                    <input id="address-postal-code" type="text" name="code" class="input-field" required>
+                    <input type="hidden" name="token" value="<?php echo $addressToken ?>">
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </form>
+                <form id="change-phone" action="../../requests/user/updatePhoneNumber" class="flex-form hidden">
+                    <label for="phone-number" class="info">Phone Number</label>
+                    <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
+                    <input type="hidden" name="token" value="<?php echo $phoneNumberToken ?>">
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </form>
+                <form id="change-email" action="../../requests/user/updateEmail" class="flex-form hidden">
+                    <label for="email-address" class="info">Email Address</label>
+                    <input id="email-address" type="email" name="email" class="input-field" required>
+                    <input type="hidden" name="token" value="<?php echo $emailToken ?>">
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </form>
             </div>
-            <div class="list fixed-sub">
-		        <div class="container fixed-sub fixed-item">
-		            <div class="margin-bottom">
-    		            <label class="banner-text">Account Actions</label>
-    		            <hr>
-    		            <button class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p class="banner-text">Remove Account</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </button>
-        		        <hr>
-    		            <button class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p class="banner-text">Edit Account</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </button>
-        		        <hr>
-    		            <button class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p class="banner-text">View Transactions</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </button>
-        		        <hr>
-    		            <button class="highlight-button transform-button split round">
-                            <div class="list">
-                                <p class="banner-text">View Payments</p>
-                            </div>
-                            <div class="animate-left">
-                	            <div class="toggle-button">
-                	                <i class="fas fa-chevron-right"></i>
-                	            </div>
-                            </div>
-        		        </button>
-    		        </div>
-		            <label class="banner-text">Other</label>
-		            <hr>
-		            <a href="open" class="highlight-button transform-button split round">
-                        <div class="list">
-                            <p class="banner-text">Manage Open Requests</p>
-                            <small>Bank Account Management</small>
-                        </div>
-                        <div class="animate-left">
-            	            <div class="toggle-button">
-            	                <i class="fas fa-chevron-right"></i>
-            	            </div>
-                        </div>
-    		        </a>
-    		        <hr>
-    		        <a href="../registration" class="highlight-button transform-button split round">
-                        <div class="list">
-                            <p class="banner-text">Manage Registration Requests</p>
-                            <small>Registration Management</small>
-                        </div>
-                        <div class="animate-left">
-            	            <div class="toggle-button">
-            	                <i class="fas fa-chevron-right"></i>
-            	            </div>
-                        </div>
-    		        </a>
-    		        <hr>
-    		        <a href="../user" class="highlight-button transform-button split round">
-                        <div class="list">
-                            <p class="banner-text">Manage Userbase</p>
-                            <small>User Management</small>
-                        </div>
-                        <div class="animate-left">
-            	            <div class="toggle-button">
-            	                <i class="fas fa-chevron-right"></i>
-            	            </div>
-                        </div>
-    		        </a>
-		        </div>
+            <div class="list mini">
 		    </div>
         </div>
 	</body>
+	<script type="text/javascript" src="../../../js/navigation.js"></script>
+	<script type="text/javascript" src="../../../js/tabs.js"></script>
+	<script type="text/javascript" src="../../../js/post.js"></script>
+	<script type="text/javascript" src="../../../js/notification.js"></script>
 </html>
