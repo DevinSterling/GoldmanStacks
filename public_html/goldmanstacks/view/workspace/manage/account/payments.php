@@ -54,7 +54,7 @@ if ($db === null) {
 		<?php notification(); ?>
     	<div class="container flex-center">
             <div class="list mini">
-                <a href="../user?id=<?php echo $user ?>" class="tab-button transform-button round" data-id="overview" data-title="User">
+                <a href="../user?id=<?php echo $user ?>" class="tab-button transform-button round">
                     <div class="split">
                         <div class="text-right">
                             <p>Overview</p>
@@ -64,7 +64,17 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </a>
-                <a href="transactions?id=<? echo $user ?>" class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                <a href="accounts?id=<? echo $user ?>" class="tab-button transform-button round">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Accounts</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </a>
+                <a href="transactions?id=<? echo $user ?>" class="tab-button transform-button round">
                     <div class="split">
                         <div class="text-right">
                             <p>Transactions</p>
@@ -74,7 +84,7 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </button>
-                <a href="payments?id=<? echo $user ?>" class="tab-button transform-button round selected"  data-id="change-password selected" data-title="Change Password">
+                <a href="payments?id=<? echo $user ?>" class="tab-button transform-button round selected">
                     <div class="split">
                         <div class="text-right">
                             <p>Payments</p>
