@@ -53,7 +53,7 @@ if ($db === null) {
 		<?php notification(); ?>
     	<div class="container flex-center">
             <div class="list mini">
-                <a href="user?id=<?php echo $user ?>" class="tab-button transform-button round selected" data-id="overview" data-title="User">
+                <a href="user?id=<?php echo $user ?>" class="tab-button transform-button round selected" data-id="overview" data-title="Change Password">
                     <div class="split">
                         <div class="text-right">
                             <p>Overview</p>
@@ -63,7 +63,17 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </a>
-                <a href="account/transactions?id=<? echo $user ?>" class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                <a href="account/accounts?id=<? echo $user ?>" class="tab-button transform-button round" data-id="overview">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Accounts</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </a>
+                <a href="account/transactions?id=<? echo $user ?>" class="tab-button transform-button round" data-id="overview">
                     <div class="split">
                         <div class="text-right">
                             <p>Transactions</p>
@@ -73,7 +83,7 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </button>
-                <a href="account/payments?id=<? echo $user ?>" class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+                <a href="account/payments?id=<? echo $user ?>" class="tab-button transform-button round" data-id="overview">
                     <div class="split">
                         <div class="text-right">
                             <p>Payments</p>
@@ -83,76 +93,88 @@ if ($db === null) {
         		        </div>
                     </div>
 		        </a>
-                <!--<button class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
+		        <hr class="margin-bottom">
+                <button class="tab-button transform-button round" data-id="change-password" data-title="Change Password">
                     <div class="split">
                         <div class="text-right">
-                            <p>Password</p>
+                            <p><span class="fas fa-edit text-center icon"></span> Password</p>
                         </div>
        		            <div class="toggle-button">
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round"  data-id="change-address" data-title="Change Address">
+                <button class="tab-button transform-button round" data-id="change-address" data-title="Change Address">
                     <div class="split">
                         <div class="text-right">
-                            <p>Address</p>
+                            <p><span class="fas fa-edit text-center icon"></span> Address</p>
                         </div>
        		            <div class="toggle-button">
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round"  data-id="change-phone" data-title="Change Phone Number">
+                <button class="tab-button transform-button round" data-id="change-phone" data-title="Change Phone Number">
                     <div class="split">
                         <div class="text-right">
-                            <p>Phone</p>
+                            <p><span class="fas fa-edit text-center icon"></span> Phone</p>
                         </div>
        		            <div class="toggle-button">
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
 		        </button>
-                <button class="tab-button transform-button round"  data-id="change-email" data-title="Change Email Address">
+                <button class="tab-button transform-button round" data-id="change-email" data-title="Change Email Address">
                     <div class="split">
                         <div class="text-right">
-                            <p>Email</p>
+                            <p><span class="fas fa-edit text-center icon"></span> Email</p>
                         </div>
        		            <div class="toggle-button">
         		            <i class="fas fa-chevron-right"></i>
         		        </div>
                     </div>
-		        </button>-->
+		        </button>
+		        <hr class="margin-bottom">
+                <button class="tab-button transform-button round" data-id="remove-user" data-title="Remove User">
+                    <div class="split">
+                        <div class="text-right">
+                            <p><span class="fas fa-times text-center icon"></span> Remove</p>
+                        </div>
+       		            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+		        </button>
 		    </div>
             <div class="list sub">
+        	    <h2 id="title"><?php echo $currentAccountName?> User <?php echo $user ?> Overview</h2>
     	        <div id="overview">
-        	        <h2 id="title"><?php echo $currentAccountName?> User <?php echo $user ?> Overview</h2>
                     <?php
                         /* Query */
-                        $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode FROM users U INNER JOIN address A ON U.userID=A.userID WHERE U.userID=?");
+                        $queryUser = $db->prepare("SELECT userRole, firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode FROM users U INNER JOIN address A ON U.userID=A.userID WHERE U.userID=?");
                         $queryUser->bind_param("i", $user);
                         $queryUser->execute();
                         
                         /* Result */
                         $resultUser = $queryUser->get_result();
-                        $user = $resultUser->fetch_assoc();
+                        $userInfo = $resultUser->fetch_assoc();
                     ?>
                     <h5 class="big-info">User Information</h5>
-                    <p class="info"><b>First Name</b>: <?php echo htmlspecialchars($user['firstName']) ?></p>
-                    <p class="info"><b>Last Name</b>: <?php echo htmlspecialchars($user['lastName']) ?></p>
+                    <p class="info"><b>First Name</b>: <?php echo htmlspecialchars($userInfo['firstName']) ?></p>
+                    <p class="info"><b>Last Name</b>: <?php echo htmlspecialchars($userInfo['lastName']) ?></p>
                     <hr>
                     <h5 class="big-info">Contact Information</h5>
-                    <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($user['email']) ?></p>
-                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars($user['phoneNumber']) ?></p>
+                    <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($userInfo['email']) ?></p>
+                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars($userInfo['phoneNumber']) ?></p>
                     <hr>
                     <h5 class="big-info">Address Information</h5>
-                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($user['line1']) ?></p>
+                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($userInfo['line1']) ?></p>
                     <?php
-			        if (!empty($user['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($user['line2'])."</p>";
+			        if (!empty($user['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($userInfo['line2'])."</p>";
                     ?>
-                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($user['city']) ?></p>
-                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($user['state']) ?></p>
-                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($user['postalCode']) ?></p>
+                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($userInfo['city']) ?></p>
+                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($userInfo['state']) ?></p>
+                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($userInfo['postalCode']) ?></p>
                     <?php
                         /* Release */
                         $resultUser->free();
@@ -219,6 +241,20 @@ if ($db === null) {
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Apply<p>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>
+                    </button>
+                </form>
+                <form id="remove-user" action="" class="flex-form hidden">
+                    <p class="info">Upon confirmation this will <b>remove</b> this user account permanently.</p>
+                    <p class="info"><b>Current User ID:</b> <?php echo $user ?></p>
+                    <p class="info"><b>Current User Role:</b> <?php echo ucfirst($userInfo['userRole']) ?></p>
+                    <input type="hidden" name="token" value="<?php echo $emailToken ?>">
+                    <button type="submit" class="standard-button transform-button flex-center round">
+                        <div class="split">
+                            <p class="animate-left">Remove User<p>
            		            <div class="toggle-button">
             		            <i class="fas fa-chevron-right"></i>
             		        </div>
