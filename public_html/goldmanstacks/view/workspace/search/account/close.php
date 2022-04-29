@@ -6,7 +6,7 @@ require_once('../../../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkClientStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 /* SESSION Variables */
 $key = $_SESSION['key'];
@@ -91,14 +91,13 @@ $amountOfUsers = 40
                     <tbody>
 		            <?php
 	                for ($n = 1; $n <= $amountOfUsers; $n++) {
-	                    echo "<tr onClick=\"showPopUp('request-details-popup-content', this)\">
+	                    echo "<tr id=\"$n\" onClick=\"showPopUp('request-details-popup-content', this)\">
 	                            <td data-label=\"Request Date\">" . date("Y-m-d h:i:s") . "</td>
 	                            <td data-label=\"Account Number\">1098</td>
 	                            <td data-label=\"Account Type\">Savings</td>
 	                            <td data-label=\"Client\">User$n@client.co</td>
 	                            <td data-label=\"First Name\">Name</td>
 	                            <td data-label=\"Last Name\">Name</td>
-	                            <td class=\"hidden\">1</td>
 	                        </tr>";
 	                }
 		            ?>
@@ -164,7 +163,7 @@ $amountOfUsers = 40
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content sub round margin-bottom hidden">
+            <div id="pup-up-element" class="pop-up-content sub round hidden">
                 <button id="return-button" class="expand-button transform-button extend-right round">
 	                <div class="split">
 	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -175,6 +174,7 @@ $amountOfUsers = 40
     		            </div>
 	                </div>
 	            </button>
+	            <br><br>
 	            <div id="request-details-popup-content" class="pop-up-item split hidden">
 	                <div class="list main flex-form">
                         <h2 id="title">Request Details</h2>
@@ -268,7 +268,7 @@ $amountOfUsers = 40
 	    
 	    /* Event Listeners */
 	    document.getElementById('user-details-button').addEventListener('click', () => {
-	        window.location.href = '../../manage/user?id=' + selectedRow.children[6].textContent;
+	        window.location.href = '../../manage/user?id=' + selectedRow.id;
 	    });
 	    document.getElementById('approve-button').addEventListener('click', () => {
 	        document.getElementById('approve-request-info').innerHTML = popupRequestInfo.innerHTML;
