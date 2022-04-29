@@ -50,7 +50,7 @@ $amountOfUsers = 40
 			</ul>
 			<ul class="menugroup">
 				<li class="menuitem"><a href="../staff/options">Options</a></li>
-				<li class="menuitem"><a href="../../login">Sign Out</a></li>
+				<li class="menuitem"><a href="../../../requests/signout">Sign Out</a></li>
 			</ul>
 		</nav>
 		<div class="sys-notification">
