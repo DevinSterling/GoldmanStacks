@@ -6,7 +6,7 @@ require_once('../../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkClientStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 /* GET Variables */
 $user = $_GET['id'];
