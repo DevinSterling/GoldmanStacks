@@ -6,7 +6,7 @@ require_once('../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkClientStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 $lastLog = date("F j, Y, g:i a"); // Last time of log
 ?>
