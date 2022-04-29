@@ -16,18 +16,18 @@ function checkIfLoggedIn() {
     }
 }
 
-/* Check if user is a client */
-function isClient() {
-    if ($_SESSION['role'] === "client") {
+/* Check if user is an employee */
+function isEmployee() {
+    if ($_SESSION['role'] === "employee") {
         return true;
     } else {
         return false;
     }
 }
 
-/* Check if user is an admin */
-function isAdmin() {
-    if ($_SESSION['role'] === "admin") {
+/* Check if user is a client */
+function isClient() {
+    if ($_SESSION['role'] === "client") {
         return true;
     } else {
         return false;
@@ -48,14 +48,25 @@ function checkInactive() {
 function redirect() {
     if (isClient()) {
         header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/home.php'); // Redirect client to their home page
-        die();
-    } else if (isAdmin()) {
-        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/workspace/manage.php'); // Redirect admin to workspace
-        die();
+    } else if (isEmployee()) {
+        header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/workspace/manager.php'); // Redirect admin to workspace
     } else {
         header('Location: https://' . $_SERVER['HTTP_HOST'] . getHomeDirectory() . '/goldmanstacks/view/signin.php'); // Redirect to sign in page
-        die();
     }
+    die();
+}
+
+/* Check the status and determine if a user is an employee */
+function checkEmployeeStatus() {
+    if (checkIfLoggedIn()) { // Check if user is logged in
+        if (isEmployee()) { // Check if user is a client
+            checkInactive(); // Check if the client has been inactive
+            return;
+        }
+    }
+
+    /* Guard Block */
+    redirect();
 }
 
 /* Check the status and determine if a user is a client */
