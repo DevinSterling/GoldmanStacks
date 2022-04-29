@@ -5,7 +5,7 @@ require_once('../../../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkAdminStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 session_start();
 
