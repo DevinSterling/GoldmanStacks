@@ -1,6 +1,11 @@
 <?php
 require_once('../../../../../private/sysNotification.php');
 require_once('../../../../../private/userbase.php');
+
+forceHTTPS(); // Force https connection
+session_start(); // Start Session
+checkEmployeeStatus(); // Check if the employee is signed in
+
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
