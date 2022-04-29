@@ -6,7 +6,7 @@ require_once('../../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkClientStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 /* SESSION Variables */
 $key = $_SESSION['key'];
@@ -268,7 +268,7 @@ $amountOfUsers = 40
 	    
 	    /* Event Listeners */
 	    document.getElementById('user-details-button').addEventListener('click', () => {
-	        window.location.href = '../manage/user?id=' + selectedRow.children[5].textContent;
+	        window.location.href = '../manage/user?id=' + selectedRow.id;
 	    });
 	    document.getElementById('approve-button').addEventListener('click', () => {
 	        document.getElementById('approve-request-info').innerHTML = popupRequestInfo.innerHTML;
