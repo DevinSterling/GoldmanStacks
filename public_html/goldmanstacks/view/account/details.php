@@ -18,7 +18,7 @@ $toDate = $_GET['to'];
 
 /* Variables */
 $isDateRangeFiltered = !empty($fromDate) && !empty($toDate);
-$isDateMonthFiltered = !empty($fromDate);
+$isDateMonthFiltered = !empty($fromDate) && !$isDateRangeFiltered;
 $routingNumber = "123456789";
 $accounts = array(); // User Account names taken from DB
 
