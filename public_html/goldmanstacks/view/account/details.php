@@ -13,12 +13,13 @@ $userId = $_SESSION['uid'];
 
 /* GET Variables */
 $currentAccountName = $_GET['acc'];
+$fromDate = $_GET['from'];
+$toDate = $_GET['to'];
 
 /* Variables */
-$accountType = '';
-$accountBalance = 0.00;
+$isDateRangeFiltered = !empty($fromDate) && !empty($toDate);
+$isDateMonthFiltered = !empty($fromDate);
 $routingNumber = "123456789";
-$lastVisit = date("F j, Y, g:i a"); // Last time of login
 $accounts = array(); // User Account names taken from DB
 
 /* csrf token */
@@ -133,12 +134,36 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     <tbody tabindex="0" id="transactions-body">
 		            <?php
                     /* Query to get all transactions from the selected account */
-                    $transactionStatement = $db->prepare("SELECT accountNum, recipientAccount, transactionTime, transactionAmount, type 
+                    $transactionQuery = "SELECT accountNum, recipientAccount, transactionTime, transactionAmount, type 
                                                             FROM transactions 
-                                                            WHERE accountNum=? 
-                                                            OR recipientAccount=?
-                                                            ORDER BY transactionTime DESC");
-                    $transactionStatement->bind_param("ss", $accountNumber, $accountNumber);
+                                                            WHERE (accountNum=? 
+                                                            OR recipientAccount=?)";
+                    
+                    /* Determine whether the string is filtered */
+                    if ($isDateRangeFiltered || $isDateMonthFiltered) {
+                        $transactionQuery .= " AND (transactionTime>=? AND transactionTime<=?)";
+                        
+                        if ($isDateRangeFiltered) {
+                            $fromDate = date('Y-m-d', strtotime($_GET['from']));
+                            $toDate = date('Y-m-d', strtotime($_GET['to']));
+                        } else {
+                            $fromDate = date('Y-m-d', strtotime($_GET['from'] . '-01'));
+                            $toDate = date('Y-m-d', strtotime($fromDate . ' +1 month'));
+                        }
+                    } 
+                    
+                    /* Prepare Statment */
+                    $transactionStatement = $db->prepare($transactionQuery . " ORDER BY transactionTime DESC");
+                    
+                    /* Bind parameters */
+                    if ($isDateRangeFiltered || $isDateMonthFiltered) {
+                        $transactionStatement->bind_param("ssss", $accountNumber, $accountNumber, $fromDate, $toDate);
+                    }
+                    else {
+                        $transactionStatement->bind_param("ss", $accountNumber, $accountNumber);
+                    }
+                    
+                    /* Execute statement */
                     $transactionStatement->execute();
                     
                     /* Obtain result */
@@ -311,7 +336,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content fixed-sub round margin-bottom hidden">
+            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
                 <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
 	                <div class="split">
 	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -322,14 +347,33 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     		            </div>
 	                </div>
 	            </button>
+	            <br><br>
 	            <div id="dateFilter-popup-content" class="pop-up-item hidden">
                     <h2 id="title">Date</h2>
-                    <p class="info">Please specify the time frame</p><br>
+                    <p class="info">Please specify the time frame</p>
                     <form id="filterDate" class="flex-form">
-                        <label for="date1" class="info">From</label>
-                        <input id="date1" type="date" class="input-field">
-                        <label for="date2" class="info">To</label>
-                        <input id="date2" type="date" class="input-field">
+                        <div id="date-range" class="collapsable-item">
+                            <div class="flex-form ">
+                                <label for="from-date" class="info">From</label>
+                                <input id="from-date" type="date" name="from" <?php if ($isDateRangeFiltered) echo "value=\"$fromDate\"" ?> max="<?php echo date("Y-m-d", strtotime("today")) ?>" class="input-field">
+                                <label for="to-date" class="info">To</label>
+                                <input id="to-date" type="date" name="to" <?php if ($isDateRangeFiltered) echo "value=\"$toDate\"" ?> max="<?php echo date("Y-m-d", strtotime("today")) ?>" class="input-field">
+                            </div>
+                        </div>
+                        <div id="date-month" class="collapsable-item collapse">
+                            <div class="flex-form ">
+                                <label for="from-month" class="info">From Month</label>
+                                <input id="from-month" type="month" name="from" <?php if ($isDateMonthFiltered) echo "value=\"" . date("Y-m", strtotime($fromDate)) . "\"" ?> max="<?php echo date("Y-m", strtotime("today")) ?>" class="input-field" disabled>
+                            </div>
+                        </div>
+                        <div class="switch-field">
+                            <label class="switch-item">
+                                <input type="checkbox" <?php if ($isDateMonthFiltered) echo "checked=\"true\"" ?> id="date-checkbox">
+                                <span class="slider"></span>
+                            </label>
+                            <label for="date-checkbox" class="info">Specific Month</label>
+                        </div>
+                        <input type="hidden" name="acc" value="<?php echo $currentAccountName ?>" class="input-field">
                         <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
                                 <p class="animate-left">Apply<p>
@@ -500,11 +544,36 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     }
 	</script>
 	<script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('change-nickname').addEventListener('submit', handleForm);
-            <?php if ($accountBalance === 0) echo "document.getElementById('close-account').addEventListener('submit', handleForm);" ?>
-        });
+	    /* Listener to change accounts */
+        document.getElementById('change-nickname').addEventListener('submit', handleForm);
         
+        /* Listener to close account*/
+        <?php if ($accountBalance === 0) echo "document.getElementById('close-account').addEventListener('submit', handleForm);" ?>
+        
+	    /* Listener to hide or show form contents for date filter in the "filterDate" form */
+	    document.getElementById('date-checkbox').addEventListener('change', function() {
+	        if (this.checked) {
+	            document.getElementById('date-month').classList.remove('collapse');
+	            document.getElementById('date-range').classList.add('collapse');
+
+                /* Make inputs disabled */
+                document.getElementById('from-date').disabled = true;
+                document.getElementById('to-date').disabled = true;
+                document.getElementById('from-month').disabled = false;
+	        } else {
+	            document.getElementById('date-range').classList.remove('collapse');
+	            document.getElementById('date-month').classList.add('collapse');
+                
+                /* Make inputs not disabled */
+                document.getElementById('from-date').disabled = false;
+                document.getElementById('to-date').disabled = false;
+                document.getElementById('from-month').disabled = true;
+	        }
+	    });
+	    
+	    /* Launch event listener on document load */
+	    document.getElementById('date-checkbox').dispatchEvent(new Event('change'))
+	    
         function handleForm(event) {
 	        event.preventDefault();
 	        
