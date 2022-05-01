@@ -19,7 +19,13 @@ $searchResults = 99; // For use only when a search is initiated
 /* CSRF tokens */
 $removeUserToken = hash_hmac('sha256', '/removeUser.php', $key);
 
-$amountOfUsers = 40
+/* Database Connection */
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -87,15 +93,25 @@ $amountOfUsers = 40
                     </thead>
                     <tbody>
 		            <?php
-	                for ($n = 0; $n <= $amountOfUsers; $n++) {
-	                    echo "<tr id=\"$n\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"User Type\">User</td>
-	                            <td data-label=\"Username\">User$n</td>
-	                            <td data-label=\"First Name\">Name</td>
-	                            <td data-label=\"Last Name\">Name</td>
-	                            <td data-label=\"Balance\">\$1000.00</td>
+		            $result = $db->query("SELECT userID, userRole, email, firstName, lastName, (
+                        		            SELECT SUM(balance) 
+                        		            FROM accountDirectory 
+                        		            WHERE clientID=userID
+                                        ) AS balance 
+                                        FROM users;");
+		            $users = $result->fetch_all(MYSQLI_ASSOC);
+		            
+	                foreach ($users as $user) {
+	                    echo "<tr id=\"" . $user['userID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+	                            <td data-label=\"User Type\">" . ucfirst($user['userRole']) . "</td>
+	                            <td data-label=\"Username\">" . $user['email'] . "</td>
+	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
+	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
+	                            <td data-label=\"Balance\">" . ($user['userRole'] === 'client' ? '$' . number_format($user['balance'], 2) : '...') . "</td>
 	                        </tr>";
 	                }
+	                
+	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
