@@ -13,8 +13,11 @@ session_start();
 $key = $_SESSION['key'];
 
 /* POST Variables */
-$clientID = $_POST['id'];
+$requestID = $_POST['id'];
 $token = $_POST['token'];
+
+/* Constants */
+const MAX_ATTEMPTS = 10;
 
 /* Object variables */
 $dbResponse = false;
@@ -25,10 +28,10 @@ $calc = hash_hmac('sha256', '/approveOpenRequest.php', $key);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !empty($clientID)) {
+    && !empty($requestID)) {
     
     /* Input Validation */
-    $isMatch = is_numeric($clientID);
+    $isMatch = is_numeric($requestID);
     
     if ($isMatch) {
         /* Get database connection */
@@ -36,8 +39,49 @@ if (hash_equals($calc, $token)
          
         /* Check connection */
         if ($db !== null) {
-            $dbResponse = true;
-            $dbMessage = "Fetch API Success!";
+            /* Retreive client ID */
+            $selectStatement = $db->prepare("SELECT clientID, accountType FROM accountRequests WHERE requestID=?");
+            $selectStatement->bind_param("i", $requestID);
+            $selectStatement->execute();
+            $selectStatement->store_result();
+            
+            $selectStatement->bind_result($clientID, $accountType);
+            $selectStatement->fetch();
+            $selectStatement->close();
+            
+            if ($clientID !== null) {
+                $count = 0;
+                
+                do {
+                    /* Generate nickname for new bank account */
+                    $accountName = ucfirst($accountType);
+                    if ($count > 0) $accountName .= $count;
+                    
+                    /* Create new bank account for client */
+                    $insertStatement = $db->prepare("INSERT INTO accountDirectory (accountType, nickName, clientID) VALUES (?, ?, ?)");
+                    $insertStatement->bind_param("ssi", $accountType, $accountName, $clientID);
+                    $insertStatement->execute();
+                    
+                    /* Check if successful */
+                    if ($db->affected_rows > 0) {
+                        $insertStatement->close();
+                        
+                        $deleteStatement = $db->prepare("DELETE FROM accountRequests WHERE requestID=?");
+                        $deleteStatement->bind_param("i", $requestID);
+                        $deleteStatement->execute();
+                        
+                        if ($db->affected_rows > 0) {
+                            $dbResponse = true;
+                            $dbMessage = "Open request ($requestID) has been approved";
+                        }
+                        
+                        $deleteStatement->close();
+                        break;
+                    }
+                    
+                    $count++;
+                } while ($count != MAX_ATTEMPTS);
+            }
             
             $db->close();
         }
