@@ -13,7 +13,7 @@ session_start();
 $key = $_SESSION['key'];
 
 /* POST Variables */
-$clientID = $_POST['id'];
+$requestID = $_POST['id'];
 $token = $_POST['token'];
 
 /* Object variables */
@@ -25,10 +25,10 @@ $calc = hash_hmac('sha256', '/rejectOpenRequest.php', $key);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !empty($clientID)) {
+    && !empty($requestID)) {
     
     /* Input Validation */
-    $isMatch = is_numeric($clientID);
+    $isMatch = is_numeric($requestID);
     
     if ($isMatch) {
         /* Get database connection */
@@ -36,9 +36,16 @@ if (hash_equals($calc, $token)
          
         /* Check connection */
         if ($db !== null) {
-            $dbResponse = true;
-            $dbMessage = "Fetch API Success!";
+            $deleteStatement = $db->prepare("DELETE FROM accountRequests WHERE requestId=?");
+            $deleteStatement->bind_param("i", $requestID);
+            $deleteStatement->execute();
             
+            if ($db->affected_rows > 0) {
+                $dbResponse = true;
+                $dbMessage = "Open request ($requestID) has been rejected";
+            }
+            
+            $deleteStatement->close();
             $db->close();
         }
     }
