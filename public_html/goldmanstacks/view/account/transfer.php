@@ -19,9 +19,9 @@ $referencedName = $_GET['acc'];
 $accounts = array();
 
 /* Csrf form tokens */
-$internalTransferToken = hash_hmac('sha256', '/newInternalTransfer.php', $_SESSION['key']);
-$externalTransferToken = hash_hmac('sha256', '/newExternalTransfer.php', $_SESSION['key']);
-$getBalanceToken = hash_hmac('sha256', '/getBalance.php', $_SESSION['key']);
+$internalTransferToken = hash_hmac('sha256', '/newInternalTransfer.php', $key);
+$externalTransferToken = hash_hmac('sha256', '/newExternalTransfer.php', $key);
+$getBalanceToken = hash_hmac('sha256', '/getBalance.php', $key);
 
 /* Get Database Connection */
 $db = getUpdateConnection();
