@@ -20,10 +20,10 @@ $toDate = $_GET['to'];
 $isDateRangeFiltered = !empty($fromDate) && !empty($toDate);
 $isDateMonthFiltered = !empty($fromDate) && !$isDateRangeFiltered;
 $routingNumber = "123456789";
-$accounts = array(); // User Account names taken from DB
 
 /* csrf token */
 $updateNickNameToken = hash_hmac('sha256', '/updateAccountNickname.php', $_SESSION['key']); 
+$closeAccountToken = hash_hmac('sha256', '/requestCloseAccount.php', $_SESSION['key']); 
 
 /* Database Connection */
 $db = getUpdateConnection();
@@ -34,29 +34,37 @@ if ($db === null) {
     die();
 }
 
-/* Query used to gather account names and then store them in an array */
-$query = $db->prepare('SELECT balance, accountType, accountNum, nickName FROM accountDirectory WHERE clientID=?');
-$query->bind_param("i", $userId);
-$query->execute();
+/* Get user bank accounts */
+$accountsStatement = $db->prepare("SELECT nickName, accountType FROM accountDirectory WHERE clientID=?");
+$accountsStatement->bind_param("i", $userId);
+$accountsStatement->execute();
 
-$result = $query->get_result();
-$rows = $result->fetch_all(MYSQLI_ASSOC);
+$result = $accountsStatement->get_result();
+$accounts = $result->fetch_all(MYSQLI_ASSOC);
 
-foreach ($rows as $account) {
-    $accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']); // User Account names taken from DB
-	
-    if ($account['nickName'] === $currentAccountName) {
-    	$accountBalance = $account['balance'];
-	    $accountType = ucfirst($account['accountType']);
-	    $accountNumber = $account['accountNum'];
-    }
-}
+$result->free();
+$accountsStatement->close();
 
 /* Check if the selected account is valid */
 if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     header("Location: ../home.php");
     die();
 }
+
+/* Get current bank account information */
+$currentAccountStatement = $db->prepare("SELECT balance, accountType, accountNum AS accountNumber, 
+                                        CASE
+                                            WHEN (SELECT COUNT(*) FROM accountCloseRequests C WHERE C.accountNum=accountNumber) = 1 THEN 1
+                                            ELSE 0
+                                        END AS hasCloseRequest
+                                        FROM accountDirectory WHERE nickName=? AND clientID=?");
+$currentAccountStatement->bind_param("si", $currentAccountName, $userId);
+$currentAccountStatement->execute();
+$currentAccountStatement->store_result();
+
+$currentAccountStatement->bind_result($accountBalance, $accountType, $accountNumber, $hasCloseRequest);
+$currentAccountStatement->fetch();
+$currentAccountStatement->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -96,8 +104,8 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	<?php notification(); ?>
     	<div class="container flex-center">
     	    <div class="list main">
-            <button id="notification" onClick="hideNotification()" class="notification max success transform-button round collapse">
-                <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
+            <button id="notification" onClick="hideNotification()" class="notification max transform-button round <?php echo $hasCloseRequest ? 'failure' : 'success collapse' ?>">
+                <p><i id="notification-icon" class="fas fa-<?php echo $hasCloseRequest ? 'times' : 'check' ?> icon"></i><span id="notification-text"><?php if ($hasCloseRequest) echo 'This account is currently pending to be closed' ?></span></p>
                 <div class="split">
        	            <div class="toggle-button">
     		            <i class="fas fa-times"></i>
@@ -106,7 +114,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
             </button>
             <div id="transaction">
     	        <div class="container">
-        	        <h2 id="title"><span id="title-account-name"><?php echo $currentAccountName ?></span> History <span id="title-account-type">(<?php echo $accountType ?>)</span></h2>
+        	        <h2 id="title"><span id="title-account-name"><?php echo $currentAccountName ?></span> History <span id="title-account-type">(<?php echo ucfirst($accountType) ?>)</span></h2>
         	        <div class="split">
             	        <p class="info">Transactions</p>
     		            <button onClick="showPopUp('dateFilter-popup-content')" class="expand-button transform-button extend-left round shadow">
@@ -127,8 +135,6 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	                        <th class="date">Date</th>
 	                        <th class="desc">Description</th>
 	                        <th class="amount text-right">Amount</th>
-	                        <th class="hidden">Balance After</th>
-	                        <th class="hidden">Type</th>
 	                    </tr>
                     </thead>
                     <tbody tabindex="0" id="transactions-body">
@@ -190,10 +196,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                                 $description = "Payment to";
                         }
                         
-                        
                         echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
-                            <td data-label=\"Balance After\" class=\"hidden\">\$1000.00</td>
-                            <td data-label=\"Type\" class=\"hidden\">".ucfirst($transaction['type'])."</td>
                             <td data-label=\"Date\" class=\"date\">".$transaction['transactionTime']."</td>
                             <td data-label=\"Description\" class=\"desc\">$description</td>
                             <td data-label=\"Amount\" class=\"amount text-right\">".convertToCurrency($transaction['transactionAmount'])."</td>
@@ -224,7 +227,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
 	                                    echo " selected";
 	                               }
 	                               
-	                               echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")" . "</option>";
+	                               echo ">" . $account['nickName'] . " (" . ucfirst($account['accountType']) . ")" . "</option>";
 	                            }
 	                            ?>
 	                        </select>
@@ -247,7 +250,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
     	                <label class="banner-text">Account Actions</label>
     	            </div>
     	            <div class="item-content bottom-round">
-                        <a href="funds?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <<?php echo $hasCloseRequest ? "button" : "a href=\"funds?acc=$currentAccountName\"" ?> class="highlight-button transform-button split round" <? if ($hasCloseRequest) echo "disabled" ?>>
                             <div class="list">
                                 <p><i class="fas fa-plus icon"></i> Deposit Funds</p>
                             </div>
@@ -256,9 +259,9 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 	                <i class="fas fa-chevron-right"></i>
                 	            </div>
                             </div>
-                        </a>
+                        </<?php echo $hasCloseRequest ? "button" : "a" ?>>
                         <hr>
-                        <a href="funds?v=withdraw&acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="funds?v=withdraw&acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round" <? if ($hasCloseRequest) echo "disabled" ?>>
                             <div class="list">
                                 <p><i class="fas fa-minus icon"></i> Withdraw Funds</p>
                             </div>
@@ -269,7 +272,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </a>
                         <hr>
-                        <a id="transfer" href="transfer?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <a href="transfer?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round" <? if ($hasCloseRequest) echo "disabled" ?>>
                             <div class="list">
                                 <p><i class="fas fa-exchange-alt icon"></i> Transfer Funds</p>
                             </div>
@@ -280,7 +283,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                             </div>
                         </a>
                         <hr>
-                        <a href="payments?acc=<?php echo $currentAccountName ?>" class="highlight-button transform-button split round">
+                        <<?php echo $hasCloseRequest ? "button" : "a href=\"payments?acc=$currentAccountName\"" ?> class="highlight-button transform-button split round" <? if ($hasCloseRequest) echo "disabled" ?>>
                             <div class="list">
                                 <p><i class="fas fa-money-bill icon"></i> Initiate Payment</p>
                             </div>
@@ -289,7 +292,7 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                 	                <i class="fas fa-chevron-right"></i>
                 	            </div>
                             </div>
-                        </a>
+                        </<?php echo $hasCloseRequest ? "button" : "a" ?>>
                         <hr>
                         <button onclick="printSelected('transaction')" class="highlight-button transform-button split round">
                             <div class="list">
@@ -390,12 +393,8 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     <p id="transaction-date"></p>
                     <b class="info">Description</b>
                     <p id="transaction-description"></p>
-                    <b class="info">Type</b>
-                    <p id="transaction-type"></p>
                     <b class="info">Amount</b>
                     <p id="transaction-amount"></p>
-                    <b class="info">Balance Afterward</b>
-                    <p id="transaction-balance"></p>
                     <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                         <div class="split">
            		            <div class="toggle-button">
@@ -410,12 +409,11 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                     <b class="info">Account Name</b>
                     <p id="account-name"><?php echo $currentAccountName ?></p>
                     <b class="info">Account Type</b>
-                    <p id="account-type"><?php echo $accountType ?></p>
+                    <p id="account-type"><?php echo ucfirst($accountType) ?></p>
                     <b class="info">Account Balance</b>
-                    <p id="account-balance"><?php echo $accountBalance ?></p>
-                    <b class="info">Routing Number</b>
-                    <p id="account-routing-number"><?php echo $routingNumber ?></p>
-                    <b class="info">Stuff</b>
+                    <p id="account-balance">$<?php echo number_format($accountBalance, 2) ?></p>
+                    <b class="info">Bank Account Number</b>
+                    <p id="account-number">(*<?php echo substr($accountNumber, -4) ?>)</p>
                     <p id="placeholder2"></p>
                     <button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
                         <div class="split">
@@ -444,169 +442,203 @@ if (!in_array($currentAccountName, array_column($accounts, 'nickName'))) {
                         </button>
                     </form>
                 </div>
-                <div id="close-popup-content" class="pop-up-item hidden">
+                <div id="close-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Close Account</h2>
                     <p class="info">
                         <?php 
-                        if ($accountBalance > 0) {
+                        if ($hasCloseRequest) {
+                            echo "A close request has already been submitted";
+                        }
+                        else if ($accountBalance > 0) {
                             echo "Account balance must be <b>\$0.00</b> before a close request can be submitted";
-                        } else {
+                        } 
+                        else {
                             echo "A request will be submitted to close this account upon confirmation.";
                         }
                         ?>
-                    </p><br>
+                    </p>
                     <?php
-                    if ($accountBalance === 0) {
+                    if (!$hasCloseRequest && $accountBalance === 0.00) {
                         echo '<form id="close-account" action="../../requests/account/requestCloseAccount" class="flex-form">
-                            <input id="current-account-name" type="hidden" name="old" value="<?php echo ' . $currentAccountName . ' ?>" required>
-                            <input type="hidden" name="token" value="<?php echo ' . $closeAccountToken . ' ?>" required>
+                            <input id="current-account-name" type="hidden" name="account" value="' . $currentAccountName . '" required>
+                            <input type="hidden" name="token" value="' . $closeAccountToken . '" required>
                             <button type="submit" class="standard-button transform-button flex-center round">
                                 <div class="split">
-                                    <p class="animate-left">Apply<p>
+                                    <p class="animate-left">Submit Close Request<p>
                    		            <div class="toggle-button">
                     		            <i class="fas fa-chevron-right"></i>
                     		        </div>
                                 </div>
                             </button>
                         </form>';
+                    } else {
+                        echo '<button onClick="hidePopUp()" class="standard-button transform-button flex-center round">
+                                <div class="split">
+                   		            <div class="toggle-button">
+                    		            <i class="fas fa-chevron-left"></i>
+                    		        </div>
+                                    <p class="animate-right">Return<p>
+                                </div>
+                            </button>';
                     }
                     ?>
                 </div>
             </div>
         </div>
-	</body>
-    <script type="text/javascript" src="../../js/jquery/jquery.js"></script>
-	<script type="text/javascript" src="../../js/navigation.js"></script>
-	<script type="text/javascript" src="../../js/notification.js"></script>
-	<script type="text/javascript" src="../../js/print.js"></script>
-	<script type="text/javascript">
-        function showPopUp(ContentId, entity = null) {
-            document.querySelectorAll('.pop-up-item').forEach((element) => {
-                if (element.id === ContentId) {
-                    if (entity !== null && ContentId === 'transaction-popup-content') {
-            	        let item = entity.children;
-            	        
-                        $('#transaction-date').text(item[2].textContent);
-                        $('#transaction-description').text(item[3].textContent);
-                        $('#transaction-type').text(item[1].textContent);
-                        $('#transaction-amount').text(item[4].textContent);
-                        $('#transaction-balance').text(item[0].textContent);
+        <script type="text/javascript" src="../../js/jquery/jquery.js"></script>
+        <script type="text/javascript" src="../../js/navigation.js"></script>
+        <script type="text/javascript" src="../../js/notification.js"></script>
+        <script type="text/javascript" src="../../js/post.js"></script>
+        <script type="text/javascript" src="../../js/print.js"></script>
+        <script type="text/javascript">
+            function showPopUp(ContentId, entity = null) {
+                document.querySelectorAll('.pop-up-item').forEach((element) => {
+                    if (element.id === ContentId) {
+                        if (entity !== null && ContentId === 'transaction-popup-content') {
+                	        let item = entity.children;
+                	        
+                            document.getElementById('transaction-date').textContent = item[0].textContent;
+                            document.getElementById('transaction-description').textContent = item[1].textContent;
+                            document.getElementById('transaction-amount').textContent = item[2].textContent;
+                        }
+                        element.classList.remove('hidden');
                     }
-                    element.classList.remove('hidden');
-                }
-                else {
-                    element.classList.add('hidden');
+                    else {
+                        element.classList.add('hidden');
+                    }
+                });
+                document.getElementById('pop-up').classList.add('show-popup-content');
+                document.getElementById('pup-up-element').classList.remove('hidden');
+            }
+            
+            function hidePopUp() {
+                document.getElementById('pop-up').classList.remove('show-popup-content');
+                document.getElementById('pup-up-element').classList.add('hidden');
+            }
+        </script>
+        <script type="text/javascript">
+        let transactionsTable = document.getElementById('transactions-body');
+        
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+            	    if (document.activeElement.classList.contains('transaction-element')) {
+            	    	let currentElement = document.activeElement;
+            		
+            		    $(currentElement).prevAll('.transaction-element:first').focus();
+            	    }
+            	    
+             	    break;
+                case 'ArrowDown':
+            	    if (transactionsTable === document.activeElement) {
+            	        $('.transaction-element:first').focus();
+            	    } else if (document.activeElement.classList.contains('transaction-element')) {
+            	    	let currentElement = document.activeElement;
+            	    	
+            		    $(currentElement).nextAll('.transaction-element:first').focus();
+            	    }
+            	    
+            	    break;
+            	case 'Enter':
+            	    if (document.activeElement.classList.contains('transaction-element')) {
+            	    	let currentElement = document.activeElement;
+            	    	
+            		    showPopUp('transaction-popup-content', currentElement);
+            	    }
+            }
+        });
+        
+        function changeAccount(element) {
+            window.location.href = "details?acc=" + element.value;
+        }
+        </script>
+        <script type="text/javascript">
+            /* Listener to change accounts */
+            document.getElementById('change-nickname').addEventListener('submit', handleNicknameForm);
+            
+            /* Listener to close account*/
+            <?php if ($accountBalance === 0.00) echo "document.getElementById('close-account').addEventListener('submit', handleCloseAccountForm);" ?>
+            
+            /* Listener to hide or show form contents for date filter in the "filterDate" form */
+            document.getElementById('date-checkbox').addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('date-month').classList.remove('collapse');
+                    document.getElementById('date-range').classList.add('collapse');
+        
+                    /* Make inputs disabled */
+                    document.getElementById('from-date').disabled = true;
+                    document.getElementById('to-date').disabled = true;
+                    document.getElementById('from-month').disabled = false;
+                } else {
+                    document.getElementById('date-range').classList.remove('collapse');
+                    document.getElementById('date-month').classList.add('collapse');
+                    
+                    /* Make inputs not disabled */
+                    document.getElementById('from-date').disabled = false;
+                    document.getElementById('to-date').disabled = false;
+                    document.getElementById('from-month').disabled = true;
                 }
             });
-            document.getElementById('pop-up').classList.add('show-popup-content');
-            document.getElementById('pup-up-element').classList.remove('hidden');
-        }
-        
-        function hidePopUp() {
-            document.getElementById('pop-up').classList.remove('show-popup-content');
-            document.getElementById('pup-up-element').classList.add('hidden');
-        }
-	</script>
-	<script type="text/javascript">
-	let transactionsTable = document.getElementById('transactions-body');
-	
-	document.addEventListener('keydown', (event) => {
-	    switch (event.key) {
-	        case 'ArrowUp':
-        	    if (document.activeElement.classList.contains('transaction-element')) {
-        	    	let currentElement = document.activeElement;
-        		
-        		    $(currentElement).prevAll('.transaction-element:first').focus();
-        	    }
-        	    
-         	    break;
-	        case 'ArrowDown':
-        	    if (transactionsTable === document.activeElement) {
-        	        $('.transaction-element:first').focus();
-        	    } else if (document.activeElement.classList.contains('transaction-element')) {
-        	    	let currentElement = document.activeElement;
-        	    	
-        		    $(currentElement).nextAll('.transaction-element:first').focus();
-        	    }
-        	    
-        	    break;
-        	case 'Enter':
-        	    if (document.activeElement.classList.contains('transaction-element')) {
-        	    	let currentElement = document.activeElement;
-        	    	
-        		    showPopUp('transaction-popup-content', currentElement);
-        	    }
-	    }
-	});
-	
-    function changeAccount(element) {
-        window.location.href = "details?acc=" + element.value;
-    }
-	</script>
-	<script type="text/javascript">
-	    /* Listener to change accounts */
-        document.getElementById('change-nickname').addEventListener('submit', handleForm);
-        
-        /* Listener to close account*/
-        <?php if ($accountBalance === 0) echo "document.getElementById('close-account').addEventListener('submit', handleForm);" ?>
-        
-	    /* Listener to hide or show form contents for date filter in the "filterDate" form */
-	    document.getElementById('date-checkbox').addEventListener('change', function() {
-	        if (this.checked) {
-	            document.getElementById('date-month').classList.remove('collapse');
-	            document.getElementById('date-range').classList.add('collapse');
-
-                /* Make inputs disabled */
-                document.getElementById('from-date').disabled = true;
-                document.getElementById('to-date').disabled = true;
-                document.getElementById('from-month').disabled = false;
-	        } else {
-	            document.getElementById('date-range').classList.remove('collapse');
-	            document.getElementById('date-month').classList.add('collapse');
+            
+            /* Launch event listener on document load */
+            document.getElementById('date-checkbox').dispatchEvent(new Event('change'))
+            
+            async function handleNicknameForm(event) {
+                event.preventDefault();
                 
-                /* Make inputs not disabled */
-                document.getElementById('from-date').disabled = false;
-                document.getElementById('to-date').disabled = false;
-                document.getElementById('from-month').disabled = true;
-	        }
-	    });
-	    
-	    /* Launch event listener on document load */
-	    document.getElementById('date-checkbox').dispatchEvent(new Event('change'))
-	    
-        function handleForm(event) {
-	        event.preventDefault();
-	        
-	        let form = event.target;
-	        let formData = new FormData(form);
-	        
-	        let url = form.action;
-	        let request = new Request(url, {
-	            body: formData,
-	            method: 'POST',
-	        });
-	        
-	        if (formData.get('old') === formData.get('new')) {
-	            setFailNotification('Account is already named ' + formData.get('old'));
-	        } else {
-    	        fetch(request)
-    	            .then((response) => response.json())
-    	            .then((data) => {
-    	                if (data.response) {
-    	                    setSuccessNotification(data.message);
-    	                    document.getElementById('title-account-name').textContent = formData.get('new');
-    	                    document.getElementById('choose-account').selectedOptions[0].text = formData.get('new') + ' ' + document.getElementById('title-account-type').textContent + '';
-    	                    document.getElementById('current-account-name').value = formData.get('new');
-    	                    history.pushState(null, '', '<? echo getHomeDirectory() /* TEMP */?>/goldmanstacks/view/account/details?acc=' + formData.get('new'));    
-    	                } else {
-    	                    setFailNotification(data.message);
-    	                }
-    	            })
-    	            .catch(console.warn);
-	        }
-
-            hidePopUp();
-		    showNotification();
-	    }
-    </script>
+                let form = event.target;
+                let formData = new FormData(form);
+                
+                if (formData.get('old') === formData.get('new')) {
+                    setFailNotification('Account is already named ' + formData.get('old'));
+                } else {
+        	        let json = await getJson(form.action, formData);
+        	        
+        	        if (!isEmptyJson(json)) {
+        	            if (json.response) {
+                            setSuccessNotification(json.message);
+                            
+                            document.getElementById('title-account-name').textContent = formData.get('new');
+                            document.getElementById('choose-account').selectedOptions[0].text = formData.get('new') + ' ' + document.getElementById('title-account-type').textContent + '';
+                            document.getElementById('current-account-name').value = formData.get('new');
+                            history.pushState(null, '', '<? echo getHomeDirectory() /* TEMP */?>/goldmanstacks/view/account/details?acc=' + formData.get('new'));  
+        	            } else {
+        	                setFailNotification(json.message);
+        	            }
+        	        } else {
+        	            setFailNotification("test");
+        	        }
+                }
+        
+                hidePopUp();
+        	    showNotification();
+            }
+            
+            <?php
+                if (!$hasCloseRequest && $accountBalance === 0.00) {
+                    echo 'async function handleCloseAccountForm(event) {
+            	        event.preventDefault();
+            	        
+            	        let form = event.target;
+            	        let formData = new FormData(form);
+            	        
+            	        let json = await getJson(form.action, formData);
+            	        
+            	        if (!isEmptyJson(json)) {
+            	            if (json.response) {
+                                setSuccessNotification(json.message);
+            	            } else {
+            	                setFailNotification(json.message);
+            	            }
+            	        } else {
+            	            setFailNotification("test");
+            	        }
+            
+                        hidePopUp();
+            		    showNotification();
+                    }';
+                }
+            ?>
+        </script>
+	</body>
 </html>
