@@ -7,8 +7,6 @@ forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkEmployeeStatus(); // Check if the employee is signed in
 
-session_start();
-
 /* SESSION Variables */
 $key = $_SESSION['key'];
 
