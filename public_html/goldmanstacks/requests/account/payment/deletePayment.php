@@ -35,6 +35,7 @@ if (hash_equals($calc, $token)
         
         /* Check database connection */
         if ($db !== null) {
+            /* Confirm the requested payment to delete is from the client */
             $selectStatement = $db->prepare("SELECT COUNT(*) 
                                             FROM payments P INNER JOIN accountDirectory A ON P.accountNum=A.accountNum 
                                             WHERE P.paymentID=? AND A.clientID=?");
@@ -47,6 +48,7 @@ if (hash_equals($calc, $token)
             $selectStatement->close();
             
             if ($count) {
+                /* Delete payment */
                 $deleteStatement = $db->prepare("DELETE FROM payments WHERE paymentID=?");
                 $deleteStatement->bind_param("s", $paymentID);
                 $deleteStatement->execute();
@@ -60,8 +62,8 @@ if (hash_equals($calc, $token)
             }
             
             $db->close();
-        } else $dbMessage = "test";
-    } else $dbMessage = "test?";
+        }
+    }
 }
 
 $response = (object)array();
