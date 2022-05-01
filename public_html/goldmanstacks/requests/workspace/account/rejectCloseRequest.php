@@ -13,7 +13,7 @@ session_start();
 $key = $_SESSION['key'];
 
 /* POST Variables */
-$clientID = $_POST['id'];
+$accountNumber = decrypt($_POST['id'], $key);
 $token = $_POST['token'];
 
 /* Object variables */
@@ -25,10 +25,10 @@ $calc = hash_hmac('sha256', '/rejectCloseRequest.php', $key);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && !empty($clientID)) {
+    && !empty($accountNumber)) {
     
     /* Input Validation */
-    $isMatch = is_numeric($clientID);
+    $isMatch = preg_match('/^[0-9]{10}$/', $accountNumber);
     
     if ($isMatch) {
         /* Get database connection */
@@ -36,9 +36,16 @@ if (hash_equals($calc, $token)
          
         /* Check connection */
         if ($db !== null) {
-            $dbResponse = true;
-            $dbMessage = "Fetch API Success!";
+            $deleteStatement = $db->prepare("DELETE FROM accountCloseRequests WHERE accountNum=?");
+            $deleteStatement->bind_param("i", $accountNumber);
+            $deleteStatement->execute();
             
+            if ($db->affected_rows > 0) {
+                $dbResponse = true;
+                $dbMessage = "Close request for (*" . substr($accountNumber, -4) . ") has been rejected";
+            }
+            
+            $deleteStatement->close();
             $db->close();
         }
     }
