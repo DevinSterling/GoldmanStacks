@@ -13,10 +13,14 @@ const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
 
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
+$key = $_SESSION['key'];
 
 /* Main Variables */
 $totalBalance = 0.00;
 $accounts = array(); // Array that possess the names of the accounts under the current client
+
+/* CSRF Authentication Token */
+$newPaymentToken = hash_hmac('sha256', '/newPayment.php', $key);
 
 /* Get Database Connection */
 $db = getUpdateConnection();
@@ -102,7 +106,7 @@ $queryFirstName->close();
 				
 				if ($accountsResult->num_rows > 0) {	
     				foreach ($accountsRows as $account) {
-    					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType']);
+    					$accounts[] = array('nickName' => $account['nickName'], 'type' => $account['accountType'], 'number' => $account['accountNum']);
     
     					/* Determine if account type is credit or not */
     					if ($account['accountType'] == 'credit') {
@@ -233,36 +237,74 @@ $queryFirstName->close();
     		        <div class="item-banner top-round">
     		            <label class="banner-text">Quick Payments</label>
     		        </div>
-    		        <form id="payments" class="flex-form item-content bottom-round">
-        		        <label class="info" for="PayFrom">Sender</label>
-    		            <select id="PayFrom" class="input-field">
-                            <?php
-							foreach ($accounts as $account) {
-								echo "<option>" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
-							}
-                            ?>
-    		            </select>
-        		        <label class="info" for="PayTo">Receiver Bank Account Number</label>
-        		        <input id="PayTo" class="input-field" type="text" required>
-    		            <label class="info" for="Date">Date</label>
-        		        <input id="Date" class="input-field" type="date" placeholder="yyyy-mm-dd">
-    		            <label class="info" for="Amount">Amount</label>
-    		            <input id="Amount" class="input-field" type="number" min="0" max="<?php echo $totalBalance ?>" placeholder="USD">
-                        <button form="payments" class="standard-button transform-button flex-center round">
-                            <div class="split">
-                                <p class="animate-left">Schedule Payment<p>
-               		            <div class="toggle-button">
-                		            <i class="fas fa-chevron-right"></i>
-                		        </div>
-                            </div>
-                        </button>
-    		        </form>
+                	<button id="payment-notification" type="button" onClick="hideNotification('payment-notification')" class="panel-notification max failure transform-button collapse" data-message="payment-notification-text" data-icon="payment-notification-icon">
+                        <p><i id="payment-notification-icon" class="fas fa-times icon"></i><span id="payment-notification-text"></span></p>
+                        <div class="split">
+                               <div class="toggle-button">
+                	            <i class="fas fa-times"></i>
+                	        </div>
+                        </div>
+                    </button>
+    		        <div class="item-content bottom-round">
+                        <form id="payments" action="../requests/account/payment/newPayment" class="flex-form">
+            		        <label class="info" for="PayFrom">Sender</label>
+        		            <select id="PayFrom" name="from" class="input-field" required>
+                                <?php
+    							foreach ($accounts as $account) {
+    								echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
+    							}
+                                ?>
+        		            </select>
+            		        <label class="info" for="PayTo">Receiver Bank Account Number</label>
+            		        <input id="PayTo" class="input-field" type="text" name="to" required>
+        		            <label class="info" for="Date">Date</label>
+            		        <input id="Date" class="input-field" type="date" name="date" min="<?php echo date("Y-m-d", strtotime("yesterday")) ?>" placeholder="yyyy-mm-dd" required>
+        		            <label class="info" for="Amount">Amount</label>
+        		            <input id="Amount" class="input-field" type="number" min="0" step="0.01" max="<?php echo $totalBalance ?>" name="amount" placeholder="USD" required>
+        		            <input type="hidden" name="token" value="<?php echo $newPaymentToken ?>">
+                            <button type="submit" class="standard-button transform-button flex-center round">
+                                <div class="split">
+                                    <p class="animate-left">Schedule Payment<p>
+                   		            <div class="toggle-button">
+                    		            <i class="fas fa-chevron-right"></i>
+                    		        </div>
+                                </div>
+                            </button>
+                        </div>
+    		        </div>
     		    </div>
 		    </div>
 		</div>
 	</body>
 	<script type="text/javascript" src="../js/navigation.js"></script>
+	<script type="text/javascript" src="../js/notification.js"></script>
 	<script type="text/javascript" src="../js/post.js"></script>
+	<script type="text/javascript">
+	    document.getElementById('payments').addEventListener('submit', handlePaymentForm);
+	    
+	    async function handlePaymentForm(event) {
+	        event.preventDefault();
+	        
+	        let form = event.target;
+	        let formData = new FormData(form);
+            
+	        let json = await getJson(form.action, formData);
+	        
+	        if (!isEmptyJson(json)) {
+	            if (json.response) {
+	                setSuccessNotification(json.message, 'payment-notification');
+	                
+	                form.reset();
+	            } else {
+	                setFailNotification(json.message, 'payment-notification');
+	            }
+	        } else {
+	            setFailNotification('Failed to make payment!', 'payment-notification');
+	        }
+	        
+	        showNotification('payment-notification');
+	    }
+	</script>
 </html>
 <?php
 $db->close();
