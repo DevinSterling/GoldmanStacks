@@ -3,6 +3,7 @@ require_once('../../../../../private/sysNotification.php');
 require_once('../../../../../private/userbase.php');
 require_once('../../../../../private/config.php');
 require_once('../../../../../private/userbase.php');
+require_once('../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
@@ -106,7 +107,7 @@ if ($db === null) {
 	                            <td data-label=\"Username\">" . $user['email'] . "</td>
 	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
 	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
-	                            <td data-label=\"Phone\">" . $user['phoneNumber'] . "</td>
+	                            <td data-label=\"Phone\">" . convertToPhoneNumber($user['phoneNumber']) . "</td>
 	                        </tr>";
 	                }
 	                
