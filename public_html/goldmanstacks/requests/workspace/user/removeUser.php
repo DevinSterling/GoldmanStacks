@@ -17,7 +17,7 @@ $userID = $_POST['id'];
 $token = $_POST['token'];
 
 /* Object variables */
-$dbResponse = false;
+$dbSuccess = false;
 $dbMessage = 'Failed to remove user';
 
 /* Calculate expected token */
@@ -36,8 +36,14 @@ if (hash_equals($calc, $token)
          
         /* Check connection */
         if ($db !== null) {
-            $dbResponse = true;
-            $dbMessage = "Fetch API Success!";
+            $deleteStatement = $db->prepare("DELETE FROM users WHERE userID=?");
+            $deleteStatement->bind_param("i", $userID);
+            $deleteStatement->execute();
+            
+            if ($db->affected_rows > 0) {
+                $dbSuccess = true;
+                $dbMessage = "User ($userID) has been removed";
+            }
             
             $db->close();
         }
@@ -45,7 +51,7 @@ if (hash_equals($calc, $token)
 }
 
 $object = (object)array();
-$object->response = $dbResponse;
+$object->response = $dbSuccess;
 $object->message = $dbMessage;
 
 $json = json_encode($object);
