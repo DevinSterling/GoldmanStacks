@@ -178,12 +178,12 @@ $currentAccountStatement->close();
 
                     foreach ($rows as $transaction) {
                         switch ($transaction['type']) {
-                            case 'transfer':
+                            case ('transfer' || 'payment'):
                                 if ($transaction['accountNum'] != $accountNumber) {
-                                    $description = "Transfer from (*" . substr($transaction['accountNum'], -4) . ")";
+                                    $description = ucfirst($transaction['type']) . " from (*" . substr($transaction['accountNum'], -4) . ")";
                                     $transaction['transactionAmount'] *= -1;
                                 } else {
-                                    $description = "Transfer to (*" . substr($transaction['recipientAccount'], -4) . ")";
+                                    $description = ucfirst($transaction['type']) . " to (*" . substr($transaction['recipientAccount'], -4) . ")";
                                 }
                                 break;
                             case 'deposit':
@@ -192,8 +192,6 @@ $currentAccountStatement->close();
                             case 'withdraw':
                                 $description = "Withdraw from account";
                                 break;
-                            case 'payment':
-                                $description = "Payment to";
                         }
                         
                         echo "<tr tabindex=\"-1\" onClick=\"showPopUp('transaction-popup-content', this)\" class=\"transaction-element\">
