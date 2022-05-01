@@ -1,12 +1,12 @@
 <?php
 function checkNotEmpty(...$params) {
-	foreach ($params as $param) {
-		if (empty($param)) {
-			return false;
-		}
-	}
+    foreach ($params as $param) {
+        if (empty($param)) {
+            return false;
+        }
+    }
 	
-	return true;
+    return true;
 }
 
 function convertToCurrency($amount) {
@@ -19,6 +19,10 @@ function convertToCurrency($amount) {
     }
 
     return $currency;
+}
+
+function convertToPhoneNumber($string) {
+    return substr($string, 0, 3) . '-' . substr($string, 3, 3) . '-' . substr($string, 6, 4);
 }
 
 function encrypt($data, $key) {
