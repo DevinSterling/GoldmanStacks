@@ -24,13 +24,12 @@ $endDate = $_POST['end'];
 $token = $_POST['token'];
 
 /* Defaults */
+$isRecurring = false;
 $dbSuccess = false;
-$dbMessage = '';
+$dbMessage = 'Failed to create payment';
 $dbPaymentId = '';
 
 $periods = array('day', 'week', 'month', 'year');
-
-$dbFailMessage = 'Failed to create payment';
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/newPayment.php', $key);
@@ -78,7 +77,7 @@ if (hash_equals($calc, $token)
             case 'month':
                 $step *= 30;
                 break;
-            case 'year':
+            case 'year': 
                 $steps *= 365;
         }
     } else {
@@ -97,43 +96,89 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
         
         if ($db !== null) {
-            /* Ensure that the "sender" is the client's own account */
-            $queryAccount = $db->prepare("SELECT COUNT(*) FROM accountDirectory WHERE accountNum=? AND clientID=?");
+            /* Ensure that the "sender" is the client's own account and get balance */
+            $queryAccount = $db->prepare("SELECT balance FROM accountDirectory WHERE accountNum=? AND clientID=?");
             $queryAccount->bind_param("si", $from, $userID);
             $queryAccount->execute();
             $queryAccount->store_result();
             
             /* Get result */
-            $queryAccount->bind_result($count);
+            $queryAccount->bind_result($balance);
             $queryAccount->fetch();
             $queryAccount->close();
             
-            if ($count === 1) {
-                /* Insert new payment into database */
-                $insertPayment = $db->prepare("INSERT INTO payments (accountNum, recipientAccount, recipientNickName, amount, paymentDate, step, endDate) VALUES (?,?,?,?,?,?,?)");
-                $insertPayment->bind_param("sssdsis", $from, $to, $name, $amount, $date, $step, $endDate);
-                $insertPayment->execute();
+            if ($balance !== null) {
+                $isToday = $date === date("Y-m-d");
                 
-                if ($db->affected_rows > 0) {
-                    $dbSuccess = true;
-                    $dbMessage = 'New payment created';
-                    $dbPaymentId = encrypt($db->insert_id, $key);
-                } else {
-                    $dbMessage = $db->error;
+                /* Make payment immediately if the payment date is today */
+                if ($isToday) {
+                    if ($balance > $amount) {
+                        /* Deduct funds from client account */
+                        $updateSenderBalance = $db->prepare("UPDATE accountDirectory SET balance=balance-? WHERE accountNum=?");
+                        $updateSenderBalance->bind_param("di", $amount, $from);
+                        $updateSenderBalance->execute();
+                        $updateSenderBalance->close();
+                        
+                        /* Check if the receiver exists */
+                        $receiverAccount = $db->prepare("SELECT COUNT(*) FROM accountDirectory WHERE accountNum=?");
+                        $receiverAccount->bind_param("i", $to);
+                        $receiverAccount->execute();
+                        $receiverAccount->store_result();
+                        
+                        /* Get result */
+                        $receiverAccount->bind_result($count);
+                        $receiverAccount->fetch();
+                        $receiverAccount->close();
+                        
+                        /* Payment of funds */
+                        if ($count) {
+                            $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
+                            $updateReceiverBalance->bind_param("di", $amount, $to);
+                            $updateReceiverBalance->execute();
+                            $updateReceiverBalance->close();
+                        }
+                        
+                        /* Insert new transaction */
+                        $insertTransaction = $db->prepare("INSERT INTO transactions (type, clientID, accountNum, transactionAmount, recipientAccount) VALUES ('payment', ?, ?, -?, ?)");
+                        $insertTransaction->bind_param("iidi", $userID, $from, $amount, $to);
+                        $insertTransaction->execute();
+                        
+                        if ($db->affected_rows > 0) {
+                            $dbSuccess = true;
+                            $dbMessage = 'Payment has been paid';
+                        }
+                        
+                        $insertTransaction->close();
+                    }
+                    
+                    if ($isRecurring) {
+                        $date = date("Y-m-d", strtotime($date . ' +' . $step . ' days')); // Calculate next payment date
+                        $isRecurring = $endDate > $date; // Ensure the next payment date is not over the end date
+                    }
                 }
                 
-                $insertPayment->close();
-            } else {
-                $dbMessage = $dbFailMessage;
+                /* Schedule Payment */
+                if (!$isToday || ($isToday && $isRecurring)) {
+                    /* Insert new payment into database */
+                    $insertPayment = $db->prepare("INSERT INTO payments (accountNum, recipientAccount, recipientNickName, amount, paymentDate, step, endDate) VALUES (?,?,?,?,?,?,?)");
+                    $insertPayment->bind_param("sssdsis", $from, $to, $name, $amount, $date, $step, $endDate);
+                    $insertPayment->execute();
+                    
+                    if ($db->affected_rows > 0) {
+                        $dbSuccess = true;
+                        $dbMessage = 'New payment created';
+                        $dbPaymentId = encrypt($db->insert_id, $key);
+                    } else {
+                        $dbMessage = $db->error;
+                    }
+                    
+                    $insertPayment->close();
+                }
             }
             
             $db->close();
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    $dbMessage = $dbFailMessage;
 }
 
 /* Return Outcome */
@@ -142,5 +187,4 @@ $object->response = $dbSuccess;
 $object->message = $dbMessage;
 $object->id = $dbPaymentId;
 $json = json_encode($object);
-
 echo $json;
