@@ -89,6 +89,7 @@ if ($db === null) {
 	                    <tr>
 	                        <th>Request Date</th>
 	                        <th>Account Number</th>
+	                        <th>Balance</th>
 	                        <th>Account Type</th>
 	                        <th>Client</th>
 	                        <th>First Name</th>
@@ -97,7 +98,7 @@ if ($db === null) {
                     </thead>
                     <tbody>
 		            <?php
-		            $result = $db->query("SELECT C.accountNum, C.requestDate, A.accountType, email, firstName, lastName FROM users
+		            $result = $db->query("SELECT userID, C.accountNum, C.requestDate, A.accountType, A.balance, email, firstName, lastName FROM users
                                             INNER JOIN accountDirectory A ON userID=A.clientID
                                             INNER JOIN accountCloseRequests C ON A.accountNum=C.accountNum");
 		            $users = $result->fetch_all(MYSQLI_ASSOC);
@@ -106,10 +107,12 @@ if ($db === null) {
 	                    echo "<tr id=\"" . encrypt($user['accountNum'], $key) . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
 	                            <td data-label=\"Request Date\">" . $user['requestDate'] . "</td>
 	                            <td data-label=\"Account Number\">(*" . substr($user['accountNum'], -4) . ")</td>
+	                            <td data-label=\"Balance\">$" . number_format($user['balance'], 2) . "</td>
 	                            <td data-label=\"Account Type\">" . ucfirst($user['accountType']) . "</td>
 	                            <td data-label=\"Client\">" . $user['email'] . "</td>
 	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
 	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
+	                            <td class=\"hidden\">". $user['userID'] . "<td>
 	                        </tr>";
 	                }
 	                
@@ -199,6 +202,8 @@ if ($db === null) {
                             <p id="request-date"></p>
                             <p class="info">Requested Account</p>
                             <p><span id="account-number"></span> (<span id="account-type"></span>)</p>
+                            <p class="info">Balance</p>
+                            <p id="balance"></p>
                         </div>
                     </div>
                     <hr>
@@ -279,10 +284,11 @@ if ($db === null) {
 	    
 	    /* Selected Content */
 	    let selectedRow = null;
+	    let selectedClient = null;
 	    
 	    /* Event Listeners */
 	    document.getElementById('user-details-button').addEventListener('click', () => {
-	        window.location.href = '../../manage/user?id=' + selectedRow.id;
+	        window.location.href = '../../manage/user?id=' + selectedClient;
 	    });
 	    document.getElementById('approve-button').addEventListener('click', () => {
 	        document.getElementById('approve-request-info').innerHTML = popupRequestInfo.innerHTML;
@@ -345,12 +351,15 @@ if ($db === null) {
             	            
                 	        var item = entity.children;
                 	        
-                	        document.getElementById('email').textContent = item[3].textContent;
-                	        document.getElementById('first-name').textContent = item[4].textContent;
-                	        document.getElementById('last-name').textContent = item[5].textContent;
+                	        document.getElementById('balance').textContent = item[2].textContent;
+                	        document.getElementById('email').textContent = item[4].textContent;
+                	        document.getElementById('first-name').textContent = item[5].textContent;
+                	        document.getElementById('last-name').textContent = item[6].textContent;
                 	        document.getElementById('request-date').textContent = item[0].textContent;
                 	        document.getElementById('account-number').textContent = item[1].textContent;
-                	        document.getElementById('account-type').textContent = item[2].textContent;
+                	        document.getElementById('account-type').textContent = item[3].textContent;
+                	        
+                	        selectedClient = item[7].textContent;
             	        }
                     } else {
                         document.getElementById("pup-up-element").classList.remove('sub');
