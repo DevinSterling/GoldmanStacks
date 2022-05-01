@@ -99,12 +99,12 @@ if ($db === null) {
 
                     foreach ($rows as $transaction) {
                         switch ($transaction['type']) {
-                            case 'transfer':
-                                if ($transaction['accountNum'] != $accountNumber) {
-                                    $description = "Transfer from (*" . substr($transaction['accountNum'], -4) . ")";
+                            case ('transfer' || 'payment'):
+                                if ($transaction['isRecipient']) {
+                                    $description = ucfirst($transaction['type']) . " from (*" . substr($transaction['accountNum'], -4) . ")";
                                     $transaction['transactionAmount'] *= -1;
                                 } else {
-                                    $description = "Transfer to (*" . substr($transaction['recipientAccount'], -4) . ")";
+                                    $description = ucfirst($transaction['type']) . " to (*" . substr($transaction['recipientAccount'], -4) . ")";
                                 }
                                 break;
                             case 'deposit':
@@ -113,8 +113,6 @@ if ($db === null) {
                             case 'withdraw':
                                 $description = "Withdraw from account";
                                 break;
-                            case 'payment':
-                                $description = "Payment to";
                         }
                         
                         
