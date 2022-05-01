@@ -9,6 +9,13 @@ session_start(); // Start Session
 checkEmployeeStatus(); // Check if the employee is signed in
 
 $lastLog = date("F j, Y, g:i a"); // Last time of log
+
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -59,7 +66,15 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            <div class="split animate-left">
 		                <div class="list text-right">
 						    <p>Users</p>
-							<p class="focused-info">14</p>
+							<p class="focused-info">
+							<?php
+							    /* Get total amount of users */
+                                $result = $db->query("SELECT count(*) FROM users");
+                                $amount = $result->fetch_row()[0];
+                                $result->free();
+                                echo $amount;
+							?>
+							</p>
 		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
@@ -74,7 +89,15 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            <div class="split animate-left">
 		                <div class="list text-right">
 						    <p>Requests</p>
-							<p class="focused-info">14</p>
+							<p class="focused-info">
+							<?php
+							    /* Get total amount of bank account open requests */
+                                $result = $db->query("SELECT count(*) FROM accountRequests");
+                                $amount = $result->fetch_row()[0];
+                                $result->free();
+                                echo $amount;
+							?>
+							</p>
 		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
@@ -89,7 +112,15 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            <div class="split animate-left">
 		                <div class="list text-right">
 						    <p>Requests</p>
-							<p class="focused-info">2</p>
+							<p class="focused-info">
+							<?php
+							    /* Get total amount of bank account close requests */
+                                $result = $db->query("SELECT count(*) FROM accountCloseRequests");
+                                $amount = $result->fetch_row()[0];
+                                $result->free();
+                                echo $amount;
+							?>
+							</p>
 		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
@@ -104,7 +135,15 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            <div class="split animate-left">
 		                <div class="list text-right">
 						    <p>Requests</p>
-							<p class="focused-info">91</p>
+							<p class="focused-info">
+							<?php
+							    /* Get total amount of users that are not verified (registration pending) */
+                                $result = $db->query("SELECT count(*) FROM client WHERE verified=0");
+                                $amount = $result->fetch_row()[0];
+                                $result->free();
+                                echo $amount;
+							?>
+							</p>
 		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
@@ -119,7 +158,11 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 		            <div class="split animate-left">
 		                <div class="list text-right">
 						    <p>Logs</p>
-							<p class="focused-info">10</p>
+							<p class="focused-info">
+							<?php
+							
+							?>
+							</p>
 		                </div>
     		            <div class="toggle-button">
     		                <i class="fas fa-chevron-right"></i>
@@ -201,3 +244,5 @@ $lastLog = date("F j, Y, g:i a"); // Last time of log
 	</body>
 	<script type="text/javascript" src="../../js/navigation.js"></script>
 </html>
+<?php
+$db->close();
