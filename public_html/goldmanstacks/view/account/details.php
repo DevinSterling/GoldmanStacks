@@ -178,7 +178,8 @@ $currentAccountStatement->close();
 
                     foreach ($rows as $transaction) {
                         switch ($transaction['type']) {
-                            case ('transfer' || 'payment'):
+                            case 'transfer':
+                            case 'payment':
                                 if ($transaction['accountNum'] != $accountNumber) {
                                     $description = ucfirst($transaction['type']) . " from (*" . substr($transaction['accountNum'], -4) . ")";
                                     $transaction['transactionAmount'] *= -1;
