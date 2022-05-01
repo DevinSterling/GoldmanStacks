@@ -297,7 +297,7 @@ if (!$isReferenced && !empty($referencedName)) {
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
             <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
-                <div class="split margin-bottom">
+                <div class="split">
                     <button id="return-button" onClick="hidePopUp()" class="expand-button transform-button extend-right round">
     	                <div class="split">
     	                    <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -319,17 +319,18 @@ if (!$isReferenced && !empty($referencedName)) {
     	                </div>
     	            </button>
 	            </div>
+	            <br>
                 <div id="view-payment-popup-content" class="pop-up-item flex-form hidden">
                     <h2 id="title">Payment</h2>
                     <div id='payment-details'>
                         <b class="info">Sender</b>
-                        <p id="selected-sender"><?php echo $currentAccountName ?></p>
+                        <p id="selected-sender"></p>
                         <b class="info">Receiver</b>
-                        <p id="selected-receiver"><?php echo $balance ?></p>
+                        <p id="selected-receiver"></p>
                         <b class="info">Date</b>
-                        <p id="selected-date"><?php echo $routingNumber ?></p>
+                        <p id="selected-date"></p>
                         <b class="info">Amount</b>
-                        <p id="selected-payment-amount"></p>
+                        <p>$<span id="selected-payment-amount"></span></p>
                         <div id="selected-recurring-content" class="flex-form hidden">
                             <b class="info">Recurring Payment</b>
                             <p id="selected-recurring-info">False (This is a one-time payment)</p>
@@ -675,7 +676,7 @@ if (!$isReferenced && !empty($referencedName)) {
 	                selectedDate.textContent = json.date;
 	                selectedAmount.textContent = json.amount;
 	                
-	                if (json.isRecurring) {
+	                if (json.recurInfo !== null) {
 	                    selectedRecurringInfo.textContent = json.recurInfo;
 	                    selectedRecurringDiv.classList.remove('hidden');
 	                } else {
