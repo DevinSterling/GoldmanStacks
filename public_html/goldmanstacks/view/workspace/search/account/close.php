@@ -3,6 +3,7 @@ require_once('../../../../../../private/sysNotification.php');
 require_once('../../../../../../private/userbase.php');
 require_once('../../../../../../private/config.php');
 require_once('../../../../../../private/userbase.php');
+require_once('../../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
@@ -21,7 +22,13 @@ $searchResults = 99; // For use only when a search is initiated
 $approveCloseAccountToken = hash_hmac('sha256', '/approveCloseRequest.php', $key);
 $rejectCloseAccountToken = hash_hmac('sha256', '/rejectCloseRequest.php', $key);
 
-$amountOfUsers = 40
+/* Database Connection */
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -90,16 +97,23 @@ $amountOfUsers = 40
                     </thead>
                     <tbody>
 		            <?php
-	                for ($n = 1; $n <= $amountOfUsers; $n++) {
-	                    echo "<tr id=\"$n\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"Request Date\">" . date("Y-m-d h:i:s") . "</td>
-	                            <td data-label=\"Account Number\">1098</td>
-	                            <td data-label=\"Account Type\">Savings</td>
-	                            <td data-label=\"Client\">User$n@client.co</td>
-	                            <td data-label=\"First Name\">Name</td>
-	                            <td data-label=\"Last Name\">Name</td>
+		            $result = $db->query("SELECT C.accountNum, C.requestDate, A.accountType, email, firstName, lastName FROM users
+                                            INNER JOIN accountDirectory A ON userID=A.clientID
+                                            INNER JOIN accountCloseRequests C ON A.accountNum=C.accountNum");
+		            $users = $result->fetch_all(MYSQLI_ASSOC);
+		            
+	                foreach ($users as $user) {
+	                    echo "<tr id=\"" . encrypt($user['accountNum'], $key) . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+	                            <td data-label=\"Request Date\">" . $user['requestDate'] . "</td>
+	                            <td data-label=\"Account Number\">(*" . substr($user['accountNum'], -4) . ")</td>
+	                            <td data-label=\"Account Type\">" . ucfirst($user['accountType']) . "</td>
+	                            <td data-label=\"Client\">" . $user['email'] . "</td>
+	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
+	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
 	                        </tr>";
 	                }
+	                
+	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
