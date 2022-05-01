@@ -17,7 +17,7 @@ $clientID = $_POST['id'];
 $token = $_POST['token'];
 
 /* Object variables */
-$dbResponse = false;
+$dbSuccess = false;
 $dbMessage = 'Failed to approve client registration request';
 
 /* Calculate expected token */
@@ -36,8 +36,14 @@ if (hash_equals($calc, $token)
          
         /* Check connection */
         if ($db !== null) {
-            $dbResponse = true;
-            $dbMessage = "Fetch API Success!";
+            $updateStatement = $db->prepare("UPDATE client SET verified=1 WHERE clientID=?");
+            $updateStatement->bind_param("i", $clientID);
+            $updateStatement->execute();
+            
+            if ($db->affected_rows > 0) {
+                $dbSuccess = true;
+                $dbMessage = "Registration request for ($clientID) has been approved";
+            }
             
             $db->close();
         }
@@ -45,7 +51,7 @@ if (hash_equals($calc, $token)
 }
 
 $object = (object)array();
-$object->response = $dbResponse;
+$object->response = $dbSuccess;
 $object->message = $dbMessage;
 
 $json = json_encode($object);
