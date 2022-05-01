@@ -95,7 +95,7 @@ if ($db === null) {
                     </thead>
                     <tbody>
 		            <?php
-		            $result = $db->query("SELECT requestID, requestDate, accountType, userRole, email, firstName, lastName, phoneNumber FROM users
+		            $result = $db->query("SELECT userID, requestID, requestDate, accountType, userRole, email, firstName, lastName, phoneNumber FROM users
                                             INNER JOIN accountRequests ON userID=clientID");
 		            $users = $result->fetch_all(MYSQLI_ASSOC);
 		            
@@ -106,6 +106,7 @@ if ($db === null) {
 	                            <td data-label=\"Client\">" . $user['email'] . "</td>
 	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
 	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
+	                            <td class=\"hidden\">". $user['userID'] . "<td>
 	                        </tr>";
 	                }
 	                
@@ -275,10 +276,11 @@ if ($db === null) {
 	    
 	    /* Selected Content */
 	    let selectedRow = null;
+	    let selectedClient = null;
 	    
 	    /* Event Listeners */
 	    document.getElementById('user-details-button').addEventListener('click', () => {
-	        window.location.href = '../../manage/user?id=' + selectedRow.id;
+	        window.location.href = '../../manage/user?id=' + selectedClient;
 	    });
 	    document.getElementById('approve-button').addEventListener('click', () => {
 	        document.getElementById('approve-request-info').innerHTML = popupRequestInfo.innerHTML;
@@ -346,6 +348,8 @@ if ($db === null) {
                 	        document.getElementById('last-name').textContent = item[4].textContent;
                 	        document.getElementById('request-date').textContent = item[0].textContent;
                 	        document.getElementById('account-type').textContent = item[1].textContent;
+                	        
+                	        selectedClient = item[5].textContent;
             	        }
                     } else {
                         document.getElementById("pup-up-element").classList.remove('sub');
