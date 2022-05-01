@@ -58,7 +58,7 @@ if (hash_equals($calc, $token)
                 $queryRequest->fetch();
                 $queryRequest->close();
                 
-                if ($balance > $amount) {
+                if ($balance >= $amount) {
                     $updateSenderBalance = $db->prepare("UPDATE accountDirectory SET balance=balance-? WHERE accountNum=?");
                     $updateSenderBalance->bind_param("di", $amount, $sender);
                     $updateSenderBalance->execute();
