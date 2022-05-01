@@ -2,6 +2,7 @@
 require_once('../../../../private/config.php');
 require_once('../../../../private/sysNotification.php');
 require_once('../../../../private/userbase.php');
+require_once('../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
@@ -152,7 +153,7 @@ if ($db === null) {
                     <hr>
                     <h5 class="big-info">Contact Information</h5>
                     <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($user['email']) ?></p>
-                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars($user['phoneNumber']) ?></p>
+                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars(convertToPhoneNumber($user['phoneNumber'])) ?></p>
                     <hr>
                     <h5 class="big-info">Address Information</h5>
                     <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($user['line1']) ?></p>
