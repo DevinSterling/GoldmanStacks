@@ -6,7 +6,7 @@ require_once('../../../../../private/userbase.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-checkEmployeeStatus(); // Check if the employee is signed in
+//checkClientStatus(); // Check if the client is signed in
 
 /* SESSION Variables */
 $key = $_SESSION['key'];
@@ -21,7 +21,13 @@ $searchResults = 99; // For use only when a search is initiated
 $approveRegistrationToken = hash_hmac('sha256', '/approveRegistration.php', $key);
 $rejectRegistrationToken = hash_hmac('sha256', '/rejectRegistration.php', $key);
 
-$amountOfUsers = 40
+/* Database Connection */
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -89,17 +95,22 @@ $amountOfUsers = 40
                     </thead>
                     <tbody>
 		            <?php
+		            $result = $db->query("SELECT userID, lastSignin, userRole, email, firstName, lastName, phoneNumber FROM users
+                                            INNER JOIN client ON userID=clientID 
+                                            WHERE verified=0");
+		            $users = $result->fetch_all(MYSQLI_ASSOC);
 		            
-		            /* id for tr here is the clientID */
-	                for ($n = 1; $n <= $amountOfUsers; $n++) {
-	                    echo "<tr id=\"$n\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"Request Date\">" . date("Y-m-d h:i:s") . "</td>
-	                            <td data-label=\"Username\">user$n@test.com</td>
-	                            <td data-label=\"First Name\">Name</td>
-	                            <td data-label=\"Last Name\">Name</td>
-	                            <td data-label=\"Phone\">999-999-9999</td>
+	                foreach ($users as $user) {
+	                    echo "<tr id=\"" . $user['userID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+	                            <td data-label=\"Request Date\">" . $user['lastSignin'] . "</td>
+	                            <td data-label=\"Username\">" . $user['email'] . "</td>
+	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
+	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
+	                            <td data-label=\"Phone\">" . $user['phoneNumber'] . "</td>
 	                        </tr>";
 	                }
+	                
+	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
