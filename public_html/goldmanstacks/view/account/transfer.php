@@ -240,7 +240,7 @@ if (!$isReferenced && !empty($referencedName)) {
         <div id="pop-up" class="pop-up">
             <div onClick="hidePopUp()" class="flex-center-item">
             </div>
-            <div id="pup-up-element" class="pop-up-content fixed-sub round margin-bottom hidden">
+            <div id="pup-up-element" class="pop-up-content fixed-sub round hidden">
                 <button onClick="hidePopUp()" class="expand-button transform-button extend-right round">
                     <div class="split">
                         <p class="condensed-info"><i class="fas fa-arrow-left"></i></p>
@@ -251,6 +251,8 @@ if (!$isReferenced && !empty($referencedName)) {
         	            </div>
                     </div>
                 </button>
+                <br>
+                <br>
                 <div class="flex-form">
                     <h2 id="title">Transfer Confirmation</h2>
                     <p class="info">Sender</p>
@@ -361,38 +363,31 @@ if (!$isReferenced && !empty($referencedName)) {
             document.getElementById('pup-up-element').classList.add('hidden');
         }
         
-        function handleForm(event) {
-	        let url = form.action;
-	        request = new Request(url, {
-	            body: formData,
-	            method: 'POST',
-	        });
+        async function handleForm(event) {
+	        let json = await getJson(form.action, formData);
 	        
-	        fetch(request)
-	            .then((response) => response.json())
-	            .then((data) => {          
-	                if (data.response) {
-	                    form.reset();
-
-	                    if (form.id === 'internal-transfer') {
-	                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
-	                        internalSender.dispatchEvent(new Event('change'));
-	                        internalReceiverBalance.textContent = '0.00';
-	                    }
-	                    else {
-	                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
-	                        externalSender.dispatchEvent(new Event('change'));
-	                    }
-	                } else {
-	                    setFailNotification(data.message);
-	                }
-			
-	                showNotification();
-	            })
-	            .catch(console.warn);
+	        if (!isEmptyJson(json)) {
+	            if (json.response) {
+                    if (form.id === 'internal-transfer') {
+                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to ' + internalReceiver.selectedOptions[0].text + ' from ' + internalSender.selectedOptions[0].text);
+                        internalSender.dispatchEvent(new Event('change'));
+                        internalReceiverBalance.textContent = '0.00';
+                    } else {
+                        setSuccessNotification('Transfered $' + formData.get('usd') + ' to (*' + externalReceiver.value.substring(externalReceiver.value.length - 4) + ') from ' + externalSender.selectedOptions[0].text);
+                        externalSender.dispatchEvent(new Event('change'));
+                    }
+                    
+                    form.reset();
+	            } else {
+	                setFailNotification(json.message);
+	            }
+	        } else {
+	            setFailNotification('Failed to transfer');
+	        }
 	            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             hidePopUp();
+            showNotification();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 	    }
 	    
 	    async function retreiveInternalSenderBalance(event) {
