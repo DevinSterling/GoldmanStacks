@@ -77,7 +77,7 @@ if ($db === null) {
         	    <div class="split">
         	        <?php
         	        /* Find accounts that is still pending for the current client  */
-                    $queryAccountRequests = $db->prepare("SELECT accountType FROM accountRequests WHERE clientID=? AND verified=0");
+                    $queryAccountRequests = $db->prepare("SELECT accountType FROM accountRequests WHERE clientID=?");
                     $queryAccountRequests->bind_param("i", $userID);
                     $queryAccountRequests->execute();
                     
