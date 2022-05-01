@@ -21,7 +21,13 @@ $searchResults = 99; // For use only when a search is initiated
 $approveOpenAccountToken = hash_hmac('sha256', '/approveOpenRequest.php', $key);
 $rejectOpenAccountToken = hash_hmac('sha256', '/rejectOpenRequest.php', $key);
 
-$amountOfUsers = 40
+/* Database Connection */
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -89,15 +95,21 @@ $amountOfUsers = 40
                     </thead>
                     <tbody>
 		            <?php
-	                for ($n = 1; $n <= $amountOfUsers; $n++) {
-	                    echo "<tr id=\"$n\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"Request Date\">" . date("Y-m-d h:i:s") . "</td>
-	                            <td data-label=\"Account Type\">Savings</td>
-	                            <td data-label=\"Client\">user$n@client.co</td>
-	                            <td data-label=\"First Name\">Name</td>
-	                            <td data-label=\"Last Name\">Name</td>
+		            $result = $db->query("SELECT requestID, requestDate, accountType, userRole, email, firstName, lastName, phoneNumber FROM users
+                                            INNER JOIN accountRequests ON userID=clientID");
+		            $users = $result->fetch_all(MYSQLI_ASSOC);
+		            
+	                foreach ($users as $user) {
+	                    echo "<tr id=\"" . $user['requestID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+	                            <td data-label=\"Request Date\">" . $user['requestDate'] . "</td>
+	                            <td data-label=\"Account Type\">" . ucfirst($user['accountType']) . "</td>
+	                            <td data-label=\"Client\">" . $user['email'] . "</td>
+	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
+	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
 	                        </tr>";
 	                }
+	                
+	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
