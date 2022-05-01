@@ -13,82 +13,84 @@ $key = $_SESSION['key'];
 
 /* POST Variables */
 $paymentId = decrypt($_POST['id'], $key);
-$token = $_POST['token'];
+$paymentToken = $_POST['token'];
 
 /* Defaults */
-$response = (object)array();
-$response->response = false;
-$response->message = '';
-
-$dbFailMessage = 'Failed to retrieve payment details';
+$dbSuccess = false;
+$dbMessage = '';
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/getPaymentDetails.php', $key);
 
 /* Confirm token and user input */
-if (hash_equals($calc, $token)
+if (hash_equals($calc, $paymentToken)
     && !empty($paymentId)) {
         
     /* Input validation code goes here */
+    $isMatch = is_numeric($paymentId);
     
     if ($isMatch) {
-        /* Get database connection */
         $db = getUpdateConnection();
         
-        /* Check database connection */
         if ($db !== null) {
+            $paymentStatement = $db->prepare("SELECT A.nickName, A.accountType, P.accountNum, P.recipientAccount, P.recipientNickName, P.amount, P.paymentDate, P.step, P.endDate 
+                                                FROM payments P INNER JOIN accountDirectory A ON P.accountNum=A.accountNum 
+                                                WHERE paymentID=? AND clientID=?");
+            $paymentStatement->bind_param("si", $paymentId, $userID);
+            $paymentStatement->execute();
+            $paymentStatement->store_result();
             
-            /* Code goes here */
+            $paymentStatement->bind_result($accountName, $accountType, $paymentFrom, $paymentTo, $recipientName, $paymentAmount, $paymentDate, $paymentStep, $paymentEndDate);
+            $paymentStatement->fetch();
             
-            if ($something) {
-                /* Commented code below is what is sent back after data retrieval from database */
-                // $response->from = substr(DB_VALUE, -4);
-                // $response->to = substr(DB_VALUE, -4);
-                // $response->amount = number_format(DB_VALUE, 2);
-                // $response->date = DB_VALUE;
-                
-                /* To check if a payment is recurring, check the step value for the current payment and see if it is null or not (if step has a value, then the payment is recurring) */
-                // $isRecurring = DB_VALUE; 
-                
-                // $response->isRecurring = $isRecurring;
-                
-                // if ($isRecurring) {
-                    /* Returns a string containing the step, period, and end date */
+            if ($paymentFrom != null) {
+                /* Data to return to client */
+                $paymentFrom = $accountName . ' (' . ucfirst($accountType) . ') (*' . substr($paymentFrom, -4) . ')';
+                $paymentTo = $recipientName . ' (*' . substr($paymentTo, -4) . ')';
+                $paymentAmount = number_format($paymentAmount, 2);
+
+                /* Returns a string containing the step, period, and end date */
+                if ($paymentStep != null) {
+                    /* Calculate period and relative step */
+                    if ($paymentStep % 7 === 0) {
+                      $period = 'week';
+                      $paymentStep /= 7;
+                    }
+                    else if ($paymentStep % 30 === 0) {
+                      $period = 'month';
+                      $paymentStep /= 30;
+                    }
+                    else if ($paymentStep % 365 === 0) {
+                      $period = 'year';
+                      $paymentStep /= 365;
+                    }
+                    else {
+                      $period = 'day';
+                    }
                     
-                    // /* Calculate period and orginally user inputted step */
-                    // if ($step % 7 === 0) {
-                    //   $period = 'week';
-                    //   $step /= 7;
-                    // }
-                    // else if ($step % 30 === 0) {
-                    //   $period = 'month';
-                    //   $step /= 30;
-                    // }
-                    // else if ($step % 365 === 0) {
-                    //   $period = 'year';
-                    //   $step /= 365;
-                    // }
-                    // else {
-                    //   $period = 'day';
-                    // }
+                    /* Plural/Singular */
+                    if ($paymentStep > 1) $period =  $paymentStep . ' ' . $period . 's';
                     
-                    // /* Plural/Singular */
-                    // if ($step > 1) $period .= 's';
-                    
-                    // $response->recurInfo = "Every $step $period until <end date goes here (value taken from database)>";
-                // }
+                    /* String to return */
+                    $recurInfo = "Every $period until $paymentEndDate";
+                }
+                
+                $dbSuccess = true;
+                $dbMessage = "Payment details retrieved";
             }
-            
+                        
             $db->close();
-        } else {
-            $response->message = $dbFailMessage;
         }
-    } else {
-        $response->message = $dbFailMessage;
     }
-} else {
-    $response->message = $dbFailMessage;
 }
+
+$response = (object)array();
+$response->response = $dbSuccess;
+$response->message = $dbMessage;
+$response->from = $paymentFrom;
+$response->to = $paymentTo;
+$response->amount = $paymentAmount;
+$response->recurInfo = $recurInfo;
 
 /* Return outcome */
 $json = json_encode($response);
