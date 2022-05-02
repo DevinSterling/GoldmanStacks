@@ -11,11 +11,13 @@ checkEmployeeStatus(); // Check if the employee is signed in
 /* SESSION Variables */
 $key = $_SESSION['key'];
 
-/* POST Variables */
+/* GET Variables */
 $searchTerm = $_GET['q'];
 
 /* Variables */
-$searchResults = 99; // For use only when a search is initiated
+/* Variables */
+$requests = array();
+$isSearchFiltered = !empty($searchTerm);
 
 /* CSRF tokens */
 $approveOpenAccountToken = hash_hmac('sha256', '/approveOpenRequest.php', $key);
@@ -28,6 +30,119 @@ if ($db === null) {
     header("Location: ");
     die();
 }
+
+$query = "SELECT userID, requestID, requestDate, accountType, userRole, email, firstName, lastName, phoneNumber FROM users
+            INNER JOIN accountRequests ON userID=clientID";
+
+/* Search Interpreter */
+if ($isSearchFiltered) {
+    $command = explode(":", $_GET['q']);
+    
+    $term = strtolower(preg_replace('/ /', '', $command[0]));
+    $value = trim($command[1]);
+    
+    switch ($term) {
+        case 'date':
+        case 'requestdate':
+            /* Filter by date */
+            $value2 = trim($command[2]);
+            $hasRange = false;
+            
+            $queryExtension = " WHERE requestDate";
+            
+            if (strlen($value2) == 4) {
+                $value2 = date("Y-m-d", strtotime($value2 . '-01-01'));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 year'));
+            } 
+            else if (strlen($value2) == 7) {
+                $value2 = date("Y-m-d", strtotime($value2 . '-01'));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 month'));
+            }
+            else {
+                $value2 = date("Y-m-d", strtotime($value2));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 day'));
+            }
+            
+            /* Determine operator */
+            switch ($value) {
+                case '>':
+                    $queryExtension .= ">?)";
+                    break;
+                case '<':
+                    $queryExtension .= "<?)";
+                    break;
+                case '=':
+                    $hasRange = true;
+                    $queryExtension .= ">=? AND requestDate<?";
+                    break;
+                case '>=':
+                    $queryExtension .= ">=?)";
+                    break;
+                case '<=':
+                    $queryExtension .= "<=?)";
+                    break;
+                default:
+                    $isSearchFiltered = false;
+            }
+            
+            /* Confirm user input passes operator check */
+            if ($isSearchFiltered) {
+                $statement = $db->prepare($query . $queryExtension);
+                
+                if ($hasRange) {
+                    $statement->bind_param("ss", $value2, $value3);
+                }
+                else {
+                    $statement->bind_param("s", $value2);
+                }
+            }
+            
+            break;
+        case 'type':
+        case 'accounttype':
+            /* Filter by username/email */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " WHERE accountType LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        case 'client':
+        case 'username':
+        case 'email':
+            /* Filter by username/email */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " WHERE email LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        case 'firstname':
+        case 'lastname':
+        case 'name':
+            /* Filter by name */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " WHERE firstName LIKE ? OR lastName LIKE ?");
+            $statement->bind_param("ss", $value, $value);
+            
+            break;
+        default:
+            $isSearchFiltered = false;
+    }
+}
+
+if (!$isSearchFiltered) $statement = $db->prepare($query);
+
+$statement->execute();
+$result = $statement->get_result();
+$requests = $result->fetch_all(MYSQLI_ASSOC);
+
+$searchResults = count($requests); // For use only when a search is initiated
+
+$result->free();
+$statement->close();
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -78,8 +193,17 @@ if ($db === null) {
 		        <div class="container split">
     		        <h2 id="title">Manage Open Account Requests</h2>
     		        <?php
-    		        if (!empty($searchTerm)) {
-    		            echo "<p class=\"info\">$searchResults results for <b>$searchTerm</b></p>";
+    		        if ($isSearchFiltered) {
+    		            echo "<a href=\"open\" class=\"expand-button transform-button extend-left round shadow\">
+    		                <div class=\"split\">
+    		                    <div class=\"animate-left\">
+                		            <div class=\"toggle-button\">
+                		                <p class=\"info\">Clear</p>
+                		            </div>
+            		            </div>
+    		                    <p class=\"condensed-info\"><p class=\"info\">$searchResults results for <b>$searchTerm</b></p></p>
+    		                </div>
+    		            </a>";
     		        }
     		        ?>
     		    </div>
@@ -95,22 +219,16 @@ if ($db === null) {
                     </thead>
                     <tbody>
 		            <?php
-		            $result = $db->query("SELECT userID, requestID, requestDate, accountType, userRole, email, firstName, lastName, phoneNumber FROM users
-                                            INNER JOIN accountRequests ON userID=clientID");
-		            $users = $result->fetch_all(MYSQLI_ASSOC);
-		            
-	                foreach ($users as $user) {
-	                    echo "<tr id=\"" . $user['requestID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"Request Date\">" . $user['requestDate'] . "</td>
-	                            <td data-label=\"Account Type\">" . ucfirst($user['accountType']) . "</td>
-	                            <td data-label=\"Client\">" . $user['email'] . "</td>
-	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
-	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
-	                            <td class=\"hidden\">". $user['userID'] . "<td>
+	                foreach ($requests as $request) {
+	                    echo "<tr id=\"" . $request['requestID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+	                            <td data-label=\"Request Date\">" . $request['requestDate'] . "</td>
+	                            <td data-label=\"Account Type\">" . ucfirst($request['accountType']) . "</td>
+	                            <td data-label=\"Client\">" . $request['email'] . "</td>
+	                            <td data-label=\"First Name\">" . $request['firstName'] . "</td>
+	                            <td data-label=\"Last Name\">" . $request['lastName'] . "</td>
+	                            <td class=\"hidden\">". $request['userID'] . "<td>
 	                        </tr>";
 	                }
-	                
-	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
