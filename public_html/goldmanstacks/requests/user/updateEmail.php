@@ -15,9 +15,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to update email address";
+$dbMessage = "Failed to update email address";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/updateEmail.php', $_SESSION['key']);
@@ -27,54 +25,31 @@ if (hash_equals($calc, $token)
     && !empty($email)) {
     
     /* Input Validation */
-    $isMatch = filter_var($email, FILTER_VALIDATE_EMAIL);
+    $isMatch = (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
     
     if ($isMatch) {
         /* DB Connection */
         $db = getUpdateConnection();
 
         if ($db !== null) {
-            /* Query to search if email is registered already */
-            $queryEmail = $db->prepare("SELECT email FROM users WHERE email=?");
-            $queryEmail->bind_param("s", $email);
-            $queryEmail->execute();
-            
-            /* Get result and close */
-            $result = $queryEmail->get_result();
-            $queryEmail->close();
-            
-            /* Verify if email is not registered yet */
-            if ($result->num_rows === 0) {
-                /* Prepared Statement */
-                $stmt = $db->prepare("UPDATE users SET email=? WHERE userID=?");
-                $stmt->bind_param("si", $email, $userID);
-                $stmt->execute();
-    
-                /* Check Execution */
-                if ($db->affected_rows === 0) { // If 0, update failed to execute
-                    $dbMessage = $dbFailMessage;
-                }
-                else {
-                    $dbSuccess = true;
-                    $dbMessage = "Email address has been updated";
-                }
-    
-                /* Close Streams */
-                $stmt->close();
-                $db->close();
+            /* Prepared Statement */
+            $updateStatement = $db->prepare("UPDATE users SET email=? WHERE userID=?");
+            $updateStatement->bind_param("si", $email, $userID);
+            $updateStatement->execute();
+
+            /* Check Execution */
+            if ($db->affected_rows > 0) {
+                $dbSuccess = true;
+                $dbMessage = "Email address has been updated";
             } else {
                 $dbMessage = "Provided email is registered already";
             }
-            
-            $result->free();
-        } else {
-            $dbMessage = $dbFailMessage;
+
+            /* Close Streams */
+            $updateStatement->close();
+            $db->close();
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
 
 /* Return Outcome */
