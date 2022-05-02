@@ -29,52 +29,47 @@ if (hash_equals($calc, $token)
     
     if ($db !== null) {
         /* Verify Current Password */
-        $query = $db->prepare("SELECT userRole, password, IFNULL((
+        $query = $db->prepare("SELECT userID, userRole, password, IFNULL((
                                     SELECT verified FROM client WHERE clientID=userID
                                 ), 1) AS isVerified 
-                                FROM users WHERE userID=?");
+                                FROM users WHERE email=?");
         $query->bind_param("s", $username);
         $query->execute();
-        $result = $query->get_result();
+        $query->store_result();
+        $query->bind_result($userID, $userRole, $hashedPassword, $isVerified);
+        $query->fetch();
+        $query->close();
         
-        /* Check if user exists */
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
+        /* Check if user exists and if passwords match */
+        if ($isVerified && password_verify($password, $hashedPassword)) {
+            session_regenerate_id(true);
             
-            /* Compare passwords */
-            if (password_verify($password, $user['password'])) {
-                session_regenerate_id(true);
-                
-                $_SESSION['uid'] = $user['userID']; // Set User Id for Session
-                $_SESSION['role'] = $user['userRole']; // Set User Role for Session
-                $_SESSION['key'] = bin2hex(random_bytes(32)); // Create Session Key for CSRF tokens
-                
-                $_SESSION['last_activity'] = time(); // Set active time (used for inactivity detection)
-                $_SESSION['expiry_time'] = 10 * 60; // Time till timeout (10 minutes)
-                
-                /* Get current last sign in */
-                $selectLastSignIn = $db->prepare("SELECT lastSignin FROM users WHERE userID=?");
-                $selectLastSignIn->bind_param("i", $user['userID']);
-                $selectLastSignIn->execute();
-                $selectLastSignIn->store_result();
-                $selectLastSignIn->bind_result($_SESSION['lastSignin']);
-                $selectLastSignIn->fetch();
-                $selectLastSignIn->close();
-                
-                /* Update last sign in information for current user */
-                $updateLastSignIn = $db->prepare("UPDATE users SET lastSignin=CURRENT_TIMESTAMP() WHERE userID=?");
-                $updateLastSignIn->bind_param("i", $user['userID']);
-                $updateLastSignIn->execute();
-                $updateLastSignIn->close();
-                
-                $dbSuccess = true;
-                $dbMessage = "Sign In Verified";
-            }
+            $_SESSION['uid'] = $userID; // Set User Id for Session
+            $_SESSION['role'] = $userRole; // Set User Role for Session
+            $_SESSION['key'] = bin2hex(random_bytes(32)); // Create Session Key for CSRF tokens
+            
+            $_SESSION['last_activity'] = time(); // Set active time (used for inactivity detection)
+            $_SESSION['expiry_time'] = 10 * 60; // Time till timeout (10 minutes)
+            
+            /* Get current last sign in */
+            $selectLastSignIn = $db->prepare("SELECT lastSignin FROM users WHERE userID=?");
+            $selectLastSignIn->bind_param("i", $userID);
+            $selectLastSignIn->execute();
+            $selectLastSignIn->store_result();
+            $selectLastSignIn->bind_result($_SESSION['lastSignin']);
+            $selectLastSignIn->fetch();
+            $selectLastSignIn->close();
+            
+            /* Update last sign in information for current user */
+            $updateLastSignIn = $db->prepare("UPDATE users SET lastSignin=CURRENT_TIMESTAMP() WHERE userID=?");
+            $updateLastSignIn->bind_param("i", $userID);
+            $updateLastSignIn->execute();
+            $updateLastSignIn->close();
+            
+            $dbSuccess = true;
+            $dbMessage = "Sign In Verified";
         }
         
-        /* Close Streams */
-        $result->free();
-        $query->close();
         $db->close();
     } else {
         $dbMessage = "Cannot connect to service";
