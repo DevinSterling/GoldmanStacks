@@ -45,22 +45,14 @@ if (hash_equals($calc, $token)
             $queryBalance->bind_result($balance);
             $queryBalance->fetch();
 
-            if ($queryBalance->num_rows === 1) {
+            if ($queryBalance->num_rows > 0) {
                 $dbSuccess = true;
                 $dbMessage = number_format($balance, 2);
-            } else {
-                $dbMessage = $dbFailMessage;
             }
             
             $queryBalance->close();
-        } else {
-            $dbMessage = $dbFailMessage;
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    $dbMessage = $dbFailMessage;
 }
 
 /* Return Outcome */
