@@ -49,6 +49,21 @@ if (hash_equals($calc, $token)
                 $_SESSION['last_activity'] = time(); // Set active time (used for inactivity detection)
                 $_SESSION['expiry_time'] = 10 * 60; // Time till timeout (10 minutes)
                 
+                /* Get current last sign in */
+                $selectLastSignIn = $db->prepare("SELECT lastSignin FROM users WHERE userID=?");
+                $selectLastSignIn->bind_param("i", $user['userID']);
+                $selectLastSignIn->execute();
+                $selectLastSignIn->store_result();
+                $selectLastSignIn->bind_result($_SESSION['lastSignin']);
+                $selectLastSignIn->fetch();
+                $selectLastSignIn->close();
+                
+                /* Update last sign in information for current user */
+                $updateLastSignIn = $db->prepare("UPDATE users SET lastSignin=CURRENT_TIMESTAMP() WHERE userID=?");
+                $updateLastSignIn->bind_param("i", $user['userID']);
+                $updateLastSignIn->execute();
+                $updateLastSignIn->close();
+                
                 $dbSuccess = true;
                 $dbMessage = "Sign In Verified";
             }
@@ -61,6 +76,8 @@ if (hash_equals($calc, $token)
     } else {
         $dbMessage = "Cannot connect to service";
     }
+} else {
+    header("Location: signout.php");
 }
 
 /* Return Outcome */
