@@ -8,14 +8,26 @@ forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkEmployeeStatus(); // Check if the employee is signed in
 
-$lastLog = date("F j, Y, g:i a"); // Last time of log
+/* SESSION Variable */
+$userID = $_SESSION['uid'];
 
+/* Database connection */
 $db = getUpdateConnection();
 
 if ($db === null) {
     header("Location: ");
     die();
 }
+
+/* Retrieve User Details */
+$selectStatement = $db->prepare("SELECT firstName, middleName, lastName, lastSignin FROM users WHERE userID=?");
+$selectStatement->bind_param("i", $userID);
+$selectStatement->execute();
+$selectStatement->store_result();
+
+$selectStatement->bind_result($firstName, $middleName, $lastName, $lastSignin);
+$selectStatement->fetch();
+$selectStatement->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -42,10 +54,6 @@ if ($db === null) {
 				<li class="menulogo"><a href="manager">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="manager">Manage</a></li>
-				<div class="search-bar">
-    				<input type="text" placeholder="Search" class="nav-search-bar">
-    				<button type="submit" class="nav-search-button"><i class="fas fa-search"></i></button>
-				</div>
 			</ul>
 			<ul class="menugroup">
 				<li class="menuitem"><a href="staff/options">Options</a></li>
@@ -187,11 +195,9 @@ if ($db === null) {
         		    </div>
         		    <hr>
         		    <p class="banner-text">Name</p>
-        		    <p class="info">Test Name Last</p>
+        		    <p class="info"><?php echo $firstName . ' ' . $middleName . ' ' . $lastName ?></p>
         		    <p class="banner-text">Last Sign In</p>
-        		    <p class="info"><?php echo $lastLog ?></p>
-        		    <p class="banner-text">Last Logged</p>
-        		    <p class="info"><?php echo $lastLog ?></p>
+        		    <p class="info"><?php echo $lastSignin ?></p>
         		    <hr>
         		    <p class="banner-text">Server Uptime</p>
         		    <p class="info"><?php echo ucfirst(shell_exec('uptime -p')) ?></p>
@@ -212,11 +218,6 @@ if ($db === null) {
     		        ?>
     		        </p>
     		        <hr>
-        		    <p class="banner-text">Currently Logged Admins</p>
-        		    <p class="info">0</p>
-        		    <p class="banner-text">Currently Logged Clients</p>
-        		    <p class="info">0</p>
-        		    <hr>
     		        <a href="staff/options" class="highlight-button transform-button split round">
                         <div class="list">
                             <p>Options</p>
