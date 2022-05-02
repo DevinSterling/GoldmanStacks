@@ -35,9 +35,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to register account";
+$dbMessage = "Failed to register account";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/authenticateRegistration.php', $_SESSION['key']);
@@ -128,8 +126,6 @@ if (hash_equals($calc, $token) // Check token
                     if ($db->affected_rows > 0) {
                         $dbSuccess = true;
                         $dbMessage = "Account has been registered";
-                    } else {
-                        $dbMessage = $db->error;
                     }
                   
                     $insertAddress->close();
@@ -144,14 +140,8 @@ if (hash_equals($calc, $token) // Check token
             $result->free();
             $queryEmail->close();
             $db->close();
-        } else {
-            $dbMessage = $dbFailMessage;
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
 
 /* Return Outcome */
