@@ -600,7 +600,7 @@ $currentAccountStatement->close();
                             document.getElementById('title-account-name').textContent = formData.get('new');
                             document.getElementById('choose-account').selectedOptions[0].text = formData.get('new') + ' ' + document.getElementById('title-account-type').textContent + '';
                             document.getElementById('current-account-name').value = formData.get('new');
-                            history.pushState(null, '', '<? echo getHomeDirectory() /* TEMP */?>/goldmanstacks/view/account/details?acc=' + formData.get('new'));  
+                            history.replaceState(null, '', '<? echo getHomeDirectory() /* TEMP */?>/goldmanstacks/view/account/details?acc=' + formData.get('new'));  
         	            } else {
         	                setFailNotification(json.message);
         	            }
