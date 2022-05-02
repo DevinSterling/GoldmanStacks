@@ -16,9 +16,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Invalid Username or Password";
+$dbMessage = "Invalid Username or Password";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/authenticateSignin.php', $_SESSION['key']);
@@ -53,11 +51,7 @@ if (hash_equals($calc, $token)
                 
                 $dbSuccess = true;
                 $dbMessage = "Sign In Verified";
-            } else {
-                $dbMessage = $dbFailMessage;
             }
-        } else {
-            $dbMessage = $dbFailMessage;
         }
         
         /* Close Streams */
@@ -67,8 +61,6 @@ if (hash_equals($calc, $token)
     } else {
         $dbMessage = "Cannot connect to service";
     }
-} else {
-    $dbMessage = "$calc\n\n\n$token";
 }
 
 /* Return Outcome */
