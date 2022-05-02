@@ -10,11 +10,12 @@ checkEmployeeStatus(); // Check if the employee is signed in
 /* SESSION Variables */
 $key = $_SESSION['key'];
 
-/* POST Variables */
-$searchTerm = $_POST['q'];
+/* GET Variables */
+$searchTerm = $_GET['q'];
 
 /* Variables */
-$searchResults = 99; // For use only when a search is initiated
+$users = array();
+$isSearchFiltered = !empty($searchTerm);
 
 /* CSRF tokens */
 $removeUserToken = hash_hmac('sha256', '/removeUser.php', $key);
@@ -26,6 +27,110 @@ if ($db === null) {
     header("Location: ");
     die();
 }
+
+/* Get results */
+$query = "SELECT userID, userRole, email, firstName, lastName, (
+        SELECT IFNULL(SUM(balance), 0) 
+            FROM accountDirectory 
+            WHERE clientID=userID
+        ) AS balance 
+        FROM users";
+                    
+/* Search Interpreter */
+if ($isSearchFiltered) {
+    $command = explode(":", $_GET['q']);
+    
+    $term = strtolower(preg_replace('/ /', '', $command[0]));
+    $value = trim($command[1]);
+    
+    switch ($term) {
+        case 'user':
+        case 'type':
+            /* Filter by user role */
+            $value = "%$value%";
+            
+            $statement = $db->prepare($query . " WHERE userRole LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        case 'username':
+        case 'email':
+            /* Filter by username/email */
+            $value = "%$value%";
+            
+            $statement = $db->prepare($query . " WHERE email LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        case 'firstname':
+        case 'lastname':
+        case 'name':
+            /* Filter by name */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " WHERE firstName LIKE ? OR lastName LIKE ?");
+            $statement->bind_param("ss", $value, $value);
+            
+            break;
+        case 'balance':
+            /* Filter by balance */
+            $value2 = trim(preg_replace('/,/', '', $command[2]));
+            
+            $queryExtension = " WHERE (
+                                    SELECT IFNULL(SUM(balance), 0) 
+                                    FROM accountDirectory 
+                                    WHERE clientID=userID
+                                )";
+            
+            if (!is_numeric($value2)) {
+                $isSearchFiltered = false;
+                break;
+            }
+            
+            /* Determine operator */
+            switch ($value) {
+                case '>':
+                    $queryExtension .= ">?";
+                    break;
+                case '<':
+                    $queryExtension .= "<?";
+                    break;
+                case '=':
+                    $queryExtension .= "=?";
+                    break;
+                case '>=':
+                    $queryExtension .= ">=?";
+                    break;
+                case '<=':
+                    $queryExtension .= "<=?";
+                    break;
+                default:
+                    $isSearchFiltered = false;
+            }
+            
+            /* Confirm user input passes operator check */
+            if ($isSearchFiltered) {
+                $statement = $db->prepare($query . $queryExtension);
+                $statement->bind_param("d", $value2);
+            }
+            
+            break;
+        default:
+            $isSearchFiltered = false;
+    }
+}
+
+if (!$isSearchFiltered) $statement = $db->prepare($query);
+
+$statement->execute();
+$result = $statement->get_result();
+$users = $result->fetch_all(MYSQLI_ASSOC);
+
+$searchResults = count($users); // For use only when a search is initiated
+
+$result->free();
+$statement->close();
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -76,8 +181,17 @@ if ($db === null) {
 		        <div class="container split">
     		        <h2 id="title">Manage Userbase</h2>
     		        <?php
-    		        if (!empty($searchTerm)) {
-    		            echo "<p class=\"info\">$searchResults results for <b>$searchTerm</b></p>";
+    		        if ($isSearchFiltered) {
+    		            echo "<a href=\"user\" class=\"expand-button transform-button extend-left round shadow\">
+    		                <div class=\"split\">
+    		                    <div class=\"animate-left\">
+                		            <div class=\"toggle-button\">
+                		                <p class=\"info\">Clear</p>
+                		            </div>
+            		            </div>
+    		                    <p class=\"condensed-info\"><p class=\"info\">$searchResults results for <b>$searchTerm</b></p></p>
+    		                </div>
+    		            </a>";
     		        }
     		        ?>
     		    </div>
@@ -93,14 +207,6 @@ if ($db === null) {
                     </thead>
                     <tbody>
 		            <?php
-		            $result = $db->query("SELECT userID, userRole, email, firstName, lastName, (
-                        		            SELECT SUM(balance) 
-                        		            FROM accountDirectory 
-                        		            WHERE clientID=userID
-                                        ) AS balance 
-                                        FROM users;");
-		            $users = $result->fetch_all(MYSQLI_ASSOC);
-		            
 	                foreach ($users as $user) {
 	                    echo "<tr id=\"" . $user['userID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
 	                            <td data-label=\"User Type\">" . ucfirst($user['userRole']) . "</td>
@@ -110,8 +216,6 @@ if ($db === null) {
 	                            <td data-label=\"Balance\">" . ($user['userRole'] === 'client' ? '$' . number_format($user['balance'], 2) : '...') . "</td>
 	                        </tr>";
 	                }
-	                
-	                $db->close();
 		            ?>
 		            </tbody>
 	            </table>
