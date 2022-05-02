@@ -19,8 +19,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-$dbFailMessage = "Failed to process transaction";
+$dbMessage = "Failed to process transaction";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/newInternalTransfer.php', $_SESSION['key']);
@@ -76,25 +75,15 @@ if (hash_equals($calc, $token)
                     if ($db->affected_rows > 0) {
                         $dbSuccess = true;
                         $dbMessage = "Transferred $" . $amount . " to (*" . substr($receiver, -4) . ")";
-                    } else {
-                        $dbMessage = $dbFailMessage;
                     }
     
                     $insertTransaction->close();
-                } else {
-                    $dbMessage = $dbFailMessage;
                 }
-            } else {
-                $dbMessage = $dbFailMessage;
             }
 
             $db->close();
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    $dbMessage = $dbFailMessage;
 }
 
 /* Return Outcome */
