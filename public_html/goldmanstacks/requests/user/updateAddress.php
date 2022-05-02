@@ -20,9 +20,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to update address";
+$dbMessage = "Failed to update address";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
@@ -39,7 +37,7 @@ if (hash_equals($calc, $token)
        
     if (!empty($addressLine2)) $isMatch &= preg_match('/^[A-z0-9#, ]+$/', $addressLine2);
     else $addressLine2 = NULL;
-    
+
     if ($isMatch) {
         /* DB Connection */
         $db = getUpdateConnection();
@@ -51,10 +49,7 @@ if (hash_equals($calc, $token)
             $stmt->execute();
 
             /* Check Execution */
-            if ($db->affected_rows === 0) { // If 0, update failed to execute
-                $dbMessage = $dbFailMessage;
-            }
-            else {
+            if ($db->affected_rows > 0) {
                 $dbSuccess = true;
                 $dbMessage = "Address Has Been Updated";
             }
@@ -62,14 +57,8 @@ if (hash_equals($calc, $token)
             /* Close Streams */
             $stmt->close();
             $db->close();
-        } else {
-            $dbMessage = $dbFailMessage;
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
 
 /* Return Outcome */
