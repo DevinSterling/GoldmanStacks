@@ -333,7 +333,7 @@ $db->close();
                     <p class="info">Confirmation will <b>remove</b> the above user</p>
                     <button id="confirm-removal" type="button" class="standard-button transform-button flex-center round">
                         <div class="split">
-                            <p class="animate-left">Confirm Approval<p>
+                            <p class="animate-left">Confirm Removal<p>
            		            <div class="toggle-button">
             		            <i class="fas fa-chevron-right"></i>
             		        </div>
