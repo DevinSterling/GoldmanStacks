@@ -174,10 +174,10 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         		setFailNotification("Passwords Do Not Match");
     	        showNotification();
     	        
-    	        return false;
+    	        return true;
             }
             
-            return true;
+            return false;
         }
         
         function checkAge() {
@@ -186,10 +186,10 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
         		setFailNotification("Age requirement not met");
     	        showNotification();
     	        
-    	        return false;
+    	        return true;
             }
             
-            return true;
+            return false;
         }
         
         function handleForm(event) {
@@ -204,9 +204,11 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
 	        method: 'POST',
             });
 		
-            if (checkAge()) passwordField.focus();
-            else if (checkPasswords()) ageField.focus();
-            else {
+            if (checkAge()) {
+                ageField.focus();
+            } else if (checkPasswords()) {
+                passwordField.focus();
+            } else {
     	        fetch(request)
     	            .then((response) => response.json())
     	            .then((data) => {
@@ -224,4 +226,4 @@ $registrationToken = hash_hmac('sha256', '/authenticateRegistration.php', $_SESS
     	    }    
         }
     </script>
-</html>
+</html>=
