@@ -16,9 +16,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to update nickname";
+$dbMessage = "Failed to update nickname";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/updateAccountNickname.php', $_SESSION['key']); 
@@ -43,20 +41,12 @@ if (hash_equals($calc, $token)
             if ($db->affected_rows > 0) {
                 $dbSuccess = true;
                 $dbMessage = "Nickname has been updated";
-            } else {
-                $dbMessage = $dbFailMessage;
             }
             
             $updateNickName->close();
             $db->close();
-        } else {
-            $dbMessage = $dbFailMessage;
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
     
 $object = (object)array();
