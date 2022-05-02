@@ -14,6 +14,12 @@ $userID = $_SESSION['uid'];
 /* GET Variables */
 $user = $_GET['id'];
 
+/* Create CSRF tokens */
+$passwordToken = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
+$addressToken = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
+$phoneNumberToken = hash_hmac('sha256', '/updatePhoneNumber.php', $_SESSION['key']);
+$emailToken = hash_hmac('sha256', '/updateEmail.php', $_SESSION['key']);
+
 /* Database Connection */
 $db = getUpdateConnection();
 
@@ -22,7 +28,7 @@ if ($db === null) {
 }
 
 /* Query */
-$queryUser = $db->prepare("SELECT U.userID, userRole, firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode FROM users U INNER JOIN address A ON U.userID=A.userID WHERE U.userID=?");
+$queryUser = $db->prepare("SELECT userRole, firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode FROM users U INNER JOIN address A ON U.userID=A.userID WHERE U.userID=?");
 $queryUser->bind_param("i", $user);
 $queryUser->execute();
 
@@ -35,8 +41,8 @@ $resultUser->free();
 $queryUser->close();
 $db->close(); 
 
-/* Determine if the user is a client */
-$isClient = $userInfo['userRole'] === 'client';
+$isClient = $userInfo['userRole'] === 'client'; // Determine if the user is a client
+$isNotOwnAccount = $userID !== $user; // Determine if the account is not the current signed in account
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -71,6 +77,14 @@ $isClient = $userInfo['userRole'] === 'client';
 		</nav>
 		<div class="sys-notification">Logged as Employee</div>
 		<?php notification(); ?>
+        <button id="notification" onClick="hideNotification()" class="notification sub success transform-button round collapse">
+            <p><i id="notification-icon" class="fas fa-check icon"></i><span id="notification-text"></span></p>
+            <div class="split">
+   	            <div class="toggle-button">
+		            <i class="fas fa-times"></i>
+		        </div>
+            </div>
+        </button>
     	<div class="container flex-center">
             <div class="list mini">
                 <a href="user?id=<?php echo $user ?>" class="tab-button transform-button round selected" data-id="overview" data-title="User ... Overview">
@@ -157,7 +171,7 @@ $isClient = $userInfo['userRole'] === 'client';
                         </div>
     		        </button>';
 		        
-		        if ($userID != $userInfo['userID']) 
+		        if ($isNotOwnAccount) 
     		        echo '<hr class="margin-bottom">
                         <button class="tab-button transform-button round" data-id="remove-user" data-title="Remove User">
                             <div class="split">
@@ -193,15 +207,13 @@ $isClient = $userInfo['userRole'] === 'client';
         	    </div>
         	    <?php
         	    if ($isClient)
-        	        echo '<form id="change-password" action="../../requests/user/updatePassword" class="flex-form hidden">
-                    <label for="current-password" class="info">Current Password</label>
-    		        <input id="current-password" type="password" name="old" class="input-field" required>
-    	            <hr>
+        	        echo '<form id="change-password" action="../../../requests/workspace/user/updatePassword" class="flex-form hidden">
     	            <label for="new-password" class="info">New Password</label>
     		        <input id="new-password" type="password" name="new" class="input-field" required>
     	            <label for="confirm-password" class="info">Confirm Password</label>
     		        <input id="confirm-password" type="password" name="confirm" class="input-field" required>
                     <input type="hidden" name="token" value="' .  $passwordToken . '">
+                    <input type="hidden" name="id" value="' . $user . '">
                     <button form="change-password" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Apply<p>
@@ -211,7 +223,7 @@ $isClient = $userInfo['userRole'] === 'client';
                         </div>
                     </button>
                 </form>
-                <form id="change-address" action="../../requests/user/updateAddress" class="flex-form hidden">
+                <form id="change-address" action="../../../requests/workspace/user/updateAddress" class="flex-form hidden">
                     <label for="address-line-1" class="info">Address Line 1</label>
                     <input id="address-line-1" type="text" name="line1" class="input-field" required>
                     <label for="address-line-2" class="info">Address Line 2</label>
@@ -223,6 +235,7 @@ $isClient = $userInfo['userRole'] === 'client';
                     <label for="address-postal-code" class="info">Postal Code</label>
                     <input id="address-postal-code" type="text" name="code" class="input-field" required>
                     <input type="hidden" name="token" value="' . $addressToken . '">
+                    <input type="hidden" name="id" value="' . $user . '">
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Apply<p>
@@ -232,10 +245,11 @@ $isClient = $userInfo['userRole'] === 'client';
                         </div>
                     </button>
                 </form>
-                <form id="change-phone" action="../../requests/user/updatePhoneNumber" class="flex-form hidden">
+                <form id="change-phone" action="../../../requests/workspace/user/updatePhoneNumber" class="flex-form hidden">
                     <label for="phone-number" class="info">Phone Number</label>
                     <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" required>
                     <input type="hidden" name="token" value="' . $phoneNumberToken . '">
+                    <input type="hidden" name="id" value="' . $user . '">
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Apply<p>
@@ -245,10 +259,11 @@ $isClient = $userInfo['userRole'] === 'client';
                         </div>
                     </button>
                 </form>
-                <form id="change-email" action="../../requests/user/updateEmail" class="flex-form hidden">
+                <form id="change-email" action="../../../requests/workspace/user/updateEmail" class="flex-form hidden">
                     <label for="email-address" class="info">Email Address</label>
                     <input id="email-address" type="email" name="email" class="input-field" required>
                     <input type="hidden" name="token" value="' . $emailToken . '">
+                    <input type="hidden" name="id" value="' . $user . '">
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
                             <p class="animate-left">Apply<p>
@@ -259,12 +274,13 @@ $isClient = $userInfo['userRole'] === 'client';
                     </button>
                 </form>';
                 
-                if ($userID != $userInfo['userID'])
+                if ($isNotOwnAccount)
                     echo '<form id="remove-user" action="" class="flex-form hidden">
                         <p class="info">Upon confirmation this will <b>remove</b> this user account permanently.</p>
                         <p class="info"><b>Current User ID:</b> ' . $user . '</p>
                         <p class="info"><b>Current User Role:</b> ' . ucfirst($userInfo['userRole']) . '</p>
-                        <input type="hidden" name="token" value="' . $emailToken . '">
+                        <input type="hidden" name="token" value="' . $removeUserToken . '">
+                        <input type="hidden" name="id" value="' . $user . '">
                         <button type="submit" class="standard-button transform-button flex-center round">
                             <div class="split">
                                 <p class="animate-left">Remove User<p>
@@ -284,4 +300,63 @@ $isClient = $userInfo['userRole'] === 'client';
 	<script type="text/javascript" src="../../../js/tabs.js"></script>
 	<script type="text/javascript" src="../../../js/post.js"></script>
 	<script type="text/javascript" src="../../../js/notification.js"></script>
+	<script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('change-password').addEventListener('submit', handlePasswordForm);
+            document.getElementById('change-address').addEventListener('submit', handleForm);
+            document.getElementById('change-phone').addEventListener('submit', handleForm);
+            document.getElementById('change-email').addEventListener('submit', handleForm);
+        });
+
+	    function handleForm(event) {
+	        event.preventDefault();
+	        
+	        let form = event.target;
+	        let formData = new FormData(form);
+	        
+	        let url = form.action;
+	        let request = new Request(url, {
+	            body: formData,
+	            method: 'POST',
+	        });
+	        
+            submitForm(request);
+	    }
+	    
+	    function handlePasswordForm(event) {
+	        event.preventDefault();
+	        
+	        let form = event.target;
+	        let formData = new FormData(form);
+	        
+	        let url = form.action;
+	        let request = new Request(url, {
+	            body: formData,
+	            method: 'POST',
+	        });
+	        
+	        if (formData.get('new') === formData.get('confirm')) {
+	            submitForm(request);
+	            form.reset();
+	        } else {
+	            document.getElementById("new-password").focus();
+	            
+	            setFailNotification("Passwords Do Not Match");
+	            showNotification();
+	        }
+	    }
+	    
+	    function submitForm(request) {
+	        fetch(request)
+	            .then((response) => response.json())
+	            .then((data) => {          
+	                if (data.response) setSuccessNotification(data.message);
+	                else setFailNotification(data.message);
+	            })
+	            .catch(console.warn);
+		    
+		showNotification();
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	    }
+	</script>
 </html>
