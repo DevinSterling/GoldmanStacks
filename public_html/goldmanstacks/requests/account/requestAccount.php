@@ -15,11 +15,9 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
+$dbMessage = "Failed to request new account";
 
 $accountTypes = array('checking', 'savings', 'credit');
-
-$dbFailMessage = "Failed to request";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/requestAccount.php', $_SESSION['key']);
@@ -36,42 +34,21 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
         
         if ($db !== null) {
-            /* Check if the account type has been requested by the user already */
-            $queryRequest = $db->prepare("SELECT clientID FROM accountRequests WHERE clientID=? AND accountType=?");
-            $queryRequest->bind_param("is", $userID, $accountType);
-            $queryRequest->execute();
-            
-            /* Get result and close */
-            $result = $queryRequest->get_result();
-            $queryRequest->close();
-            
-            if ($result->num_rows === 0) {
-                /* Insert account request */
-                $insertRequest = $db->prepare("INSERT INTO accountRequests (clientID, accountType) VALUES (?, ?)");
-                $insertRequest->bind_param("is", $userID, $accountType);
-                $insertRequest->execute();
-                
-                /* Check execution */
-                if ($db->affected_rows > 0) {
-                    $dbSuccess = true;
-                    $dbMessage = "Request to open new $accountType account submitted";
-                } else {
-                    $dbMessage = $dbFailMessage;
-                }
-                
-                $insertRequest->close();
-            } else {
-                $dbMessage = "You have already requested an account";
+            /* Insert account request (DB Constraints will prevent duplicates) */
+            $insertRequest = $db->prepare("INSERT INTO accountRequests (clientID, accountType) VALUES (?, ?)");
+            $insertRequest->bind_param("is", $userID, $accountType);
+            $insertRequest->execute();
+
+            /* Check execution */
+            if ($db->affected_rows > 0) {
+                $dbSuccess = true;
+                $dbMessage = "Request to open new $accountType account submitted";
             }
-            
-            $result->free();
+
+            $insertRequest->close();
             $db->close();
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    $dbMessage = $dbFailMessage;
 }
 
 /* Return Outcome */
