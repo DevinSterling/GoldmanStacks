@@ -29,7 +29,10 @@ if (hash_equals($calc, $token)
     
     if ($db !== null) {
         /* Verify Current Password */
-        $query = $db->prepare("SELECT userID, userRole, password FROM users INNER JOIN client ON userID=clientID WHERE email=? AND verified=1");
+        $query = $db->prepare("SELECT userRole, password, IFNULL((
+                                    SELECT verified FROM client WHERE clientID=userID
+                                ), 1) AS isVerified 
+                                FROM users WHERE userID=?");
         $query->bind_param("s", $username);
         $query->execute();
         $result = $query->get_result();
