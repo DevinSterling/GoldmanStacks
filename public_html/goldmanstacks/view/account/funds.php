@@ -310,13 +310,9 @@ $db->close();
             let verified = false;
             
 	        if (form.id === 'deposit-form') {
-	            if (Number(formData.get('amount')) > Number(depositBalance.textContent.replace(',', ''))) {
-	                setFailNotification("Requested amount is over the current balance");
-	            } else {
-	                transactionType.textContent = 'Deposit';
-                    transactionAccount.textContent = depositAccount.selectedOptions[0].text;
-                    verified = true;
-	            }
+                transactionType.textContent = 'Deposit';
+                transactionAccount.textContent = depositAccount.selectedOptions[0].text;
+                verified = true;
 	        } else {
                 if (Number(formData.get('amount')) > Number(withdrawBalance.textContent.replace(',', ''))) {
 	                setFailNotification("Requested amount is over the current balance");
