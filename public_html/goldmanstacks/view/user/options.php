@@ -211,7 +211,7 @@ if ($db === null) {
                 </form>
                 <form id="change-phone" action="../../requests/user/updatePhoneNumber" class="flex-form hidden">
                     <label for="phone-number" class="info">Phone Number</label>
-                    <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" placeholder="635-855-4929" required>
+                    <input id="phone-number" type="text" pattern="^\d{3}[\s.-]?\d{3}[\s.-]?\d{4}$" name="phone" class="input-field" required>
                     <input type="hidden" name="token" value="<?php echo $phoneNumberToken ?>">
                     <button type="submit" class="standard-button transform-button flex-center round">
                         <div class="split">
