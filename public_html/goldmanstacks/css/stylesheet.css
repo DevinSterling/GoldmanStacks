@@ -529,6 +529,7 @@ hr {
     border-width: 1px;
     border-style: solid;
     border-color: #000000;
+    box-shadow: none;
     font-size: 15px;
     font-family: 'Roboto';
     
