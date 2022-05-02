@@ -10,6 +10,7 @@ checkEmployeeStatus(); // Check if the employee is signed in
 
 /* SESSION Variable */
 $userID = $_SESSION['uid'];
+$lastSignin = $_SESSION['lastSignin'];
 
 /* Database connection */
 $db = getUpdateConnection();
@@ -19,13 +20,12 @@ if ($db === null) {
     die();
 }
 
-/* Retrieve User Details */
-$selectStatement = $db->prepare("SELECT firstName, middleName, lastName, lastSignin FROM users WHERE userID=?");
+$selectStatement = $db->prepare("SELECT firstName, middleName, lastName FROM users WHERE userID=?");
 $selectStatement->bind_param("i", $userID);
 $selectStatement->execute();
 $selectStatement->store_result();
 
-$selectStatement->bind_result($firstName, $middleName, $lastName, $lastSignin);
+$selectStatement->bind_result($firstName, $middleName, $lastName);
 $selectStatement->fetch();
 $selectStatement->close();
 ?>
