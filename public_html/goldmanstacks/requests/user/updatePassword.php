@@ -53,7 +53,7 @@ if (hash_equals($calc, $token)
                 $updateStatement->execute();
                 
                 /* Check Execution */
-                if ($db->affected_rows === 0) {
+                if ($db->affected_rows > 0) {
                     $dbSuccess = true;
                     $dbMessage = "Password has been updated";
                 }
