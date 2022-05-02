@@ -353,6 +353,7 @@ $db->close();
 	        }
 	        
 	        showNotification();
+	        hidePopUp();
 	    }
         
 	    async function retrieveBalance(value) {
