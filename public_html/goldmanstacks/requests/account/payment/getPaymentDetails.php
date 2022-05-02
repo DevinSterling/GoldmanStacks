@@ -33,9 +33,7 @@ if (hash_equals($calc, $paymentToken)
         $db = getUpdateConnection();
         
         if ($db !== null) {
-            $paymentStatement = $db->prepare("SELECT A.nickName, A.accountType, P.accountNum, P.recipientAccount, P.recipientNickName, P.amount, P.paymentDate, P.step, P.endDate 
-                                                FROM payments P INNER JOIN accountDirectory A ON P.accountNum=A.accountNum 
-                                                WHERE paymentID=? AND clientID=?");
+            $paymentStatement = $db->prepare("SELECT A.nickName, A.accountType, P.accountNum, P.recipientAccount, P.recipientNickName, P.amount, P.paymentDate, P.step, P.endDate FROM payments P INNER JOIN accountDirectory A ON P.accountNum=A.accountNum WHERE paymentID=? AND clientID=?");
             $paymentStatement->bind_param("si", $paymentId, $userID);
             $paymentStatement->execute();
             $paymentStatement->store_result();
@@ -90,6 +88,7 @@ $response->message = $dbMessage;
 $response->from = $paymentFrom;
 $response->to = $paymentTo;
 $response->amount = $paymentAmount;
+$response->date = $paymentDate;
 $response->recurInfo = $recurInfo;
 
 /* Return outcome */
