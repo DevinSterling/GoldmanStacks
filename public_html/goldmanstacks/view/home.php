@@ -14,6 +14,7 @@ const AMOUNT_OF_TRANSACTIONS = 5; // Number of recent transactions to show
 /* SESSION Variables */
 $userId = $_SESSION['uid'];
 $key = $_SESSION['key'];
+$lastSignin = $_SESSION['lastSignin'];
 
 /* Main Variables */
 $totalBalance = 0.00;
@@ -32,12 +33,12 @@ if ($db === null){
 }
 
 /* Get firstname and last sign in */
-$queryFirstName = $db->prepare("SELECT firstName, lastSignin FROM users WHERE userID=?");
+$queryFirstName = $db->prepare("SELECT firstName FROM users WHERE userID=?");
 $queryFirstName->bind_param("i", $userId);
 $queryFirstName->execute();
 $queryFirstName->store_result();
 
-$queryFirstName->bind_result($firstName, $lastSignin);
+$queryFirstName->bind_result($firstName);
 $queryFirstName->fetch();
 $queryFirstName->close();
 ?>
