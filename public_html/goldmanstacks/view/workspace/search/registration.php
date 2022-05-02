@@ -2,12 +2,11 @@
 require_once('../../../../../private/sysNotification.php');
 require_once('../../../../../private/userbase.php');
 require_once('../../../../../private/config.php');
-require_once('../../../../../private/userbase.php');
 require_once('../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-//checkClientStatus(); // Check if the client is signed in
+checkEmployeeStatus(); // Check if the employee is signed in
 
 /* SESSION Variables */
 $key = $_SESSION['key'];
@@ -16,7 +15,8 @@ $key = $_SESSION['key'];
 $searchTerm = $_GET['q'];
 
 /* Variables */
-$searchResults = 99; // For use only when a search is initiated
+$requests = array();
+$isSearchFiltered = !empty($searchTerm);
 
 /* CSRF tokens */
 $approveRegistrationToken = hash_hmac('sha256', '/approveRegistration.php', $key);
@@ -29,16 +29,133 @@ if ($db === null) {
     header("Location: ");
     die();
 }
+
+/* Get results */
+$query = "SELECT userID, lastSignin, userRole, email, firstName, lastName, phoneNumber FROM users
+            INNER JOIN client ON userID=clientID 
+            WHERE verified=0";
+
+/* Search Interpreter */
+if ($isSearchFiltered) {
+    $command = explode(":", $_GET['q']);
+    
+    $term = strtolower(preg_replace('/ /', '', $command[0]));
+    $value = trim($command[1]);
+    
+    switch ($term) {
+        case 'date':
+        case 'requestdate':
+            /* Filter by date */
+            $value2 = trim($command[2]);
+            $hasRange = false;
+            
+            $queryExtension = " AND (lastSignin";
+            
+            if (strlen($value2) == 4) {
+                $value2 = date("Y-m-d", strtotime($value2 . '-01-01'));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 year'));
+            } 
+            else if (strlen($value2) == 7) {
+                $value2 = date("Y-m-d", strtotime($value2 . '-01'));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 month'));
+            }
+            else {
+                $value2 = date("Y-m-d", strtotime($value2));
+                $value3 = date("Y-m-d", strtotime($value2 . ' +1 day'));
+            }
+            
+            /* Determine operator */
+            switch ($value) {
+                case '>':
+                    $queryExtension .= ">?)";
+                    break;
+                case '<':
+                    $queryExtension .= "<?)";
+                    break;
+                case '=':
+                    $hasRange = true;
+                    $queryExtension .= ">=? AND lastSignin<?)";
+                    break;
+                case '>=':
+                    $queryExtension .= ">=?)";
+                    break;
+                case '<=':
+                    $queryExtension .= "<=?)";
+                    break;
+                default:
+                    $isSearchFiltered = false;
+            }
+            
+            /* Confirm user input passes operator check */
+            if ($isSearchFiltered) {
+                $statement = $db->prepare($query . $queryExtension);
+                
+                if ($hasRange) {
+                    $statement->bind_param("ss", $value2, $value3);
+                }
+                else {
+                    $statement->bind_param("s", $value2);
+                }
+            }
+            
+            break;
+        case 'client':
+        case 'username':
+        case 'email':
+            /* Filter by username/email */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " AND email LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        case 'firstname':
+        case 'lastname':
+        case 'name':
+            /* Filter by name */
+            $value = "%$value%";
+
+            $statement = $db->prepare($query . " AND (firstName LIKE ? OR lastName LIKE ?)");
+            $statement->bind_param("ss", $value, $value);
+            
+            break;
+        case 'phone':
+        case 'phonenumber':
+        case 'number':
+            /* Filter by phone */
+            $value = "%$value%";
+
+            $value = preg_replace('/-/', '', $value);
+            $statement = $db->prepare($query . " AND phoneNumber LIKE ?");
+            $statement->bind_param("s", $value);
+            
+            break;
+        default:
+            $isSearchFiltered = false;
+    }
+}
+
+if (!$isSearchFiltered) $statement = $db->prepare($query);
+
+$statement->execute();
+$result = $statement->get_result();
+$requests = $result->fetch_all(MYSQLI_ASSOC);
+
+$searchResults = count($requests); // For use only when a search is initiated
+
+$result->free();
+$statement->close();
+$db->close();
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
 	<head>
-	<title>Manage Registration Requests</title>
-	<!-- Stylesheet -->
-	<link rel="stylesheet" href="../../../css/stylesheet.css">
-	<!-- Favicon -->
-	<link rel="icon" href="../../../img/logo.ico">
-	<!-- Google Font -->
+    	<title>Manage Registration Requests</title>
+    	<!-- Stylesheet -->
+    	<link rel="stylesheet" href="../../../css/stylesheet.css">
+    	<!-- Favicon -->
+    	<link rel="icon" href="../../../img/logo.ico">
+    	<!-- Google Font -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <!-- Google Font -->
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,11 +193,20 @@ if ($db === null) {
         </button>
 		<div class="container flex-center">
 		    <div class="list main">
-		        <div class="container">
+		        <div class="container split">
     		        <h2 id="title">Manage Registration Requests</h2>
     		        <?php
-    		        if (!empty($searchTerm)) {
-    		            echo "<p class=\"info\">$searchResults results for <b>$searchTerm</b></p>";
+    		        if ($isSearchFiltered) {
+    		            echo "<a href=\"registration\" class=\"expand-button transform-button extend-left round shadow\">
+    		                <div class=\"split\">
+    		                    <div class=\"animate-left\">
+                		            <div class=\"toggle-button\">
+                		                <p class=\"info\">Clear</p>
+                		            </div>
+            		            </div>
+    		                    <p class=\"condensed-info\"><p class=\"info\">$searchResults results for <b>$searchTerm</b></p></p>
+    		                </div>
+    		            </a>";
     		        }
     		        ?>
     		    </div>
@@ -96,22 +222,15 @@ if ($db === null) {
                     </thead>
                     <tbody>
 		            <?php
-		            $result = $db->query("SELECT userID, lastSignin, userRole, email, firstName, lastName, phoneNumber FROM users
-                                            INNER JOIN client ON userID=clientID 
-                                            WHERE verified=0");
-		            $users = $result->fetch_all(MYSQLI_ASSOC);
-		            
-	                foreach ($users as $user) {
-	                    echo "<tr id=\"" . $user['userID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
-	                            <td data-label=\"Request Date\">" . $user['lastSignin'] . "</td>
-	                            <td data-label=\"Username\">" . $user['email'] . "</td>
-	                            <td data-label=\"First Name\">" . $user['firstName'] . "</td>
-	                            <td data-label=\"Last Name\">" . $user['lastName'] . "</td>
-	                            <td data-label=\"Phone\">" . convertToPhoneNumber($user['phoneNumber']) . "</td>
-	                        </tr>";
-	                }
-	                
-	                $db->close();
+    	                foreach ($requests as $request) {
+    	                    echo "<tr id=\"" . $request['userID'] . "\" onClick=\"showPopUp('request-details-popup-content', this)\">
+    	                            <td data-label=\"Request Date\">" . $request['lastSignin'] . "</td>
+    	                            <td data-label=\"Username\">" . $request['email'] . "</td>
+    	                            <td data-label=\"First Name\">" . $request['firstName'] . "</td>
+    	                            <td data-label=\"Last Name\">" . $request['lastName'] . "</td>
+    	                            <td data-label=\"Phone\">" . convertToPhoneNumber($request['phoneNumber']) . "</td>
+    	                        </tr>";
+    	                }
 		            ?>
 		            </tbody>
 	            </table>
