@@ -27,7 +27,7 @@ $calc = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && checkNotEmpty(addressLine1, addressCity, addressState, addressPostalCode)) { // if true, non-empty parameters given
+    && checkNotEmpty($addressLine1, $addressCity, $addressState, $addressPostalCode)) { // if true, non-empty parameters given
     
     /* Input Validation */
     $isMatch = preg_match('/^\d+ [A-z ]+.?$/', $addressLine1);
