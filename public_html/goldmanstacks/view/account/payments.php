@@ -364,7 +364,7 @@ if (!$isReferenced && !empty($referencedName)) {
                     <p id="payment-sender"></p>
                     <p class="info">Receiver</p>
                     <p id="payment-receiver"></p>
-                    <p class="info">Date</p>
+                    <p class="info">Payment Date</p>
                     <p id="payment-date"></p>
                     <p class="info">Amount</p>
                     <p id="payment-amount"></p>
