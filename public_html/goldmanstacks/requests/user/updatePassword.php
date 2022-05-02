@@ -18,9 +18,7 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to update password";
+$dbMessage = "Failed to update password";
 
 /* Calculate expected token */
 $calc = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
@@ -35,48 +33,40 @@ if (hash_equals($calc, $token)
     
     if ($db !== null) {
         /* Verify Current Password */
-        $query = $db->prepare("SELECT password FROM users WHERE userID=?");
-        $query->bind_param("i", $userID);
-        $query->execute();
-        $result = $query->get_result();
+        $selectStatement = $db->prepare("SELECT password FROM users WHERE userID=?");
+        $selectStatement->bind_param("i", $userID);
+        $selectStatement->execute();
+        $result = $selectStatement->get_result();
+        $selectStatement->close();
         
         if ($result->num_rows > 0) {
             $password = $result->fetch_assoc();
+            
+            /* Verify passwords before updating */
             if (password_verify($oldPassword, $password['password'])) {
                 /* Encrypt Password */
                 $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 
                 /* Prepared Statement */
-                $stmt = $db->prepare("UPDATE users SET password=? WHERE userID=?");
-                $stmt->bind_param("si", $newPassword, $userID);
-                $stmt->execute();
+                $updateStatement = $db->prepare("UPDATE users SET password=? WHERE userID=?");
+                $updateStatement->bind_param("si", $newPassword, $userID);
+                $updateStatement->execute();
                 
                 /* Check Execution */
-                if ($db->affected_rows === 0) { // If 0, update failed to execute
-                    $dbMessage = $dbFailMessage;
-                } else {
+                if ($db->affected_rows === 0) {
                     $dbSuccess = true;
                     $dbMessage = "Password has been updated";
                 }
                 
                 /* Close Statement */
-                $stmt->close();
-            } else {
-                $dbMessage = $dbFailMessage;
+                $updateStatement->close();
             }
-        } else {
-            $dbMessage = $dbFailMessage;
         }
         
         /* Close Streams */
         $result->free();
-        $query->close();
         $db->close();
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
 
 /* Return Outcome */
