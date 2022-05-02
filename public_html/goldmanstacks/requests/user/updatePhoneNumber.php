@@ -15,12 +15,11 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "";
-
-$dbFailMessage = "Failed to update phone number";
+$dbMessage = "Failed to update phone number";
 
 /* Confirm token and parameters */
 $calc = hash_hmac('sha256', '/updatePhoneNumber.php', $_SESSION['key']);
+
 if (hash_equals($calc, $token)
     && !empty($phoneNumber)) { // if true, non-empty parameter given
     
@@ -33,47 +32,24 @@ if (hash_equals($calc, $token)
         $db = getUpdateConnection();
 
         if ($db !== null) {
-            /* Query to search if phone number is registered already */
-            $queryPhoneNumber = $db->prepare("SELECT phoneNumber FROM users WHERE phoneNumber=?");
-            $queryPhoneNumber->bind_param("s", $phoneNumber);
-            $queryPhoneNumber->execute();
-            
-            /* Get result and close */
-            $result = $queryPhoneNumber->get_result();
-            $queryPhoneNumber->close();
-            
-            /* Verify if phone number is not registered yet */
-            if ($result->num_rows === 0) {
-                /* Prepared Statement */
-                $stmt = $db->prepare("UPDATE users SET phoneNumber=? WHERE userID=?");
-                $stmt->bind_param("si", $phoneNumber, $userID);
-                $stmt->execute();
-    
-                /* Check Execution */
-                if ($db->affected_rows === 0) { // If 0, update failed to execute
-                    $dbMessage = $dbFailMessage;
-                }
-                else {
-                    $dbSuccess = true;
-                    $dbMessage = "Phone number has been updated";
-                }
-    
-                /* Close Streams */
-                $stmt->close();
-                $db->close();
+            /* Prepared Statement */
+            $updateStatement = $db->prepare("UPDATE users SET phoneNumber=? WHERE userID=?");
+            $updateStatement->bind_param("si", $phoneNumber, $userID);
+            $updateStatement->execute();
+
+            /* Check Execution */
+            if ($db->affected_rows > 0) {
+                $dbSuccess = true;
+                $dbMessage = "Phone number has been updated";
             } else {
                 $dbMessage = "Provided phone number is registered already";
             }
-            
-            $result->free();
-        } else {
-            $dbMessage = $dbFailMessage;
+
+            /* Close Streams */
+            $stmt->close();
+            $db->close();
         }
-    } else {
-        $dbMessage = $dbFailMessage;
     }
-} else {
-    die();
 }
 
 /* Return Outcome */
