@@ -389,7 +389,8 @@ if (!$isReferenced && !empty($referencedName)) {
 	<script type="text/javascript" src="../../js/post.js"></script>
 	<script type="text/javascript" src="../../js/notification.js"></script>
 	<script type="text/javascript">
-	    /* Payment Buttons */
+	    /* Current Payment Content */
+	    const currentPayments = document.getElementById('current-payments');
 	    const paymentButtons = document.querySelectorAll(".view-payment-button");
 	
 	    /* PopUp Buttons */
@@ -733,30 +734,40 @@ if (!$isReferenced && !empty($referencedName)) {
         }
         
         function createNewPaymentElement(id) {
+            let holder = Object.assign(document.createElement('div'), {
+                id: id,
+                innerHTML: `${document.getElementById('no-payments') === null ? '<hr>' : ''}`
+            });
+            let button = Object.assign(document.createElement('button'), {
+                className: 'view-payment-button highlight-button transform-button split round',
+                innerHTML: `<div class="list-padded text-left">
+                            <h3 class="bold">Payment to ${formData.get('name') === '' ? '(*' + formData.get('to').substr(formData.get('to').length - 4) + ')' : formData.get('name')}</h3>
+                            <p>From ${confirmSender.textContent}<p>
+                        </div>
+                        <div class="split animate-left">
+                            <div class="list-padded text-right">
+                                <h3>${confirmAmount.textContent}</h3>
+                                <p>${formData.get('step') === null ? 'One-time Payment' : 'Recurring Payment'}</p>
+                            </div>
+           		            <div class="toggle-button">
+            		            <i class="fas fa-chevron-right"></i>
+            		        </div>
+                        </div>`
+            });
+            
+            /* Append */
+            holder.appendChild(button);
+            currentPayments.appendChild(holder);
+            
             /* Check if no payments message is shown */
             if (document.getElementById('no-payments') !== null) {
                 document.getElementById('no-payments').remove();
-            } else {
-                document.getElementById('current-payments').innerHTML += '<hr>';
             }
             
-            /* Create new button for payment */
-            document.getElementById('current-payments').innerHTML += `
-                <button type="button" onClick="showPaymentDetails('${id}')" class="highlight-button transform-button split round">
-                    <div class="list-padded text-left">
-                        <h3 class="bold">Payment to ${formData.get('name') === '' ? '(*' + formData.get('to').substr(formData.get('to').length - 4) + ')' : formData.get('name')}</h3>
-                        <p>From ${confirmSender.textContent}<p>
-                    </div>
-                    <div class="split animate-left">
-                        <div class="list-padded text-right">
-                            <h3>${confirmAmount.textContent}</h3>
-                            <p>${formData.get('step') === '' ? 'One-time Payment' : 'Recurring Payment'}</p>
-                        </div>
-       		            <div class="toggle-button">
-        		            <i class="fas fa-chevron-right"></i>
-        		        </div>
-                    </div>
-                </button>`;
+            /* Create event listener */
+	        button.addEventListener('click', () => {
+	            showPaymentDetails(button.parentElement.id);
+	        });
         }
 	</script>
 </html>
