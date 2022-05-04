@@ -138,7 +138,6 @@ if (hash_equals($calc, $token) // Check token
 
             /* Close Streams */
             $result->free();
-            $queryEmail->close();
             $db->close();
         }
     }
