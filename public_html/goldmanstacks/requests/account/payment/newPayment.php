@@ -57,8 +57,6 @@ if (hash_equals($calc, $token)
     
     /* Validate option user input for recurring payments */ 
     if (checkNotEmpty($step, $period, $endDate)) {
-        $isRecurring = true; // True if the user has given input to make the payment recurring
-        
         $isMatch &= (is_numeric($step) && $step >= 1 && $step <= 55)
             && in_array($period, $periods)
             && $endDate;
@@ -66,21 +64,27 @@ if (hash_equals($calc, $token)
         /* Validate logic */
         $isMatch &= $endDate > $date; // Compare and confirm that the end date is in the future
         
-        /* Conversion */
-        $endDate = date("Y-m-d", $endDate); // Convert $endDate to SQL compatible DATE variable
-        
-        /* Step is converted into the amount of days till the next payment */
-        switch ($period) {
-            case 'week':
-                $step *= 7;
-                break;
-            case 'month':
-                $step *= 30;
-                break;
-            case 'year': 
-                $steps *= 365;
+        if ($isMatch) {
+            $isRecurring = true; // True if the user has given input to make the payment recurring
+            
+            /* Conversion */
+            $endDate = date("Y-m-d", $endDate); // Convert $endDate to SQL compatible DATE variable
+            
+            /* Step is converted into the amount of days till the next payment */
+            switch ($period) {
+                case 'week':
+                    $step *= 7;
+                    break;
+                case 'month':
+                    $step *= 30;
+                    break;
+                case 'year': 
+                    $steps *= 365;
+            }
         }
-    } else {
+    }
+    
+    if (!$isRecurring) {
         $step = null;
         $endDate = null;
     }
