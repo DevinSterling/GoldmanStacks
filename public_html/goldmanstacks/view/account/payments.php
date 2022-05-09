@@ -241,7 +241,7 @@ if (!$isReferenced && !empty($referencedName)) {
                                 echo " selected";
                             }
                            
-                            echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                            echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ") (*" . substr($account['number'], -4) . ")" . "</option>";
                         }
                         ?>
 		            </select>
