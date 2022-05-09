@@ -252,7 +252,7 @@ $queryFirstName->close();
         		            <select id="PayFrom" name="from" class="input-field" required>
                                 <?php
     							foreach ($accounts as $account) {
-    								echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . $account['nickName'] . " (" . ucfirst($account['type']) . ")</option>";
+    								echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . $account['nickName'] . " (" . ucfirst($account['type']) . ") (*" . substr($account['number'], -4) .")</option>";
     							}
                                 ?>
         		            </select>
