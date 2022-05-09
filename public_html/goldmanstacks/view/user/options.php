@@ -9,12 +9,13 @@ session_start(); // Start Session
 checkClientStatus(); // Check if the client is signed in
 
 $userID = $_SESSION['uid'];
+$key = $_SESSION['key'];
 
 /* Create CSRF tokens */
-$passwordToken = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
-$addressToken = hash_hmac('sha256', '/updateAddress.php', $_SESSION['key']);
-$phoneNumberToken = hash_hmac('sha256', '/updatePhoneNumber.php', $_SESSION['key']);
-$emailToken = hash_hmac('sha256', '/updateEmail.php', $_SESSION['key']);
+$passwordToken = hash_hmac('sha256', '/updatePassword.php', $key);
+$addressToken = hash_hmac('sha256', '/updateAddress.php', $key);
+$phoneNumberToken = hash_hmac('sha256', '/updatePhoneNumber.php', $key);
+$emailToken = hash_hmac('sha256', '/updateEmail.php', $key);
 
 /* DB Connection */
 $db = getUpdateConnection(); // Query
