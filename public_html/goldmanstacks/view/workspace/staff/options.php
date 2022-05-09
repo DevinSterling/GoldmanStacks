@@ -1,13 +1,26 @@
 <?php
+require_once('../../../../../private/config.php');
 require_once('../../../../../private/sysNotification.php');
 require_once('../../../../../private/userbase.php');
+require_once('../../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
 checkEmployeeStatus(); // Check if the employee is signed in
 
+/* SESSION Variables */
+$userID = $_SESSION['uid'];
+$key = $_SESSION['key'];
+
 /* CSRF token */
 $passwordToken = hash_hmac('sha256', '/updatePassword.php', $key);
+
+$db = getUpdateConnection();
+
+if ($db === null) {
+    header("Location: ");
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -52,7 +65,17 @@ $passwordToken = hash_hmac('sha256', '/updatePassword.php', $key);
         </button>
         <div class="container flex-center">
             <div class="list mini">
-                <button class="tab-button transform-button round selected"  data-id="change-password" data-title="Change Password">
+                <a href="options" class="tab-button transform-button round selected" data-id="overview" data-title="Account Overview">
+                    <div class="split">
+                        <div class="text-right">
+                            <p>Overview</p>
+                        </div>
+           	            <div class="toggle-button">
+        		            <i class="fas fa-chevron-right"></i>
+        		        </div>
+                    </div>
+                </a>
+                <button class="tab-button transform-button round"  data-id="change-password" data-title="Change Password">
                     <div class="split">
                         <div class="text-right">
                             <p>Password</p>
@@ -64,8 +87,45 @@ $passwordToken = hash_hmac('sha256', '/updatePassword.php', $key);
 		        </button>
 		    </div>
             <div class="list sub">
-                <h2 id="title">Change Password</h2>
-                <form id="change-password" action="../../../requests/workspace/user/updatePassword" class="flex-form">
+                <h2 id="title">Account Overview</h2>
+                <div id="overview">
+                    <?php
+                        /* Query */
+                        $queryUser = $db->prepare("SELECT firstName, middleName, lastName, email, phoneNumber, line1, line2, city, state, postalCode 
+                                                    FROM users U 
+                                                    INNER JOIN address A ON U.userID=A.userID 
+                                                    WHERE U.userID=?");
+                        $queryUser->bind_param("i", $userID);
+                        $queryUser->execute();
+                        
+                        /* Result */
+                        $resultUser = $queryUser->get_result();
+                        $user = $resultUser->fetch_assoc();
+                    ?>
+                    <h5 class="big-info">User Information</h5>
+                    <p class="info"><b>First Name</b>: <?php echo htmlspecialchars($user['firstName']) ?></p>
+                    <p class="info"><b>Last Name</b>: <?php echo htmlspecialchars($user['lastName']) ?></p>
+                    <hr>
+                    <h5 class="big-info">Contact Information</h5>
+                    <p class="info"><b>Email Address</b>: <?php echo htmlspecialchars($user['email']) ?></p>
+                    <p class="info"><b>Phone Number</b>: <?php echo htmlspecialchars(convertToPhoneNumber($user['phoneNumber'])) ?></p>
+                    <hr>
+                    <h5 class="big-info">Address Information</h5>
+                    <p class="info"><b>Line 1</b>: <?php echo htmlspecialchars($user['line1']) ?></p>
+                    <?php
+			        if (!empty($user['line2'])) echo "<p class=\"info\"><b>Line 2</b>:".htmlspecialchars($user['line2'])."</p>";
+                    ?>
+                    <p class="info"><b>City</b>: <?php echo htmlspecialchars($user['city']) ?></p>
+                    <p class="info"><b>State</b>: <?php echo htmlspecialchars($user['state']) ?></p>
+                    <p class="info"><b>Postal Code</b>: <?php echo htmlspecialchars($user['postalCode']) ?></p>
+                    <?php
+                        /* Release */
+                        $resultUser->free();
+                        $queryUser->close();
+                        $db->close(); 
+                    ?>
+                </div>
+                <form id="change-password" action="../../../requests/workspace/user/updatePassword" class="flex-form hidden">
     	            <label for="old-password" class="info">Current Password</label>
     		        <input id="old-password" type="password" name="old" class="input-field" required>
     		        <hr>
@@ -116,7 +176,7 @@ $passwordToken = hash_hmac('sha256', '/updatePassword.php', $key);
                 }
             } else {
                 document.getElementById('new-password').focus();
-                setFailNotification('Passwords Do Not Match');
+                setFailNotification('Passwords do not match');
             }
             
             showNotification();
