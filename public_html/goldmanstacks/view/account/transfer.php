@@ -167,7 +167,7 @@ if (!$isReferenced && !empty($referencedName)) {
                                 echo " selected";
                             }
                            
-                            echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                            echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ") (*" . substr($account['number'], -4) . ")" . "</option>";
                         }
                         ?>
 		            </select>
@@ -179,7 +179,7 @@ if (!$isReferenced && !empty($referencedName)) {
                         echo "<option disabled selected value>Please select an account</option>";
                         
                         foreach ($accounts as $account) {
-                            echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                            echo "<option value=\"" . encrypt($account['number'], $key) . "\">" . $account['nickName'] . " (" . ucfirst($account['type']) . ") (*" . substr($account['number'], -4) . ")" . "</option>";
                         }
                         ?>
                     </select>
@@ -213,7 +213,7 @@ if (!$isReferenced && !empty($referencedName)) {
                                 echo " selected";
                             }
                            
-                            echo ">" . ($account['nickName'] . " (" . ucfirst($account['type']) . ")" ) . "</option>";
+                            echo ">" . $account['nickName'] . " (" . ucfirst($account['type']) . ") (*" . substr($account['number'], -4) . ")" . "</option>";
                         }
                         ?>
 		            </select>
