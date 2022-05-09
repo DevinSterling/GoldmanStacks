@@ -5,10 +5,11 @@ require_once('../../../../private/functions.php');
 
 forceHTTPS(); // Force https connection
 session_start(); // Start Session
-checkClientStatus(); // Check if the client is signed in
+checkUserStatus(); // Check if the client is signed in
 
 /* SESSION Variables */
 $userID = $_SESSION["uid"];
+$key = $_SESSION['key'];
 
 /* POST Variables */
 $oldPassword = $_POST['old'];
@@ -18,10 +19,12 @@ $token = $_POST['token'];
 
 /* Defaults */
 $dbSuccess = false;
-$dbMessage = "Failed to update password";
+$dbMessage = "";
+
+$dbFailMessage = "Failed to update password";
 
 /* Calculate expected token */
-$calc = hash_hmac('sha256', '/updatePassword.php', $_SESSION['key']);
+$calc = hash_hmac('sha256', '/updatePassword.php', $key);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
@@ -33,40 +36,50 @@ if (hash_equals($calc, $token)
     
     if ($db !== null) {
         /* Verify Current Password */
-        $selectStatement = $db->prepare("SELECT password FROM users WHERE userID=?");
-        $selectStatement->bind_param("i", $userID);
-        $selectStatement->execute();
-        $result = $selectStatement->get_result();
-        $selectStatement->close();
+        $query = $db->prepare("SELECT password FROM users WHERE userID=?");
+        $query->bind_param("i", $userID);
+        $query->execute();
         
-        if ($result->num_rows > 0) {
-            $password = $result->fetch_assoc();
-            
-            /* Verify passwords before updating */
-            if (password_verify($oldPassword, $password['password'])) {
+        /* Get result */
+        $query->store_result();
+        $query->bind_result($password);
+        $query->fetch();
+        $query->close();
+
+        if ($password !== null) {
+            if (password_verify($oldPassword, $password)) {
                 /* Encrypt Password */
                 $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 
                 /* Prepared Statement */
-                $updateStatement = $db->prepare("UPDATE users SET password=? WHERE userID=?");
-                $updateStatement->bind_param("si", $newPassword, $userID);
-                $updateStatement->execute();
+                $stmt = $db->prepare("UPDATE users SET password=? WHERE userID=?");
+                $stmt->bind_param("si", $newPassword, $userID);
+                $stmt->execute();
                 
                 /* Check Execution */
-                if ($db->affected_rows > 0) {
+                if ($db->affected_rows === 0) { // If 0, update failed to execute
+                    $dbMessage = $dbFailMessage;
+                } else {
                     $dbSuccess = true;
                     $dbMessage = "Password has been updated";
                 }
                 
                 /* Close Statement */
-                $updateStatement->close();
+                $stmt->close();
+            } else {
+                $dbMessage = $dbFailMessage;
             }
+        } else {
+            $dbMessage = $dbFailMessage;
         }
         
         /* Close Streams */
-        $result->free();
         $db->close();
+    } else {
+        $dbMessage = $dbFailMessage;
     }
+} else {
+    die();
 }
 
 /* Return Outcome */
