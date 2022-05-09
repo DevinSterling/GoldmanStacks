@@ -99,6 +99,7 @@ if ($db === null) {
                             <p class="info"><?php echo $details['postalCode'] ?></p>
     		            </div>
 		            </div>
+			<p class="info">Accounts</p>
                     <table id="accounts" class="responsive-table margin-bottom">
                         <thead>
     	                    <tr>
