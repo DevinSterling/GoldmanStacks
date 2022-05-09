@@ -56,11 +56,25 @@ function redirect() {
     die();
 }
 
+/* Check the status and determine if the user is registered */
+function checkUserStatus() {
+    if (checkIfLoggedIn()) { // Check if user is logged in
+        if (isEmployee() || isClient()) { // Check if user is a client or employee
+            checkInactive(); // Check if the client has been inactive
+            return;
+        }
+    }
+
+    /* Guard Block */
+    redirect();
+}
+
+
 /* Check the status and determine if a user is an employee */
 function checkEmployeeStatus() {
     if (checkIfLoggedIn()) { // Check if user is logged in
-        if (isEmployee()) { // Check if user is a client
-            checkInactive(); // Check if the client has been inactive
+        if (isEmployee()) { // Check if user is an employee
+            checkInactive(); // Check if the employee has been inactive
             return;
         }
     }
