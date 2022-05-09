@@ -26,7 +26,8 @@ $calc = hash_hmac('sha256', '/newExternalTransfer.php', $_SESSION['key']);
 
 /* Confirm token and user input */
 if (hash_equals($calc, $token)
-    && checkNotEmpty($sender, $receiver, $amount)) {
+    && checkNotEmpty($sender, $receiver, $amount)
+    && $sender != $receiver) {
         
     /* Input Validation */
     $isMatch = preg_match('/^[0-9]{10}$/', $sender);
@@ -39,15 +40,19 @@ if (hash_equals($calc, $token)
         
         if ($db !== null) {
             /* Check if both internal accounts exist */
-            $queryRequest = $db->prepare("SELECT COUNT(*) FROM accountDirectory WHERE (clientID=? AND accountNum=?) OR accountNum=?");
+            $queryRequest = $db->prepare("SELECT (
+                                        	SELECT COUNT(*) FROM accountDirectory where clientID=? AND accountNum=?
+                                        ) AS senderExsists, (
+                                        	SELECT COUNT(*) FROM accountDirectory where accountNum=?
+                                        ) AS recipientExists");
             $queryRequest->bind_param("iss", $userID, $sender, $receiver);
             $queryRequest->execute();
             
-            $queryRequest->bind_result($count);
+            $queryRequest->bind_result($clientExists, $recipientExists);
             $queryRequest->fetch();
             $queryRequest->close();
             
-            if ($count === 2) {
+            if ($clientExists) {
                 /* Verify Balance */
                 $queryRequest = $db->prepare("SELECT balance FROM accountDirectory WHERE clientID=? AND accountNum=?");
                 $queryRequest->bind_param("is", $userID, $sender);
@@ -63,10 +68,12 @@ if (hash_equals($calc, $token)
                     $updateSenderBalance->execute();
                     $updateSenderBalance->close();
                     
-                    $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
-                    $updateReceiverBalance->bind_param("di", $amount, $receiver);
-                    $updateReceiverBalance->execute();
-                    $updateReceiverBalance->close();
+                    if ($recipientExists) {
+                        $updateReceiverBalance = $db->prepare("UPDATE accountDirectory SET balance=balance+? WHERE accountNum=?");
+                        $updateReceiverBalance->bind_param("di", $amount, $receiver);
+                        $updateReceiverBalance->execute();
+                        $updateReceiverBalance->close();
+                    }
                     
                     $insertTransaction = $db->prepare("INSERT INTO transactions (type, clientID, accountNum, transactionAmount, recipientAccount) VALUES ('transfer', ?, ?, -?, ?)");
                     $insertTransaction->bind_param("iidi", $userID, $sender, $amount, $receiver);
