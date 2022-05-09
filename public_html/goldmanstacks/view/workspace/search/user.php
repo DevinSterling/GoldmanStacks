@@ -157,7 +157,6 @@ $db->close();
 				<li class="menulogo"><a href="../manager">Goldman Stacks</a></li>
                 <li class="menutoggle"><a href="#"><i class="fas fa-bars"></i></a></li>
 				<li class="menuitem"><a href="../manager">Manage</a></li>
-				<li class="menuitem"><a href="#">Search</a></li>
 			</ul>
 			<ul class="menugroup">
 				<li class="menuitem"><a href="../staff/options">Options</a></li>
@@ -295,7 +294,7 @@ $db->close();
 	                <div class="list main flex-form">
                         <h2 id="title"><span id="user-type"></span> Details</h2>
                         <div id="user-info">
-                            <p class="info">Client</p>
+                            <p class="info">User</p>
                             <p><span id="email"></span> (<span id="first-name"></span> <span id="last-name"></span>)</p>
                             <p class="info">Balance</p>
                             <p id="balance"></p>
