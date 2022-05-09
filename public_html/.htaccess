@@ -1,3 +1,11 @@
+# Error Handling
+ErrorDocument 404 /goldmanstacks/view/error/index.php?code=404
+ErrorDocument 403 /goldmanstacks/view/error/index.php?code=403
+ErrorDocument 500 /goldmanstacks/view/error/index.php?code=500
+
+# Block directory access
+Options -Indexes
+
 # Remove php extension
 RewriteEngine on 
 
