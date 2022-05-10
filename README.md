@@ -18,5 +18,5 @@ Snippet of the client home page, where clients get a brief overview of all their
 Snippet of the bank account and transaction details page, where clients can view their recent incoming and outgoing transactions, and manage funds for a specified account.
 
 ---
-![Mange Open Requests Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/manage_open_requests.jpg "Employee View: Goldman Stacks Mange Open Requests Page")
+![Mange Open Requests Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/manage_open_requests_page.jpg "Employee View: Goldman Stacks Mange Open Requests Page")
 Snippet of the manage open requests page
