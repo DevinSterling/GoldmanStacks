@@ -16,7 +16,6 @@ CREATE TABLE employee (
   employeeID int(10) UNSIGNED NOT NULL,
   position varchar(50) NOT NULL,
   permission tinyint(4) NOT NULL,
-  salary float(10,2) DEFAULT NULL,
   CONSTRAINT pk_employee PRIMARY KEY (employeeID),
   CONSTRAINT fk_employee FOREIGN KEY (employeeID) REFERENCES users (userID) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE=InnoDB;
