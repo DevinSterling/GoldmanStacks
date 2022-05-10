@@ -9,3 +9,4 @@ Non-Functional Requirements
 - For end-user usability, the site consists of a responsive web design, redirects for 4xx and 5xx response codes, removal of file extension from URL, full-site bookmark compatibility, and lack of POST form-resubmission on refresh.
 ___
 ![Home Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/home_page.jpg "Goldman Stacks Client Home Page")
+Snippet of the client home page
