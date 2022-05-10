@@ -3,7 +3,7 @@ async function getJson(url, formData) {
     let json = null;
     
     /* Create request */
-    request = new Request(url, {
+    const request = new Request(url, {
         body: formData,
         method: 'POST',
     });
