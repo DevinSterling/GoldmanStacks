@@ -7,8 +7,12 @@ Non-Functional Requirements
 ---
 - Website security consists of CSRF authentication tokens, inactivity detection, forced HTTPS, encryption, hashed passwords, front/back-end input validation, and prepared statements.
 - For end-user usability, the site consists of a responsive web design, redirects for 4xx and 5xx response codes, removal of file extension from URL, full-site bookmark compatibility, and lack of POST form-resubmission on refresh.
-___
+
+Sample Images
+---
 ![Home Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/home_page.jpg "Goldman Stacks Client Home Page")
-Snippet of the client home page
+Snippet of the client home page, where clients get a brief overview of all their accounts and recent transactions.
+
+---
 ![Account and Transaction Details Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/bank_account_page.jpg "Goldman Stacks Account and Transaction Details Page")
-Snippet of the bank account and transaction details page
+Snippet of the bank account and transaction details page, where clients can view their recent incoming and outgoing transactions, and manage funds for a specified account.
