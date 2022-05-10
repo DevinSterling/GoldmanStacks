@@ -19,8 +19,8 @@ Functional Requirements
 
 Non-Functional Requirements
 ---
-- Website security consists of CSRF authentication tokens, inactivity detection, forced HTTPS, encryption, hashed passwords, front/back-end input validation, and prepared statements.
-- For end-user usability, the site consists of a responsive web design, redirects for 4xx and 5xx response codes, removal of file extension from URL, full-site bookmark compatibility, and lack of POST form-resubmission on refresh.
+- **Security** consists of CSRF authentication tokens, inactivity detection, forced HTTPS, encryption, hashed passwords, front/back-end input validation, and prepared statements.
+- **Usability** for end-users consists of a responsive web design, redirects for 4xx and 5xx response codes, removal of file extension from URL, full-site bookmark compatibility, and lack of POST form-resubmission on refresh.
 
 Sample Images
 ---
