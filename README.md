@@ -19,4 +19,4 @@ Snippet of the bank account and transaction details page, where clients can view
 
 ---
 ![Mange Open Requests Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/manage_open_requests_page.jpg "Employee View: Goldman Stacks Mange Open Requests Page")
-Snippet of the manage open requests page
+Snippet of the manage open requests page, where an employee can approve or reject client requests to open a new bank account.
