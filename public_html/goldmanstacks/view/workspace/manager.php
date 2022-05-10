@@ -229,7 +229,7 @@ $selectStatement->close();
                         </div>
     		        </a>
                     <hr>
-    		        <a href="../login" class="highlight-button transform-button split round">
+    		        <a href="../../requests/signout" class="highlight-button transform-button split round">
                         <div class="list">
                             <p>Sign Out</p>
                         </div>
