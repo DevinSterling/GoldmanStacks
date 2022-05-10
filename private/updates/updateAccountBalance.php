@@ -1,7 +1,7 @@
 <?php
 require_once('../config.php');
 
-$db = $getUpdateConnection();
+$db = getUpdateConnection();
 
 if ($db !== null) {
     /* Update balance of all savings accounts using interest rate */
