@@ -119,7 +119,7 @@ if ($timeout || $registered || $error) {
 	<script type="text/javascript" src="../js/notification.js"></script>
 	<script type="text/javascript">
         document.addEventListener('DOMContentLoaded', () => {
-            <?php if ($error) echo "history.replaceState(null, '', '" . getHomeDirectory() /* TEMP */ . "/goldmanstacks/view/signin');" ?>
+            <?php if ($error || $registered || $timeout) echo "history.replaceState(null, '', '" . getHomeDirectory() /* TEMP */ . "/goldmanstacks/view/signin');" ?>
             document.getElementById('login').addEventListener('submit', handleForm);
         });
         
