@@ -12,6 +12,9 @@ Sample Images
 ---
 ![Home Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/home_page.jpg "Goldman Stacks Client Home Page")
 Snippet of the client home page, where clients get a brief overview of all their accounts and recent transactions.
+
 ---
 ![Account and Transaction Details Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/bank_account_page.jpg "Goldman Stacks Account and Transaction Details Page")
 Snippet of the bank account and transaction details page, where clients can view their recent incoming and outgoing transactions, and manage funds for a specified account.
+
+---
