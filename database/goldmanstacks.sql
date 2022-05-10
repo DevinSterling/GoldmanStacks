@@ -12,14 +12,6 @@ CREATE TABLE users (
   CONSTRAINT pk_user PRIMARY KEY (userID)
 ) ENGINE=InnoDB;
 
-CREATE TABLE employee (
-  employeeID int(10) UNSIGNED NOT NULL,
-  position varchar(50) NOT NULL,
-  permission tinyint(4) NOT NULL,
-  CONSTRAINT pk_employee PRIMARY KEY (employeeID),
-  CONSTRAINT fk_employee FOREIGN KEY (employeeID) REFERENCES users (userID) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE=InnoDB;
-
 CREATE TABLE client (
   clientID int(10) UNSIGNED NOT NULL,
   verified tinyint(1) NOT NULL DEFAULT '0',
