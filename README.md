@@ -10,3 +10,5 @@ Non-Functional Requirements
 ___
 ![Home Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/home_page.jpg "Goldman Stacks Client Home Page")
 Snippet of the client home page
+![Account and Transaction Details Page](https://github.com/DevinSterling/GoldmanStacks/blob/main/public_html/goldmanstacks/img/bank_account_page.jpg "Goldman Stacks Account and Transaction Details Page")
+Snippet of the bank account and transaction details page
